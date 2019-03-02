@@ -1,0 +1,78 @@
+{
+  "name": "serverless-aws-nodejs-typescript",
+  "version": "1.0.0",
+  "main": "handler.js",
+  "license": "MIT",
+  "private": true,
+  "homepage": "https://github.com/mesaugat/serverless-aws-nodejs-typescript",
+  "scripts": {
+    "test": "jest",
+    "test:func": "jest func",
+    "lint": "eslint '*/**'",
+    "lint:fix": "eslint '*/**' --fix"
+  },
+  "dependencies": {
+    "body-parser": "^1.18.3",
+    "composable-middleware": "^0.3.0",
+    "express": "^4.16.4",
+    "express-jwt": "^5.3.1",
+    "jsonwebtoken": "^8.5.0",
+    "lodash": "^4.17.11",
+    "luxon": "^1.11.3",
+    "mysql": "^2.16.0",
+    "passport": "^0.4.0",
+    "passport-google-oauth20": "^1.0.0",
+    "passport-local": "^1.0.0",
+    "reflect-metadata": "^0.1.13",
+    "serverless-express": "^2.0.11",
+    "typeorm": "^0.2.14",
+    "uuidv4": "^3.0.1"
+  },
+  "devDependencies": {
+    "@types/aws-lambda": "8.10.15",
+    "@types/express": "^4.16.1",
+    "@types/jest": "^24.0.9",
+    "@types/jsonwebtoken": "^8.3.0",
+    "@types/lodash": "^4.14.121",
+    "@types/luxon": "^1.11.1",
+    "@types/node": "^11.9.5",
+    "@types/node-fetch": "^2.1.6",
+    "@types/passport": "^1.0.0",
+    "@typescript-eslint/parser": "^1.4.2",
+    "aws-sdk": "^2.413.0",
+    "eslint": "^5.14.1",
+    "eslint-config-airbnb-base": "13.1.0",
+    "eslint-plugin-import": "^2.16.0",
+    "eslint-plugin-jest": "^22.3.0",
+    "eslint-plugin-typescript": "^0.14.0",
+    "jest": "^24.1.0",
+    "node-fetch": "^2.3.0",
+    "serverless-offline": "^3.31.3",
+    "serverless-webpack": "^5.2.0",
+    "ts-jest": "^24.0.0",
+    "ts-loader": "^5.3.3",
+    "typescript": "^3.3.3333",
+    "webpack": "^4.26.1"
+  },
+  "jest": {
+    "testMatch": [
+      "<rootDir>/src/**/?(*.)(spec|test).ts"
+    ],
+    "moduleFileExtensions": [
+      "web.ts",
+      "ts",
+      "web.tsx",
+      "tsx",
+      "web.js",
+      "js",
+      "web.jsx",
+      "jsx",
+      "json",
+      "node",
+      "mjs"
+    ],
+    "transform": {
+      "^.+\\.tsx?$": "ts-jest"
+    }
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "extends": ["airbnb-base"],
+  "parser": "@typescript-eslint/parser",
+  "plugins": ["jest", "typescript"],
+  "env": {
+    "node": true,
+    "jest/globals": true
+  },
+  "parserOptions": {
+    "project": "./tsconfig.json"
+  },
+  "settings": {
+    "import/resolver": {
+      "node": {
+        "extensions": [".js", ".jsx", ".ts", ".tsx"]
+      }
+    }
+  },
+  "rules": {
+    "semi": ["error", "never"],
+    "no-console": "off",
+    "object-curly-newline": ["error", { "consistent": true }],
+    "no-await-in-loop": "off"
+  }
+}

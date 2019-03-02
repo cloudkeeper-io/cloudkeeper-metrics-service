@@ -1,0 +1,51 @@
+service:
+  name: cloudkeeper-metrics-service
+
+# Add the serverless-webpack plugin
+plugins:
+  - serverless-webpack
+  - serverless-offline
+
+provider:
+  name: aws
+  runtime: nodejs8.10
+  versionFunctions: false
+  memorySize: 256
+  region: eu-central-1
+  environment:
+    stage: ${self:custom.stage}
+  iamRoleStatements:
+    ${file(roleStatements.yml)}
+
+custom:
+  stage: ${opt:stage, self:provider.stage}
+  dev:
+    appSecret: test-secret
+  prod:
+
+functions:
+  trigger-update-lambdas:
+    handler: src/update/lambda-configuration/trigger-lambda-config-update.handler
+
+  update-tenant-lambdas:
+    timeout: 120
+    handler: src/update/lambda-configuration/update-lambda-configurations-for-tenant.handler
+    environment:
+      dbName: cloudkeeper
+      dbHost: cloudkeeper.cluster-ckbplh6wfiop.eu-central-1.rds.amazonaws.com
+      dbUser: cloudkeeper
+      dbPassword: ExH58GwqZBnCV49MqWcV
+
+resources:
+  Resources:
+    UsersTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:custom.stage}-tenant-cloud-configuration
+        AttributeDefinitions:
+          - AttributeName: tenantId
+            AttributeType: S
+        KeySchema:
+          - AttributeName: tenantId
+            KeyType: HASH
+        BillingMode: PAY_PER_REQUEST

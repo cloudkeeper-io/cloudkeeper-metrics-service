@@ -1,0 +1,28 @@
+- Effect: "Allow"
+  Action:
+  - "logs:*"
+  Resource:
+  - "*"
+
+- Effect: "Allow"
+  Action:
+  - "dynamodb:*"
+  Resource:
+  - "arn:aws:dynamodb:*:*:table/${self:custom.stage}-tenant-cloud-configuration"
+
+- Effect: Allow
+  Action:
+    - ec2:CreateNetworkInterface
+    - ec2:DescribeNetworkInterfaces
+    - ec2:DeleteNetworkInterface
+  Resource: "*"
+
+- Effect: Allow
+  Action:
+    - lambda:InvokeFunction
+  Resource: "*"
+
+- Effect: Allow
+  Action:
+    - lambda:ListFunctions
+  Resource: "*"
