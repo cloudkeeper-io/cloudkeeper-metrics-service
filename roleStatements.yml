@@ -26,3 +26,13 @@
   Action:
     - lambda:ListFunctions
   Resource: "*"
+
+- Effect: Allow
+  Action:
+    - s3:*
+  Resource: "*"
+
+- Effect: Allow
+  Action:
+    - sns:*
+  Resource: "*"

@@ -4786,6 +4786,11 @@ serverless-offline@^3.31.3:
     uuid "^3.3.2"
     velocityjs "^1.1.2"
 
+serverless-pseudo-parameters@^2.4.0:
+  version "2.4.0"
+  resolved "https://registry.yarnpkg.com/serverless-pseudo-parameters/-/serverless-pseudo-parameters-2.4.0.tgz#bf5ebe6948f60bbf69c7dc2cf4bd2a5ee7dc6761"
+  integrity sha512-lb9R62PUFdEAbbYH7pe1wzR7vtIpa8YI8OVcQ5LlLyE0+AxWG4bwEw33X5LE8+5oLwTy57Y/EevnxKnMeyiXxw==
+
 serverless-webpack@^5.2.0:
   version "5.2.0"
   resolved "https://registry.yarnpkg.com/serverless-webpack/-/serverless-webpack-5.2.0.tgz#3ad2de29506ad79a25d0ac8dc3f0a647b4944175"

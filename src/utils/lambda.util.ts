@@ -4,7 +4,7 @@ import { DateTime } from 'luxon'
 import { LambdaConfiguration } from '../entity'
 
 export const listAllLambdas = async (tenantId, accessKeyId, secretAccessKey, region) => {
-  const lambdaClient = new AWS.Lambda({ region, accessKeyId, secretAccessKey })
+  const lambdaClient = new AWS.Lambda({ accessKeyId, secretAccessKey, region })
 
   const lambdas: LambdaConfiguration[] = []
 
@@ -32,13 +32,13 @@ export const listAllLambdas = async (tenantId, accessKeyId, secretAccessKey, reg
 
 const period = 3600
 
-const createLambdaMetric = (lambdaName, metricName, stat, startTime, endTime) => ({
+const createLambdaMetric = (lambdaName, metricName, stats, startTime, endTime) => ({
   StartTime: startTime,
   Namespace: 'AWS/Lambda',
   EndTime: endTime,
   MetricName: metricName,
   Period: period,
-  Statistics: [stat],
+  Statistics: stats,
   Dimensions: [
     {
       Name: 'FunctionName',
@@ -47,17 +47,16 @@ const createLambdaMetric = (lambdaName, metricName, stat, startTime, endTime) =>
   ],
 })
 
-export const getLambdaMetrics = async (lambdaName) => {
-  const cloudwatch = new AWS.CloudWatch({ region: 'eu-west-1' })
+export const getLambdaMetrics = async (lambdaName, accessKeyId, secretAccessKey, region) => {
+  const cloudwatch = new AWS.CloudWatch({ accessKeyId, secretAccessKey, region })
 
-  const startTime = DateTime.utc().minus({ days: 30 }).toJSDate()
-  const endTime = DateTime.utc().toJSDate()
+  const startTime = DateTime.utc().startOf('hour').minus({ days: 30 }).toJSDate()
+  const endTime = DateTime.utc().startOf('hour').toJSDate()
 
   const requests = [
-    createLambdaMetric(lambdaName, 'Invocations', 'Sum', startTime, endTime),
-    createLambdaMetric(lambdaName, 'Errors', 'Sum', startTime, endTime),
-    createLambdaMetric(lambdaName, 'Duration', 'Maximum', startTime, endTime),
-    createLambdaMetric(lambdaName, 'Duration', 'Average', startTime, endTime),
+    createLambdaMetric(lambdaName, 'Invocations', ['Sum'], startTime, endTime),
+    createLambdaMetric(lambdaName, 'Errors', ['Sum'], startTime, endTime),
+    createLambdaMetric(lambdaName, 'Duration', ['Maximum', 'Average'], startTime, endTime),
   ]
 
   return Promise.all(requests.map(request => cloudwatch.getMetricStatistics(request).promise()))

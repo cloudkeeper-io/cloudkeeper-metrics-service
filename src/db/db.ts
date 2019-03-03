@@ -17,6 +17,9 @@ export const config: MysqlConnectionOptions = {
   ],
   logging: true,
   synchronize: true,
+  extra: {
+    connectionLimit: 1,
+  },
 }
 
 export const getConnection = memoize(async () => createConnection(config))

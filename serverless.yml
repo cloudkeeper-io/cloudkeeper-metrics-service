@@ -1,9 +1,9 @@
 service:
   name: cloudkeeper-metrics-service
 
-# Add the serverless-webpack plugin
 plugins:
   - serverless-webpack
+  - serverless-pseudo-parameters
   - serverless-offline
 
 provider:
@@ -26,6 +26,8 @@ custom:
 functions:
   trigger-update-lambdas:
     handler: src/update/lambda-configuration/trigger-lambda-config-update.handler
+    events:
+      - schedule: cron(1 * ? * * *)
 
   update-tenant-lambdas:
     timeout: 120
@@ -35,6 +37,34 @@ functions:
       dbHost: cloudkeeper.cluster-ckbplh6wfiop.eu-central-1.rds.amazonaws.com
       dbUser: cloudkeeper
       dbPassword: ExH58GwqZBnCV49MqWcV
+
+  trigger-lambda-stats-update:
+    handler: src/update/lambda-stats/trigger-lambda-stats-update.handler
+    events:
+      - schedule: cron(5 * ? * * *)
+
+  update-tenant-lambda-stats:
+    timeout: 300
+    handler: src/update/lambda-stats/update-tenant-lambda-stats.handler
+    environment:
+      dbName: cloudkeeper
+      dbHost: cloudkeeper.cluster-ckbplh6wfiop.eu-central-1.rds.amazonaws.com
+      dbUser: cloudkeeper
+      dbPassword: ExH58GwqZBnCV49MqWcV
+      finishedTopic: "arn:aws:sns:#{AWS::Region}:#{AWS::AccountId}:${self:custom.stage}-finished-updating-lambda-stats"
+
+  prepare-data-for-tenant:
+    timeout: 240
+    handler: src/update/prepare-data/prepare-data-for-tenant.handler
+    environment:
+      bucket: ${self:custom.stage}-cloudkeeper-tenant-data
+      dbName: cloudkeeper
+      dbHost: cloudkeeper.cluster-ckbplh6wfiop.eu-central-1.rds.amazonaws.com
+      dbUser: cloudkeeper
+      dbPassword: ExH58GwqZBnCV49MqWcV
+    events:
+      - sns:
+          arn: "arn:aws:sns:#{AWS::Region}:#{AWS::AccountId}:${self:custom.stage}-finished-updating-lambda-stats"
 
 resources:
   Resources:
@@ -49,3 +79,14 @@ resources:
           - AttributeName: tenantId
             KeyType: HASH
         BillingMode: PAY_PER_REQUEST
+
+    FinishedUpdatingLambdaStats:
+      Type: "AWS::SNS::Topic"
+      Properties:
+        DisplayName: ${self:custom.stage}-finished-updating-lambda-stats
+        TopicName: ${self:custom.stage}-finished-updating-lambda-stats
+
+    CloudkeeperTenantData:
+      Type: AWS::S3::Bucket
+      Properties:
+        BucketName: ${self:custom.stage}-cloudkeeper-tenant-data
