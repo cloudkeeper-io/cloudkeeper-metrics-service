@@ -9,10 +9,16 @@ export const handler = async (event) => {
 
     const totals = await getTotals(tenantId)
 
+    const data = {
+      last24Hours: {
+        totals,
+      },
+    }
+
     await s3.putObject({
       Bucket: process.env.bucket!,
       Key: `dashboard/data/${tenantId}.json`,
-      Body: JSON.stringify(totals),
+      Body: JSON.stringify(data),
       ContentType: 'application/json',
     }).promise()
   }))
