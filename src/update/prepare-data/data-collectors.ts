@@ -9,9 +9,9 @@ export const getTotals = async (tenantId) => {
     + 'group by dateTime '
     + 'order by dateTime desc '
 
-  const datapoints = await connection.query(totalsQuery, tenantId)
+  const dataPoints = await connection.query(totalsQuery, tenantId)
 
-  const totals = reduce(datapoints, (acc, datapoint) => {
+  const totals = reduce(dataPoints, (acc, datapoint) => {
     acc.invocations += Number(datapoint.invocations)
     acc.errors += Number(datapoint.errors)
 
@@ -19,7 +19,7 @@ export const getTotals = async (tenantId) => {
   }, { invocations: 0, errors: 0 })
 
   return {
-    datapoints,
+    dataPoints,
     totals,
   }
 }
