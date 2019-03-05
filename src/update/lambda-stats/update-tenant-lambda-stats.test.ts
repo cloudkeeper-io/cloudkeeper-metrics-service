@@ -10,7 +10,7 @@ describe('Token Methods', async () => {
 
   test('happy path', async () => {
     try {
-      const result = await handler({
+      await handler({
         accessKey: 'AKIAJI7Y7EUA4WTJYTUA',
         region: 'eu-west-1',
         secretKey: '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',

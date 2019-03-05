@@ -1,3 +1,4 @@
+// eslint-disable-next-line import/no-extraneous-dependencies
 import * as Lambda from 'aws-sdk/clients/lambda'
 import { map } from 'lodash'
 import { scanForArray } from '../../utils/dynamodb'

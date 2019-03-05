@@ -1,3 +1,4 @@
+// eslint-disable-next-line import/no-extraneous-dependencies
 import * as AWS from 'aws-sdk'
 import { getTotals } from './data-collectors'
 

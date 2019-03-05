@@ -1,4 +1,4 @@
-import { flatMap, forEach } from 'lodash'
+import { flatMap } from 'lodash'
 import { getConnection } from '../../db/db'
 import { listAllLambdas } from '../../utils/lambda.util'
 import { LambdaConfiguration } from '../../entity'

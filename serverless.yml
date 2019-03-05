@@ -19,9 +19,10 @@ provider:
 
 custom:
   stage: ${opt:stage, self:provider.stage}
-  dev:
-    appSecret: test-secret
-  prod:
+  dbName: ${ssm:${self:custom.stage}-metrics-db-name}
+  dbHost: ${ssm:${self:custom.stage}-metrics-db-host}
+  dbUser: ${ssm:${self:custom.stage}-metrics-db-user}
+  dbPassword: ${ssm:${self:custom.stage}-metrics-db-password}
 
 functions:
   trigger-update-lambdas:
@@ -33,10 +34,10 @@ functions:
     timeout: 120
     handler: src/update/lambda-configuration/update-lambda-configurations-for-tenant.handler
     environment:
-      dbName: cloudkeeper
-      dbHost: cloudkeeper.cluster-ckbplh6wfiop.eu-central-1.rds.amazonaws.com
-      dbUser: cloudkeeper
-      dbPassword: ExH58GwqZBnCV49MqWcV
+      dbName: ${self:custom.dbName}
+      dbHost: ${self:custom.dbHost}
+      dbUser: ${self:custom.dbUser}
+      dbPassword: ${self:custom.dbPassword}
 
   trigger-lambda-stats-update:
     handler: src/update/lambda-stats/trigger-lambda-stats-update.handler
@@ -47,10 +48,10 @@ functions:
     timeout: 300
     handler: src/update/lambda-stats/update-tenant-lambda-stats.handler
     environment:
-      dbName: cloudkeeper
-      dbHost: cloudkeeper.cluster-ckbplh6wfiop.eu-central-1.rds.amazonaws.com
-      dbUser: cloudkeeper
-      dbPassword: ExH58GwqZBnCV49MqWcV
+      dbName: ${self:custom.dbName}
+      dbHost: ${self:custom.dbHost}
+      dbUser: ${self:custom.dbUser}
+      dbPassword: ${self:custom.dbPassword}
       finishedTopic: "arn:aws:sns:#{AWS::Region}:#{AWS::AccountId}:${self:custom.stage}-finished-updating-lambda-stats"
 
   prepare-data-for-tenant:
@@ -58,10 +59,10 @@ functions:
     handler: src/update/prepare-data/prepare-data-for-tenant.handler
     environment:
       bucket: ${self:custom.stage}-cloudkeeper-tenant-data
-      dbName: cloudkeeper
-      dbHost: cloudkeeper.cluster-ckbplh6wfiop.eu-central-1.rds.amazonaws.com
-      dbUser: cloudkeeper
-      dbPassword: ExH58GwqZBnCV49MqWcV
+      dbName: ${self:custom.dbName}
+      dbHost: ${self:custom.dbHost}
+      dbUser: ${self:custom.dbUser}
+      dbPassword: ${self:custom.dbPassword}
     events:
       - sns:
           arn: "arn:aws:sns:#{AWS::Region}:#{AWS::AccountId}:${self:custom.stage}-finished-updating-lambda-stats"

@@ -1,4 +1,5 @@
 import { chunk, flatten, map, keyBy } from 'lodash'
+// eslint-disable-next-line import/no-extraneous-dependencies
 import * as AWS from 'aws-sdk'
 import { LambdaConfiguration, LambdaStats } from '../../entity'
 import { getConnection } from '../../db/db'
