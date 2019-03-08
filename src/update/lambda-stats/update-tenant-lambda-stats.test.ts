@@ -11,8 +11,8 @@ import { handler } from './update-tenant-lambda-stats'
 describe('Update Lambda Stats', async () => {
   jest.setTimeout(60000)
 
-  //
-  test('happy path', async () => {
+  // TODO: refactor to be a functional test
+  test.skip('happy path', async () => {
     await handler({
       accessKey: 'AKIAJI7Y7EUA4WTJYTUA',
       region: 'eu-west-1',
