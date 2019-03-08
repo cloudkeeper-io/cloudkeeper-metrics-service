@@ -73,7 +73,7 @@ jobs:
           name: Run functional tests
           environment:
             JEST_JUNIT_OUTPUT: reports/junit/js-test-results.xml
-          command: yarn test:func -w 1 --ci --testResultsProcessor="jest-junit"
+          command: yarn test:func -w 1 --ci --testResultsProcessor="jest-junit" --passWithNoTests
       - store_test_results:
           path: reports/junit
       - store_artifacts:
