@@ -5,7 +5,7 @@ export const getTotals = async (tenantId) => {
   const connection = await getConnection()
 
   const totalsQuery = 'select sum(invocations) as invocations, sum(`errors`) as `errors`, `dateTime` from LambdaStats '
-    + 'where tenantId = ? and (`dateTime` > UTC_TIMESTAMP()  - INTERVAL 1 DAY) '
+    + 'where tenantId = ? and (`dateTime` >= UTC_TIMESTAMP()  - INTERVAL 1 DAY) '
     + 'group by dateTime '
     + 'order by dateTime desc '
 

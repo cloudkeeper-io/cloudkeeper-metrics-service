@@ -1,0 +1,166 @@
+version: 2
+jobs:
+  ensure-deps:
+    docker:
+      - image: ayankovsky/node-serverless-aws
+
+    working_directory: ~/repo
+
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - v1-yarn-{{ .Branch }}-{{ checksum "yarn.lock" }}
+            - v1-yarn-{{ .Branch }}-
+            - v1-yarn-
+
+      - run:
+          name: Install Dependencies
+          command: yarn
+
+      - save_cache:
+          key: v1-yarn-{{ .Branch }}-{{ checksum "yarn.lock" }}
+          paths:
+            - node_modules
+            - .cache/yarn
+
+  checks:
+    environment:
+      PROJECT: cloudkeeper-metrics-service
+    working_directory: ~/repo
+    docker:
+      - image: ayankovsky/node-serverless-aws
+    steps:
+      - checkout
+      - attach_workspace:
+          at: build/distributions
+      - restore_cache:
+          keys:
+            - v1-yarn-{{ .Branch }}-{{ checksum "yarn.lock" }}
+            - v1-yarn-{{ .Branch }}-
+            - v1-yarn-
+      - run:
+          name: create folder
+          command: mkdir -p reports/junit
+      - run:
+          name: Lint
+          command: yarn lint --format junit -o reports/junit/js-lint-results.xml
+      - store_test_results:
+          path: reports/junit
+      - store_artifacts:
+          path: reports/junit
+
+  functional-tests:
+    environment:
+      PROJECT: cloudkeeper-metrics-service
+    working_directory: ~/repo
+    docker:
+      - image: ayankovsky/node-serverless-aws
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - v1-yarn-{{ .Branch }}-{{ checksum "yarn.lock" }}
+            - v1-yarn-{{ .Branch }}-
+            - v1-yarn-
+      - run:
+          name: create folder
+          command: mkdir -p reports/junit
+      - run:
+          name: Run functional tests
+          environment:
+            JEST_JUNIT_OUTPUT: reports/junit/js-test-results.xml
+          command: yarn test:func -w 1 --ci --testResultsProcessor="jest-junit"
+      - store_test_results:
+          path: reports/junit
+      - store_artifacts:
+          path: reports/junit
+
+  dev-deploy:
+    environment:
+      PROJECT: cloudkeeper-metrics-service
+    working_directory: ~/repo
+    docker:
+      - image: ayankovsky/node-serverless-aws
+    steps:
+      - checkout
+      - attach_workspace:
+          at: build/distributions
+      - restore_cache:
+          keys:
+            - v1-yarn-{{ .Branch }}-{{ checksum "yarn.lock" }}
+            - v1-yarn-{{ .Branch }}-
+            - v1-yarn-
+      - run:
+          name: deploy
+          command: sls deploy
+
+  prod-deploy:
+    environment:
+      PROJECT: cloudkeeper-metrics-service
+    working_directory: ~/repo
+    docker:
+      - image: ayankovsky/node-serverless-aws
+    steps:
+      - checkout
+      - attach_workspace:
+          at: build/distributions
+      - restore_cache:
+          keys:
+            - v1-yarn-{{ .Branch }}-{{ checksum "yarn.lock" }}
+            - v1-yarn-{{ .Branch }}-
+            - v1-yarn-
+      - run:
+          name: deploy
+          command: sls deploy --stage prod
+
+workflows:
+  version: 2
+  build-and-deploy-dev:
+    jobs:
+      - ensure-deps
+      - checks:
+          requires:
+            - ensure-deps
+      - dev-deploy:
+          filters:
+            branches:
+              only:
+                - master
+          context: ayankovsky-context
+          requires:
+            - checks
+      - functional-tests:
+          filters:
+            branches:
+              only:
+                - master
+          context: ayankovsky-context
+          requires:
+            - dev-deploy
+
+  build-and-deploy-prod:
+    jobs:
+      - ensure-deps:
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /^release.*/
+      - checks:
+          requires:
+            - ensure-deps
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /^release.*/
+      - prod-deploy:
+          context: ayankovsky-context
+          requires:
+            - checks
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /^release.*/
