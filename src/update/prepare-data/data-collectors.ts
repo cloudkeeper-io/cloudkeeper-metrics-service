@@ -20,6 +20,6 @@ export const getTotals = async (tenantId) => {
 
   return {
     dataPoints,
-    totals,
+    ...totals,
   }
 }
