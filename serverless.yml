@@ -39,6 +39,9 @@ functions:
       dbUser: ${self:custom.dbUser}
       dbPassword: ${self:custom.dbPassword}
 
+  setup-tenant:
+    handler: src/setup/setup-tenant.handler
+
   trigger-lambda-stats-update:
     handler: src/update/lambda-stats/trigger-lambda-stats-update.handler
     events:
