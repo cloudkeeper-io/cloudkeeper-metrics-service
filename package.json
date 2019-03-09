@@ -6,7 +6,7 @@
   "private": true,
   "homepage": "https://github.com/mesaugat/serverless-aws-nodejs-typescript",
   "scripts": {
-    "test": "jest",
+    "test:unit": "jest unit",
     "test:func": "jest func",
     "lint": "eslint '*/**'",
     "lint:fix": "eslint '*/**' --fix"
