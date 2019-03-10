@@ -1,6 +1,6 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
 import * as AWS from 'aws-sdk'
-import { getTotals } from './data-collectors'
+import { getSlowestLambdas, getTotals } from './data-collectors'
 
 const s3 = new AWS.S3({ apiVersion: '2006-03-01' })
 
@@ -8,11 +8,16 @@ export const handler = async (event) => {
   await Promise.all(event.Records.map(async (record) => {
     const tenantId = record.Sns.Message
 
-    const totals = await getTotals(tenantId)
+    console.log(`Preparing data for ${tenantId}`)
+
+    const totals = await getTotals(tenantId, 1)
+
+    const slowestLambdas = await getSlowestLambdas(tenantId, 1)
 
     const data = {
       last24Hours: {
         totals,
+        slowestLambdas,
       },
     }
 
