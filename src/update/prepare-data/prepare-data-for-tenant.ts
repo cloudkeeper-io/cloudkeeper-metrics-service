@@ -1,6 +1,6 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
 import * as AWS from 'aws-sdk'
-import { getSlowestLambdas, getTotals } from './data-collectors'
+import { getMostErrorsLambdas, getMostInvokedLambdas, getSlowestLambdas, getTotals } from './data-collectors'
 
 const s3 = new AWS.S3({ apiVersion: '2006-03-01' })
 
@@ -14,10 +14,16 @@ export const handler = async (event) => {
 
     const slowestLambdas = await getSlowestLambdas(tenantId, 1)
 
+    const mostInvokedLambdas = await getMostInvokedLambdas(tenantId, 1)
+
+    const mostErrorsLambdas = await getMostErrorsLambdas(tenantId, 1)
+
     const data = {
       last24Hours: {
         totals,
         slowestLambdas,
+        mostInvokedLambdas,
+        mostErrorsLambdas,
       },
     }
 
