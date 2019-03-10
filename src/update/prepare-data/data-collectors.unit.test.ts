@@ -7,7 +7,7 @@ process.env.dbPassword = 'ExH58GwqZBnCV49MqWcV'
 // eslint-disable-next-line import/first
 import { getConnection } from '../../db/db'
 // eslint-disable-next-line import/first
-import { getTotals, getSlowestLambdas } from './data-collectors'
+import { getTotals, getSlowestLambdas, getMostInvokedLambdas } from './data-collectors'
 
 describe('collectors', () => {
   jest.setTimeout(30000)
@@ -42,6 +42,29 @@ describe('collectors', () => {
     })
   })
 
+
+  test('most invoked lambdas', async () => {
+      const lambdas = await getMostInvokedLambdas('emarketeer', 1)
+
+      expect(lambdas).toBeTruthy()
+
+      lambdas.forEach((lambda) => {
+          expect(lambda).toEqual({
+              lambdaName: expect.any(String),
+              averageDuration: expect.any(Number),
+              dataPoints: expect.any(Array),
+          })
+
+          lambda.dataPoints.forEach((dataPoint) => {
+              expect(dataPoint).toEqual({
+                  averageDuration: expect.any(Number),
+                  dateTime: expect.any(Date),
+                  maxDuration: expect.any(Number),
+                  lambdaName: expect.any(String),
+              })
+          })
+      })
+  })
 
   afterAll(async () => {
     const connection = await getConnection()
