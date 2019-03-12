@@ -29,7 +29,7 @@ export const handler = async (request) => {
     UpdateExpression: 'SET tenantIds = list_append(tenantIds,:tenantId)',
     ExpressionAttributeValues: {
       ':tenantId': [tenant.tenantId],
-    }
+    },
   }).promise()
 
   console.log('Update result', updateResult)

@@ -32,7 +32,7 @@ describe('create tenant', () => {
   afterAll(async () => {
     dynamoDb.delete({
       Key: tenantId,
-      TableName: 'dev-cloudkeeper-tenants'
+      TableName: 'dev-cloudkeeper-tenants',
     })
   })
 })

@@ -7,15 +7,15 @@ const dynamoDb = new AWS.DynamoDB.DocumentClient({ apiVersion: '2012-08-10', reg
 describe('create tenant', () => {
   jest.setTimeout(30000)
 
-  let tenants = [{
+  const tenants = [{
     tenantId: 'test1',
     name: 'test tenant 1',
     isSetupCompleted: false,
     accessKey: 'test key',
     secretKey: 'test key',
     owner: {
-      id: "user test id",
-      provider: "local",
+      id: 'user test id',
+      provider: 'local',
     },
   }, {
     tenantId: 'test2',
@@ -24,8 +24,8 @@ describe('create tenant', () => {
     accessKey: 'test key',
     secretKey: 'test key',
     owner: {
-      id: "user test id",
-      provider: "local",
+      id: 'user test id',
+      provider: 'local',
     },
   }]
 
@@ -56,7 +56,7 @@ describe('create tenant', () => {
       await dynamoDb.delete({
         TableName: 'dev-cloudkeeper-tenants',
         Key: {
-          tenantId: tenant.tenantId
+          tenantId: tenant.tenantId,
         },
       }).promise()
     }
