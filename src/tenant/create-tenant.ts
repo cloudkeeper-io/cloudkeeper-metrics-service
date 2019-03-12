@@ -1,10 +1,22 @@
 import * as uuid from 'uuidv4'
 // eslint-disable-next-line import/no-extraneous-dependencies
 import * as AWS from 'aws-sdk'
+import { checkAccess } from '../utils/lambda.util'
 
 const dynamoDb = new AWS.DynamoDB.DocumentClient({ apiVersion: '2012-08-10' })
 
 export const handler = async (request) => {
+  const { accessKey, secretKey, region } = request
+
+  try {
+    await checkAccess(accessKey, secretKey, region)
+  } catch (err) {
+    console.log('error setting up access for tenant ', err)
+    return {
+      status: 'FAILED',
+    }
+  }
+
   const tenant = {
     tenantId: uuid(),
     owner: {
@@ -12,7 +24,7 @@ export const handler = async (request) => {
       provider: request.provider,
     },
     name: request.name,
-    isSetupCompleted: false,
+    isSetupCompleted: true,
   }
 
   await dynamoDb.put({

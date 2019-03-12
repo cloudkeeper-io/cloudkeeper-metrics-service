@@ -8,15 +8,29 @@ const dynamoDb = new AWS.DynamoDB.DocumentClient({ apiVersion: '2012-08-10', reg
 describe('create tenant', () => {
   jest.setTimeout(30000)
 
+  beforeAll(async () => {
+    await dynamoDb.put({
+      TableName: 'dev-users',
+      Item: {
+        provider: 'funcTest',
+        id: 'test@test.com',
+        tenantIds: [],
+      },
+    }).promise()
+  })
+
   let tenantId
 
   test('happy path', async () => {
     const response = await lambdaClient.invoke({
       FunctionName: 'cloudkeeper-metrics-service-dev-create-tenant',
       Payload: JSON.stringify({
-        userId: 'testnew@test.com',
-        provider: 'local',
+        userId: 'test@test.com',
+        provider: 'funcTest',
         name: 'test tenant',
+        accessKey: 'AKIAIL5SDDNRS6QSDEUQ',
+        secretKey: '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',
+        region: 'eu-central-1',
       }),
     }).promise()
 
@@ -26,13 +40,23 @@ describe('create tenant', () => {
 
     expect(payload.tenantId).toEqual(expect.any(String))
     expect(payload.name).toBe('test tenant')
-    expect(payload.setupComplete).toBe(false)
+    expect(payload.isSetupCompleted).toBe(true)
   })
 
   afterAll(async () => {
-    dynamoDb.delete({
-      Key: tenantId,
+    await dynamoDb.delete({
+      Key: {
+        provider: 'funcTest',
+        id: 'test@test.com',
+      },
+      TableName: 'dev-users',
+    }).promise()
+
+    await dynamoDb.delete({
+      Key: {
+        tenantId,
+      },
       TableName: 'dev-cloudkeeper-tenants',
-    })
+    }).promise()
   })
 })
