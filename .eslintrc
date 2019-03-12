@@ -24,6 +24,7 @@
     "import/prefer-default-export": "off",
     "@typescript-eslint/no-unused-vars": "error",
     "object-curly-newline": ["error", { "consistent": true }],
-    "no-await-in-loop": "off"
+    "no-await-in-loop": "off",
+    "prefer-destructuring": "off"
   }
 }

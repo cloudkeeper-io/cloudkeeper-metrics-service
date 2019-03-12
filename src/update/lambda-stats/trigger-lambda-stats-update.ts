@@ -7,7 +7,7 @@ const lambda = new Lambda({ apiVersion: '2015-03-31' })
 
 export const handler = async () => {
   const tenants = await scanForArray({
-    TableName: `${process.env.stage}-tenant-cloud-configuration`,
+    TableName: `${process.env.stage}-cloudkeeper-tenants`,
   })
 
   console.log(`Updating ${tenants.length} tenants`)

@@ -42,6 +42,12 @@ functions:
   setup-tenant:
     handler: src/setup/setup-tenant.handler
 
+  create-tenant:
+    handler: src/tenant/create-tenant.handler
+
+  list-tenants:
+    handler: src/tenant/list-tenants.handler
+
   trigger-lambda-stats-update:
     handler: src/update/lambda-stats/trigger-lambda-stats-update.handler
     events:
@@ -72,10 +78,10 @@ functions:
 
 resources:
   Resources:
-    UsersTable:
+    Tenants:
       Type: AWS::DynamoDB::Table
       Properties:
-        TableName: ${self:custom.stage}-tenant-cloud-configuration
+        TableName: ${self:custom.stage}-cloudkeeper-tenants
         AttributeDefinitions:
           - AttributeName: tenantId
             AttributeType: S

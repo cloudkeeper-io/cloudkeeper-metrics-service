@@ -8,7 +8,8 @@
   Action:
   - "dynamodb:*"
   Resource:
-  - "arn:aws:dynamodb:*:*:table/${self:custom.stage}-tenant-cloud-configuration"
+  - "arn:aws:dynamodb:*:*:table/${self:custom.stage}-cloudkeeper-tenants"
+  - "arn:aws:dynamodb:*:*:table/${self:custom.stage}-users"
 
 - Effect: Allow
   Action:
