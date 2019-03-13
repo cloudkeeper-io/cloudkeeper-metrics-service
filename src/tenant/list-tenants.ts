@@ -1,5 +1,5 @@
 /* eslint-disable no-param-reassign */
-import { map } from 'lodash'
+import { map, orderBy } from 'lodash'
 // eslint-disable-next-line import/no-extraneous-dependencies
 import * as AWS from 'aws-sdk'
 
@@ -13,16 +13,16 @@ export const handler = async (request) => {
     RequestItems: {
       [tenantsTableName]: {
         Keys: map(tenantIds, tenantId => ({
-          tenantId,
+          id: tenantId,
         })),
       },
     },
   }).promise()
 
-  return map(result.Responses![tenantsTableName], (tenant) => {
+  return orderBy(map(result.Responses![tenantsTableName], (tenant) => {
     delete tenant.accessKey
     delete tenant.secretKey
 
     return tenant
-  })
+  }), 'name')
 }

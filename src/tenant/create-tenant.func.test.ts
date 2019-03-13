@@ -36,7 +36,7 @@ describe('create tenant', () => {
 
     const payload = JSON.parse(response.Payload!.toString())
 
-    tenantId = payload.tenantId
+    tenantId = payload.id
 
     expect(payload.tenantId).toEqual(expect.any(String))
     expect(payload.name).toBe('test tenant')
@@ -54,7 +54,7 @@ describe('create tenant', () => {
 
     await dynamoDb.delete({
       Key: {
-        tenantId,
+        id: tenantId,
       },
       TableName: 'dev-cloudkeeper-tenants',
     }).promise()

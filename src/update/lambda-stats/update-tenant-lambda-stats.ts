@@ -11,7 +11,7 @@ export const handler = async (tenant) => {
   const connection = await getConnection()
 
   const lambdas = await connection.getRepository(LambdaConfiguration).find({
-    tenantId: tenant.tenantId,
+    tenantId: tenant.id,
   })
 
   console.log(`Updating ${lambdas.length} lambdas`)
@@ -37,7 +37,7 @@ export const handler = async (tenant) => {
         const durationEntry = durationDataMap[datapoint.Timestamp.getTime()]
 
         return ({
-          tenantId: tenant.tenantId,
+          tenantId: tenant.id,
           lambdaName: lambdaConfig.name,
           dateTime: datapoint.Timestamp!,
           invocations: datapoint.Sum,
@@ -58,7 +58,7 @@ export const handler = async (tenant) => {
 
   await sns.publish({
     TopicArn: process.env.finishedTopic,
-    Message: tenant.tenantId,
+    Message: tenant.id,
   }).promise()
 
   return true

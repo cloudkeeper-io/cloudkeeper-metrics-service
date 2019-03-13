@@ -8,7 +8,7 @@ describe('create tenant', () => {
   jest.setTimeout(30000)
 
   const tenants = [{
-    tenantId: 'test1',
+    id: 'test1',
     name: 'test tenant 1',
     isSetupCompleted: false,
     accessKey: 'test key',
@@ -18,7 +18,7 @@ describe('create tenant', () => {
       provider: 'local',
     },
   }, {
-    tenantId: 'test2',
+    id: 'test2',
     name: 'test tenant 2',
     isSetupCompleted: false,
     accessKey: 'test key',
@@ -56,7 +56,7 @@ describe('create tenant', () => {
       await dynamoDb.delete({
         TableName: 'dev-cloudkeeper-tenants',
         Key: {
-          tenantId: tenant.tenantId,
+          tenantId: tenant.id,
         },
       }).promise()
     }

@@ -18,13 +18,16 @@ export const handler = async (request) => {
   }
 
   const tenant = {
-    tenantId: uuid(),
+    id: uuid(),
     owner: {
       id: request.userId,
       provider: request.provider,
     },
     name: request.name,
     isSetupCompleted: true,
+    accessKey,
+    secretKey,
+    region,
   }
 
   await dynamoDb.put({
@@ -40,7 +43,7 @@ export const handler = async (request) => {
     },
     UpdateExpression: 'SET tenantIds = list_append(tenantIds,:tenantId)',
     ExpressionAttributeValues: {
-      ':tenantId': [tenant.tenantId],
+      ':tenantId': [tenant.id],
     },
   }).promise()
 
