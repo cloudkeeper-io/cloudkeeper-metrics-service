@@ -38,7 +38,7 @@ describe('create tenant', () => {
 
     tenantId = payload.id
 
-    expect(payload.tenantId).toEqual(expect.any(String))
+    expect(payload.id).toEqual(expect.any(String))
     expect(payload.name).toBe('test tenant')
     expect(payload.isSetupCompleted).toBe(true)
   })
