@@ -71,7 +71,7 @@ describe('collectors', () => {
         dataPoints: expect.any(Array),
       })
 
-      expect(lambda.dataPoints).toBeLessThanOrEqual(30)
+      expect(lambda.dataPoints.length).toBeLessThanOrEqual(30)
 
       lambda.dataPoints.forEach((dataPoint) => {
         expect(dataPoint).toEqual({
@@ -90,7 +90,7 @@ describe('collectors', () => {
     lambdas.forEach((lambda) => {
       expect(lambda).toEqual({
         lambdaName: expect.any(String),
-        invocations: expect.any(String),
+        [statName]: expect.any(String),
         dataPoints: expect.any(Array),
       })
 
@@ -106,7 +106,7 @@ describe('collectors', () => {
       lambda.dataPoints.forEach((dataPoint) => {
         expect(dataPoint).toEqual({
           dateTime: expect.any(Date),
-          invocations: expect.any(String),
+          [statName]: expect.any(String),
           lambdaName: expect.any(String),
         })
       })
