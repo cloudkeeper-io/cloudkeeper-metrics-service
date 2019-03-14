@@ -1,15 +1,35 @@
-import { reduce, groupBy, map } from 'lodash'
+/* eslint-disable prefer-template */
+import { groupBy, map, reduce } from 'lodash'
 import { getConnection } from '../../db/db'
 
-export const getTotals = async (tenantId, daysAgo) => {
+
+const getDateCondition = (groupDaily) => {
+  if (groupDaily) {
+    return '(DATE(`dateTime`) > DATE(UTC_TIMESTAMP()) - INTERVAL ? DAY) '
+  }
+  return '(`dateTime` >= UTC_TIMESTAMP()  - INTERVAL ? DAY - INTERVAL 1 HOUR) '
+}
+
+export const getTotals = async (tenantId, daysAgo, groupDaily = false) => {
   const connection = await getConnection()
 
   const totalsQuery = 'select sum(invocations) as invocations, sum(`errors`) as `errors`, `dateTime` from LambdaStats '
-    + 'where tenantId = ? and (`dateTime` >= UTC_TIMESTAMP()  - INTERVAL ? DAY - INTERVAL 1 HOUR) '
+    + 'where tenantId = ? and  '
+    + getDateCondition(false)
     + 'group by dateTime '
     + 'order by dateTime asc'
 
-  const dataPoints = await connection.query(totalsQuery, [tenantId, daysAgo])
+  const totalsQueryDaily = 'select '
+    + 'sum(invocations) as invocations, '
+    + 'sum(`errors`) as `errors`, '
+    + 'DATE(`dateTime`) as `dateTime` '
+    + 'from LambdaStats '
+    + 'where tenantId = ? and '
+    + getDateCondition(true)
+    + 'group by DATE(dateTime) '
+    + 'order by dateTime asc'
+
+  const dataPoints = await connection.query(groupDaily ? totalsQueryDaily : totalsQuery, [tenantId, daysAgo])
 
   const totals = reduce(dataPoints, (acc, datapoint) => {
     acc.invocations += Number(datapoint.invocations)
@@ -24,11 +44,15 @@ export const getTotals = async (tenantId, daysAgo) => {
   }
 }
 
-export const getSlowestLambdas = async (tenantId, daysAgo) => {
+export const getSlowestLambdas = async (tenantId, daysAgo, groupDaily = false) => {
   const connection = await getConnection()
 
-  const getSlowestLambdasQuery = 'select lambdaName, avg(averageDuration) as `averageDuration` from LambdaStats '
-    + 'where tenantId = ? and (`dateTime` >= UTC_TIMESTAMP() - INTERVAL ? DAY - INTERVAL 1 HOUR) '
+  const getSlowestLambdasQuery = 'select '
+    + 'lambdaName, '
+    + 'sum(averageDuration * invocations) / sum(invocations) as `averageDuration` '
+    + 'from LambdaStats '
+    + 'where tenantId = ? and '
+    + getDateCondition(groupDaily)
     + 'group by lambdaName '
     + 'order by `averageDuration` desc '
     + 'limit 5'
@@ -39,8 +63,19 @@ export const getSlowestLambdas = async (tenantId, daysAgo) => {
     + 'where tenantId = ? and (`dateTime` >= UTC_TIMESTAMP() - INTERVAL ? DAY - INTERVAL 1 HOUR) and lambdaName in (?) '
     + 'order by dateTime asc'
 
+  const getSlowestLambdasDataPointsQueryGroupingByDay = 'select '
+    + 'lambdaName, '
+    + 'sum(averageDuration * invocations) / sum(invocations) as `averageDuration`, '
+    + 'max(maxDuration) as `maxDuration`, '
+    + 'DATE(dateTime) as `dateTime` from LambdaStats '
+    + 'where tenantId = ? and '
+    + getDateCondition(true)
+    + 'and lambdaName in (?) '
+    + 'group by lambdaName, DATE(`dateTime`) '
+    + 'order by DATE(dateTime) asc'
+
   const dataPoints = await connection.query(
-    getSlowestLambdasDataPointsQuery,
+    groupDaily ? getSlowestLambdasDataPointsQueryGroupingByDay : getSlowestLambdasDataPointsQuery,
     [tenantId, daysAgo, map(lambdas, 'lambdaName')],
   )
 
@@ -52,25 +87,34 @@ export const getSlowestLambdas = async (tenantId, daysAgo) => {
   }))
 }
 
-export const getMostInvokedLambdas = async (tenantId, daysAgo) => {
+export const getMostInvokedLambdas = async (tenantId, daysAgo, groupDaily = false) => {
   const connection = await getConnection()
 
-  const getSlowestLambdasQuery = 'select lambdaName, sum(invocations) as `invocations` from LambdaStats '
-        + 'where tenantId = ? and (`dateTime` >= UTC_TIMESTAMP() - INTERVAL ? DAY - INTERVAL 1 HOUR) '
-        + 'group by lambdaName '
-        + 'order by `invocations` desc '
-        + 'limit 5'
-
-  const lambdas = await connection.query(getSlowestLambdasQuery, [tenantId, daysAgo])
-
-  const getSlowestLambdasDataPointsQuery = 'select lambdaName, invocations, dateTime from LambdaStats '
+  const getMostInvokedLambdasQuery = 'select lambdaName, sum(invocations) as `invocations` from LambdaStats '
     + 'where tenantId = ? and '
-    + '(`dateTime` >= UTC_TIMESTAMP() - INTERVAL ? DAY - INTERVAL 1 HOUR) and '
-    + 'lambdaName in (?) '
+    + getDateCondition(groupDaily)
+    + 'group by lambdaName '
+    + 'order by `invocations` desc '
+    + 'limit 5'
+
+  const lambdas = await connection.query(getMostInvokedLambdasQuery, [tenantId, daysAgo])
+
+  const getMostInvokedLambdasDataPointsQuery = 'select lambdaName, invocations, dateTime from LambdaStats '
+    + 'where tenantId = ? and '
+    + getDateCondition(false)
+    + ' and lambdaName in (?) '
     + 'order by dateTime asc'
 
+  const getMostInvokedLambdasDataPointsDailyQuery = 'select lambdaName, '
+    + 'sum(invocations) as invocations, DATE(dateTime) as dateTime from LambdaStats '
+    + 'where tenantId = ? and '
+    + getDateCondition(true)
+    + ' and lambdaName in (?) '
+    + 'group by lambdaName, DATE(dateTime) '
+    + 'order by DATE(dateTime) asc'
+
   const dataPoints = await connection.query(
-    getSlowestLambdasDataPointsQuery,
+    groupDaily ? getMostInvokedLambdasDataPointsDailyQuery : getMostInvokedLambdasDataPointsQuery,
     [tenantId, daysAgo, map(lambdas, 'lambdaName')],
   )
 
@@ -82,25 +126,34 @@ export const getMostInvokedLambdas = async (tenantId, daysAgo) => {
   }))
 }
 
-export const getMostErrorsLambdas = async (tenantId, daysAgo) => {
+export const getMostErrorsLambdas = async (tenantId, daysAgo, groupDaily = false) => {
   const connection = await getConnection()
 
   const getSlowestLambdasQuery = 'select lambdaName, sum(errors) as `errors` from LambdaStats '
-        + 'where tenantId = ? and (`dateTime` >= UTC_TIMESTAMP() - INTERVAL ? DAY - INTERVAL 1 HOUR) '
-        + 'group by lambdaName '
-        + 'order by `errors` desc '
-        + 'limit 5'
+    + 'where tenantId = ? and '
+    + getDateCondition(groupDaily)
+    + 'group by lambdaName '
+    + 'order by `errors` desc '
+    + 'limit 5'
 
   const lambdas = await connection.query(getSlowestLambdasQuery, [tenantId, daysAgo])
 
-  const getSlowestLambdasDataPointsQuery = 'select lambdaName, errors, dateTime from LambdaStats '
+  const getMostErrorsDataPointsQuery = 'select lambdaName, errors, dateTime from LambdaStats '
     + 'where tenantId = ? and '
-    + '(`dateTime` >= UTC_TIMESTAMP() - INTERVAL ? DAY - INTERVAL 1 HOUR) '
+    + getDateCondition(false)
     + 'and lambdaName in (?) '
     + 'order by dateTime asc'
 
+  const getMostErrorsDailyDataPointsQuery = 'select lambdaName, sum(errors) as errors, DATE(dateTime) as dateTime '
+    + 'from LambdaStats '
+    + 'where tenantId = ? and '
+    + getDateCondition(true)
+    + 'and lambdaName in (?) '
+    + 'group by lambdaName, DATE(dateTime) '
+    + 'order by DATE(dateTime) asc'
+
   const dataPoints = await connection.query(
-    getSlowestLambdasDataPointsQuery,
+    groupDaily ? getMostErrorsDailyDataPointsQuery : getMostErrorsDataPointsQuery,
     [tenantId, daysAgo, map(lambdas, 'lambdaName')],
   )
 
