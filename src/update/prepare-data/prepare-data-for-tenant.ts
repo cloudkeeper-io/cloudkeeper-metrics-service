@@ -1,6 +1,12 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
 import * as AWS from 'aws-sdk'
-import { getMostErrorsLambdas, getMostInvokedLambdas, getSlowestLambdas, getTotals } from './data-collectors'
+import {
+  getMostErrorsLambdas,
+  getMostExpensiveLambdas,
+  getMostInvokedLambdas,
+  getSlowestLambdas,
+  getTotals,
+} from './data-collectors'
 
 const s3 = new AWS.S3({ apiVersion: '2006-03-01' })
 
@@ -18,6 +24,8 @@ export const handler = async (event) => {
 
     const mostErrorsLambdas = await getMostErrorsLambdas(tenantId, 1)
 
+    const mostExpensiveLambdas = await getMostExpensiveLambdas(tenantId, 1)
+
     const last30DaysTotals = await getTotals(tenantId, 30, true)
 
     const last30DaysSlowestLambdas = await getSlowestLambdas(tenantId, 30, true)
@@ -26,18 +34,22 @@ export const handler = async (event) => {
 
     const last30DaysMostErrorsLambdas = await getMostErrorsLambdas(tenantId, 30, true)
 
+    const last30DaysMostExpensiveLambdas = await getMostExpensiveLambdas(tenantId, 30, true)
+
     const data = {
       last24Hours: {
         totals,
         slowestLambdas,
         mostInvokedLambdas,
         mostErrorsLambdas,
+        mostExpensiveLambdas,
       },
       last30Days: {
         totals: last30DaysTotals,
         slowestLambdas: last30DaysSlowestLambdas,
         mostInvokedLambdas: last30DaysMostInvokedLambdas,
         mostErrorsLambdas: last30DaysMostErrorsLambdas,
+        mostExpensiveLambdas: last30DaysMostExpensiveLambdas,
       },
     }
 

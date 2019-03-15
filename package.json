@@ -12,19 +12,11 @@
     "lint:fix": "eslint '*/**' --fix"
   },
   "dependencies": {
-    "body-parser": "^1.18.3",
-    "composable-middleware": "^0.3.0",
-    "express": "^4.16.4",
-    "express-jwt": "^5.3.1",
-    "jsonwebtoken": "^8.5.0",
+    "bignum": "^0.13.0",
     "lodash": "^4.17.11",
     "luxon": "^1.11.3",
     "mysql": "^2.16.0",
-    "passport": "^0.4.0",
-    "passport-google-oauth20": "^1.0.0",
-    "passport-local": "^1.0.0",
     "reflect-metadata": "^0.1.13",
-    "serverless-express": "^2.0.11",
     "typeorm": "^0.2.14",
     "uuidv4": "^3.0.1"
   },

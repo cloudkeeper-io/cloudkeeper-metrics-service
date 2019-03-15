@@ -164,3 +164,56 @@ export const getMostErrorsLambdas = async (tenantId, daysAgo, groupDaily = false
     dataPoints: dataPointsMap[lambda.lambdaName],
   }))
 }
+
+
+export const getMostExpensiveLambdas = async (tenantId, daysAgo, groupDaily = false) => {
+  const connection = await getConnection()
+
+  const getMostExpensiveLambdasQuery = 'select lambdaName, '
+    + 'sum(averageDuration * invocations) / 100 * LambdaPrice.price as cost from LambdaStats '
+    + 'join LambdaConfiguration '
+    + 'on LambdaStats.lambdaName = LambdaConfiguration.name and LambdaConfiguration.tenantId = ? '
+    + 'join LambdaPrice on LambdaPrice.size = LambdaConfiguration.size '
+    + 'where LambdaStats.tenantId = ? and '
+    + getDateCondition(groupDaily)
+    + 'group by lambdaName '
+    + 'order by cost desc '
+    + 'limit 5'
+
+  const lambdas = await connection.query(getMostExpensiveLambdasQuery, [tenantId, tenantId, daysAgo])
+
+  const getMostExpensiveLambdasDataPointsQuery = 'select lambdaName, '
+    + 'averageDuration * invocations / 100 * LambdaPrice.price as cost, '
+    + '`dateTime` from LambdaStats '
+    + 'join LambdaConfiguration '
+    + 'on LambdaStats.lambdaName = LambdaConfiguration.name and LambdaConfiguration.tenantId = ? '
+    + 'join LambdaPrice on LambdaPrice.size = LambdaConfiguration.size '
+    + 'where LambdaStats.tenantId = ? and '
+    + getDateCondition(groupDaily)
+    + 'and lambdaName in (?) '
+    + 'order by dateTime asc'
+
+  const getMostExpensiveLambdasDataPointsDailyQuery = 'select lambdaName, '
+    + 'sum(averageDuration * invocations) / 100 * LambdaPrice.price as cost, '
+    + 'DATE(`dateTime`) as `dateTime` from LambdaStats '
+    + 'join LambdaConfiguration '
+    + 'on LambdaStats.lambdaName = LambdaConfiguration.name and LambdaConfiguration.tenantId = ? '
+    + 'join LambdaPrice on LambdaPrice.size = LambdaConfiguration.size '
+    + 'where LambdaStats.tenantId = ? and '
+    + getDateCondition(groupDaily)
+    + 'and lambdaName in (?) '
+    + 'group by lambdaName, DATE(dateTime) '
+    + 'order by DATE(dateTime) asc'
+
+  const dataPoints = await connection.query(
+    groupDaily ? getMostExpensiveLambdasDataPointsDailyQuery : getMostExpensiveLambdasDataPointsQuery,
+    [tenantId, tenantId, daysAgo, map(lambdas, 'lambdaName')],
+  )
+
+  const dataPointsMap = groupBy(dataPoints, 'lambdaName')
+
+  return map(lambdas, lambda => ({
+    ...lambda,
+    dataPoints: dataPointsMap[lambda.lambdaName],
+  }))
+}

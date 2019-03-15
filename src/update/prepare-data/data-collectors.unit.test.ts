@@ -6,7 +6,13 @@ process.env.dbPassword = 'ExH58GwqZBnCV49MqWcV'
 
 import { sumBy } from 'lodash'
 import { getConnection } from '../../db/db'
-import { getMostErrorsLambdas, getMostInvokedLambdas, getSlowestLambdas, getTotals } from './data-collectors'
+import {
+  getMostErrorsLambdas,
+  getMostInvokedLambdas,
+  getSlowestLambdas,
+  getTotals,
+  getMostExpensiveLambdas,
+} from './data-collectors'
 
 describe('collectors', () => {
   jest.setTimeout(30000)
@@ -84,13 +90,13 @@ describe('collectors', () => {
     })
   })
 
-  const expectLambdaStatsToBeConsistent = (lambdas, statName, days) => {
+  const expectLambdaStatsToBeConsistent = (lambdas, statName, days, statType: any = String) => {
     expect(lambdas).toBeTruthy()
 
     lambdas.forEach((lambda) => {
       expect(lambda).toEqual({
         lambdaName: expect.any(String),
-        [statName]: expect.any(String),
+        [statName]: expect.any(statType),
         dataPoints: expect.any(Array),
       })
 
@@ -101,12 +107,12 @@ describe('collectors', () => {
       }
 
       // @ts-ignore
-      expect(Number(lambda[statName])).toBe(sumBy(lambda.dataPoints, dataPoint => Number(dataPoint[statName])))
+      expect(Number(lambda[statName])).toBeCloseTo(sumBy(lambda.dataPoints, dataPoint => Number(dataPoint[statName])))
 
       lambda.dataPoints.forEach((dataPoint) => {
         expect(dataPoint).toEqual({
           dateTime: expect.any(Date),
-          [statName]: expect.any(String),
+          [statName]: expect.any(statType),
           lambdaName: expect.any(String),
         })
       })
@@ -139,6 +145,17 @@ describe('collectors', () => {
     expectLambdaStatsToBeConsistent(lambdas, 'errors', 30)
   })
 
+  test('most expensive lambdas', async () => {
+    const lambdas = await getMostExpensiveLambdas('emarketeer', 1)
+
+    expectLambdaStatsToBeConsistent(lambdas, 'cost', 1, Number)
+  })
+
+  test('most expensive lambdas - 30 days', async () => {
+    const lambdas = await getMostExpensiveLambdas('emarketeer', 30, true)
+
+    expectLambdaStatsToBeConsistent(lambdas, 'cost', 30, Number)
+  })
 
   afterAll(async () => {
     const connection = await getConnection()

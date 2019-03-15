@@ -10,7 +10,7 @@ provider:
   name: aws
   runtime: nodejs8.10
   versionFunctions: false
-  memorySize: 256
+  memorySize: 512
   region: eu-central-1
   environment:
     stage: ${self:custom.stage}
