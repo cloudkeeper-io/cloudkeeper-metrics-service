@@ -17,28 +17,24 @@ import {
 describe('collectors', () => {
   jest.setTimeout(30000)
 
-  test('totals', async () => {
-    const totals = await getTotals('emarketeer', 1)
+  it.each`
+    tenantId        | daysAgo | groupDaily
+    ${'emarketeer'} | ${1}    | ${false}
+    ${'emarketeer'} | ${30}   | ${true}
+  `('totals  - $daysAgo',
+  async ({ tenantId, daysAgo, groupDaily }) => {
+    const totals = await getTotals(tenantId, daysAgo, groupDaily)
 
     expect(totals.invocations).toBeTruthy()
     expect(totals.errors).toBeTruthy()
+    expect(totals.cost).toBeTruthy()
+    expect(totals.dataPoints.length).toBe(daysAgo > 1 ? daysAgo : 24)
     // @ts-ignore
     expect(Number(totals.errors)).toBe(sumBy(totals.dataPoints, dataPoint => Number(dataPoint.errors)))
     // @ts-ignore
     expect(Number(totals.invocations)).toBe(sumBy(totals.dataPoints, dataPoint => Number(dataPoint.invocations)))
-  })
-
-  test('totals - 30 days', async () => {
-    const totals = await getTotals('emarketeer', 30, true)
-
-    expect(totals.invocations).toBeTruthy()
-    expect(totals.errors).toBeTruthy()
-    expect(totals.dataPoints.length).toBe(30)
-
     // @ts-ignore
-    expect(Number(totals.errors)).toBe(sumBy(totals.dataPoints, dataPoint => Number(dataPoint.errors)))
-    // @ts-ignore
-    expect(Number(totals.invocations)).toBe(sumBy(totals.dataPoints, dataPoint => Number(dataPoint.invocations)))
+    expect(Number(totals.cost)).toBeCloseTo(sumBy(totals.dataPoints, dataPoint => Number(dataPoint.cost)))
   })
 
   test('slowest lambdas', async () => {

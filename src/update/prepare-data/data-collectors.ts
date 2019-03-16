@@ -14,12 +14,12 @@ export const getTotals = async (tenantId, daysAgo, groupDaily = false) => {
   const connection = await getConnection()
 
   const totalsQuery = 'select sum(invocations) as invocations, sum(`errors`) as `errors`, `dateTime`, '
-    + 'sum(averageDuration * invocations / 100 * LambdaPrice.price) as cost, '
+    + 'sum(averageDuration * invocations / 100 * LambdaPrice.price) as cost '
     + 'from LambdaStats '
     + 'join LambdaConfiguration '
     + 'on LambdaStats.lambdaName = LambdaConfiguration.name and LambdaConfiguration.tenantId = ? '
     + 'join LambdaPrice on LambdaPrice.size = LambdaConfiguration.size '
-    + 'where tenantId = ? and  '
+    + 'where LambdaStats.tenantId = ? and  '
     + getDateCondition(false)
     + 'group by dateTime '
     + 'order by dateTime asc'
@@ -28,13 +28,12 @@ export const getTotals = async (tenantId, daysAgo, groupDaily = false) => {
     + 'sum(invocations) as invocations, '
     + 'sum(`errors`) as `errors`, '
     + 'DATE(`dateTime`) as `dateTime`, '
-    + 'sum(averageDuration * invocations / 100 * LambdaPrice.price) as cost, '
+    + 'sum(averageDuration * invocations / 100 * LambdaPrice.price) as cost '
     + 'from LambdaStats '
     + 'join LambdaConfiguration '
     + 'on LambdaStats.lambdaName = LambdaConfiguration.name and LambdaConfiguration.tenantId = ? '
     + 'join LambdaPrice on LambdaPrice.size = LambdaConfiguration.size '
-    + 'from LambdaStats '
-    + 'where tenantId = ? and '
+    + 'where LambdaStats.tenantId = ? and '
     + getDateCondition(true)
     + 'group by DATE(dateTime) '
     + 'order by dateTime asc'
