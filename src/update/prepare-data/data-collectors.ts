@@ -13,7 +13,12 @@ const getDateCondition = (groupDaily) => {
 export const getTotals = async (tenantId, daysAgo, groupDaily = false) => {
   const connection = await getConnection()
 
-  const totalsQuery = 'select sum(invocations) as invocations, sum(`errors`) as `errors`, `dateTime` from LambdaStats '
+  const totalsQuery = 'select sum(invocations) as invocations, sum(`errors`) as `errors`, `dateTime`, '
+    + 'sum(averageDuration * invocations / 100 * LambdaPrice.price) as cost, '
+    + 'from LambdaStats '
+    + 'join LambdaConfiguration '
+    + 'on LambdaStats.lambdaName = LambdaConfiguration.name and LambdaConfiguration.tenantId = ? '
+    + 'join LambdaPrice on LambdaPrice.size = LambdaConfiguration.size '
     + 'where tenantId = ? and  '
     + getDateCondition(false)
     + 'group by dateTime '
@@ -22,21 +27,27 @@ export const getTotals = async (tenantId, daysAgo, groupDaily = false) => {
   const totalsQueryDaily = 'select '
     + 'sum(invocations) as invocations, '
     + 'sum(`errors`) as `errors`, '
-    + 'DATE(`dateTime`) as `dateTime` '
+    + 'DATE(`dateTime`) as `dateTime`, '
+    + 'sum(averageDuration * invocations / 100 * LambdaPrice.price) as cost, '
+    + 'from LambdaStats '
+    + 'join LambdaConfiguration '
+    + 'on LambdaStats.lambdaName = LambdaConfiguration.name and LambdaConfiguration.tenantId = ? '
+    + 'join LambdaPrice on LambdaPrice.size = LambdaConfiguration.size '
     + 'from LambdaStats '
     + 'where tenantId = ? and '
     + getDateCondition(true)
     + 'group by DATE(dateTime) '
     + 'order by dateTime asc'
 
-  const dataPoints = await connection.query(groupDaily ? totalsQueryDaily : totalsQuery, [tenantId, daysAgo])
+  const dataPoints = await connection.query(groupDaily ? totalsQueryDaily : totalsQuery, [tenantId, tenantId, daysAgo])
 
   const totals = reduce(dataPoints, (acc, datapoint) => {
     acc.invocations += Number(datapoint.invocations)
     acc.errors += Number(datapoint.errors)
+    acc.cost += Number(datapoint.cost)
 
     return acc
-  }, { invocations: 0, errors: 0 })
+  }, { invocations: 0, errors: 0, cost: 0 })
 
   return {
     dataPoints,
