@@ -29,7 +29,7 @@ export const expectDataToBeConsistent = (lambdas, statNames, days, nameField, st
     lambda.dataPoints.forEach((dataPoint) => {
       const expectedDataPoint = {
         [nameField]: expect.any(String),
-        dateTime: expect.any(Date)
+        dateTime: expect.any(Date),
       }
 
       statNames.forEach((statName) => {
