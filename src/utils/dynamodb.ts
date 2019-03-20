@@ -33,10 +33,14 @@ export const scanForArray = async (params: ScanInput) => {
 }
 
 export const queryForArray = async (params: QueryInput) => {
+  const queryParams = {
+    ...params,
+  }
+
   const results: AttributeMap[] = []
 
   while (true) {
-    const queryResults = await dynamoDb.query(params).promise()
+    const queryResults = await dynamoDb.query(queryParams).promise()
 
     if (!queryResults.Items) {
       return results
@@ -48,6 +52,6 @@ export const queryForArray = async (params: QueryInput) => {
       return results
     }
 
-    params.ExclusiveStartKey = queryResults.LastEvaluatedKey
+    queryParams.ExclusiveStartKey = queryResults.LastEvaluatedKey
   }
 }
