@@ -12,7 +12,7 @@ describe('Update Dynamo Stats', async () => {
   jest.setTimeout(60000)
 
   // TODO: refactor to be a functional test
-  test('happy path', async () => {
+  test.skip('happy path', async () => {
     await handler({
       accessKey: 'AKIAJI7Y7EUA4WTJYTUA',
       region: 'eu-west-1',
