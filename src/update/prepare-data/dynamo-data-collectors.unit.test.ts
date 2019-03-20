@@ -15,25 +15,25 @@ describe('dynamo collectors', () => {
   test('most read tables - 24 hours', async () => {
     const tables = await getMostReadTables('emarketeer', 1)
 
-    expectDataToBeConsistent(tables, 'readUnits', 1, 'name')
+    expectDataToBeConsistent(tables, ['consumedRead', 'provisionedRead'], 1, 'name')
   })
 
   test('most read tables - 30 days', async () => {
     const tables = await getMostReadTables('emarketeer', 30, true)
 
-    expectDataToBeConsistent(tables, 'readUnits', 30, 'name')
+    expectDataToBeConsistent(tables, ['consumedRead', 'provisionedRead'], 30, 'name')
   })
 
   test('most writes tables - 24 hours', async () => {
     const tables = await getMostWritesTables('emarketeer', 1)
 
-    expectDataToBeConsistent(tables, 'writeUnits', 1, 'name')
+    expectDataToBeConsistent(tables, ['consumedWrite', 'provisionedWrite'], 1, 'name')
   })
 
   test('most writes tables - 30 days', async () => {
     const tables = await getMostWritesTables('emarketeer', 30, true)
 
-    expectDataToBeConsistent(tables, 'writeUnits', 30, 'name')
+    expectDataToBeConsistent(tables, ['consumedWrite', 'provisionedWrite'], 30, 'name')
   })
 
   afterAll(async () => {

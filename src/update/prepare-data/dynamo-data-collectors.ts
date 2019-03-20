@@ -6,23 +6,27 @@ import { getDateCondition } from './common'
 export const getMostReadTables = async (tenantId, daysAgo, groupDaily = false) => {
   const connection = await getConnection()
 
-  const tablesQuery = 'select name, sum (consumedRead) as `readUnits` from DynamoTableStats '
+  const tablesQuery = 'select name, sum (consumedRead) as `consumedRead`, '
+    + 'sum (provisionedRead) * 3600 as `provisionedRead`'
+    + ' from DynamoTableStats '
     + 'where tenantId = ? and '
     + getDateCondition(groupDaily)
     + 'group by name '
-    + 'order by `readUnits` desc '
+    + 'order by `consumedRead` desc '
     + 'limit 5'
 
   const tables = await connection.query(tablesQuery, [tenantId, daysAgo])
 
-  const getMostReadTablesDataPoints = 'select name, consumedRead as `readUnits`, dateTime from DynamoTableStats '
+  const getMostReadTablesDataPoints = 'select name, consumedRead as `consumedRead`, '
+    + 'provisionedRead * 3600 as `provisionedRead`, dateTime from DynamoTableStats '
     + 'where tenantId = ? and '
     + getDateCondition(false)
     + ' and name in (?) '
     + 'order by dateTime asc'
 
   const getMostReadTablesDataPointsDaily = 'select name, '
-    + 'sum(consumedRead) as `readUnits`, DATE(dateTime) as dateTime from DynamoTableStats '
+    + 'sum(consumedRead) as `consumedRead`, sum(provisionedRead) * 3600 as `provisionedRead`'
+    + ', DATE(dateTime) as dateTime from DynamoTableStats '
     + 'where tenantId = ? and '
     + getDateCondition(true)
     + ' and name in (?) '
@@ -45,23 +49,27 @@ export const getMostReadTables = async (tenantId, daysAgo, groupDaily = false) =
 export const getMostWritesTables = async (tenantId, daysAgo, groupDaily = false) => {
   const connection = await getConnection()
 
-  const tablesQuery = 'select name, sum (consumedWrite) as `writeUnits` from DynamoTableStats '
+  const tablesQuery = 'select name, sum (consumedWrite) as `consumedWrite`,'
+    + ' sum (provisionedWrite) * 3600 as `provisionedWrite` '
+    + 'from DynamoTableStats '
     + 'where tenantId = ? and '
     + getDateCondition(groupDaily)
     + 'group by name '
-    + 'order by `writeUnits` desc '
+    + 'order by `consumedWrite` desc '
     + 'limit 5'
 
   const tables = await connection.query(tablesQuery, [tenantId, daysAgo])
 
-  const getMostReadTablesDataPoints = 'select name, consumedWrite as `writeUnits`, dateTime from DynamoTableStats '
+  const getMostReadTablesDataPoints = 'select name, consumedWrite, '
+    + 'provisionedWrite * 3600 as `provisionedWrite`, dateTime from DynamoTableStats '
     + 'where tenantId = ? and '
     + getDateCondition(false)
     + ' and name in (?) '
     + 'order by dateTime asc'
 
   const getMostReadTablesDataPointsDaily = 'select name, '
-    + 'sum(consumedWrite) as `writeUnits`, DATE(dateTime) as dateTime from DynamoTableStats '
+    + 'sum(consumedWrite) as `consumedWrite`, sum(provisionedWrite) * 3600 as `provisionedWrite`, '
+    + 'DATE(dateTime) as dateTime from DynamoTableStats '
     + 'where tenantId = ? and '
     + getDateCondition(true)
     + ' and name in (?) '

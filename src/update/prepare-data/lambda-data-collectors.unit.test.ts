@@ -92,7 +92,7 @@ describe('lambda collectors', () => {
   test('most invoked lambdas', async () => {
     const lambdas = await getMostInvokedLambdas('emarketeer', 1)
 
-    expectDataToBeConsistent(lambdas, 'invocations', 1, 'lambdaName')
+    expectDataToBeConsistent(lambdas, ['invocations'], 1, 'lambdaName')
   })
 
   test('most invoked lambdas - 30 days', async () => {
@@ -100,31 +100,31 @@ describe('lambda collectors', () => {
 
     expect(lambdas).toBeTruthy()
 
-    expectDataToBeConsistent(lambdas, 'invocations', 30, 'lambdaName')
+    expectDataToBeConsistent(lambdas, ['invocations'], 30, 'lambdaName')
   })
 
   test('most errors lambdas', async () => {
     const lambdas = await getMostErrorsLambdas('emarketeer', 1)
 
-    expectDataToBeConsistent(lambdas, 'errors', 1, 'lambdaName')
+    expectDataToBeConsistent(lambdas, ['errors'], 1, 'lambdaName')
   })
 
   test('most errors lambdas - 30 days', async () => {
     const lambdas = await getMostErrorsLambdas('emarketeer', 30, true)
 
-    expectDataToBeConsistent(lambdas, 'errors', 30, 'lambdaName')
+    expectDataToBeConsistent(lambdas, ['errors'], 30, 'lambdaName')
   })
 
   test('most expensive lambdas', async () => {
     const lambdas = await getMostExpensiveLambdas('emarketeer', 1)
 
-    expectDataToBeConsistent(lambdas, 'cost', 1, 'lambdaName', Number)
+    expectDataToBeConsistent(lambdas, ['cost'], 1, 'lambdaName', Number)
   })
 
   test('most expensive lambdas - 30 days', async () => {
     const lambdas = await getMostExpensiveLambdas('emarketeer', 30, true)
 
-    expectDataToBeConsistent(lambdas, 'cost', 30, 'lambdaName', Number)
+    expectDataToBeConsistent(lambdas, ['cost'], 30, 'lambdaName', Number)
   })
 
   afterAll(async () => {

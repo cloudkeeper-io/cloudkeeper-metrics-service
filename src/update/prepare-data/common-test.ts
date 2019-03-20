@@ -1,14 +1,19 @@
 import { sumBy } from 'lodash'
 
-export const expectDataToBeConsistent = (lambdas, statName, days, nameField, statType: any = String) => {
+export const expectDataToBeConsistent = (lambdas, statNames, days, nameField, statType: any = String) => {
   expect(lambdas).toBeTruthy()
 
   lambdas.forEach((lambda) => {
-    expect(lambda).toEqual({
+    const expectedTopLevel = {
       [nameField]: expect.any(String),
-      [statName]: expect.any(statType),
       dataPoints: expect.any(Array),
+    }
+
+    statNames.forEach((statName) => {
+      expectedTopLevel[statName] = expect.any(statType)
     })
+
+    expect(lambda).toEqual(expectedTopLevel)
 
     if (days > 1) {
       expect(lambda.dataPoints.length).toBeLessThanOrEqual(days)
@@ -17,14 +22,20 @@ export const expectDataToBeConsistent = (lambdas, statName, days, nameField, sta
     }
 
     // @ts-ignore
-    expect(Number(lambda[statName])).toBeCloseTo(sumBy(lambda.dataPoints, dataPoint => Number(dataPoint[statName])))
+    statNames.forEach((statName) => {
+      expect(Number(lambda[statName])).toBeCloseTo(sumBy(lambda.dataPoints, dataPoint => Number(dataPoint[statName])))
+    })
 
     lambda.dataPoints.forEach((dataPoint) => {
-      expect(dataPoint).toEqual({
-        dateTime: expect.any(Date),
-        [statName]: expect.any(statType),
+      const expectedDataPoint = {
         [nameField]: expect.any(String),
+        dateTime: expect.any(Date)
+      }
+
+      statNames.forEach((statName) => {
+        expectedDataPoint[statName] = expect.any(statType)
       })
+      expect(dataPoint).toEqual(expectedDataPoint)
     })
   })
 }
