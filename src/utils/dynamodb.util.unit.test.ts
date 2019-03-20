@@ -7,8 +7,8 @@ const credentials = AWS.config.credentials!
 describe('dynamo data', () => {
   jest.setTimeout(30000)
 
-  test('happy path', async () => {
-    const tables = await listTables('test', credentials.accessKeyId, credentials.secretAccessKey, 'eu-west-1')
+  test('list tables - happy path', async () => {
+    const tables = await listTables('test', credentials.accessKeyId, credentials.secretAccessKey, 'eu-central-1')
 
     expect(tables).toBeTruthy()
     expect(tables.length).toBeGreaterThan(0)
