@@ -81,9 +81,9 @@ functions:
       dbPassword: ${self:custom.dbPassword}
       finishedTopic: "arn:aws:sns:#{AWS::Region}:#{AWS::AccountId}:${self:custom.stage}-finished-updating-lambda-stats"
 
-  prepare-data-for-tenant:
+  prepare-lambda-data-for-tenant:
     timeout: 240
-    handler: src/update/prepare-data/prepare-data-for-tenant.handler
+    handler: src/update/prepare-data/prepare-lambda-data-for-tenant.handler
     environment:
       bucket: ${self:custom.stage}-cloudkeeper-tenant-data
       dbName: ${self:custom.dbName}
@@ -93,6 +93,21 @@ functions:
     events:
       - sns:
           arn: "arn:aws:sns:#{AWS::Region}:#{AWS::AccountId}:${self:custom.stage}-finished-updating-lambda-stats"
+
+  trigger-dynamo-stats-update:
+    handler: src/update/dynamodb-table-stats/trigger-dynamo-stats-update.handler
+    events:
+      - schedule: cron(5 * ? * * *)
+
+  update-tenant-dynamo-stats:
+    timeout: 300
+    handler: src/update/dynamodb-table-stats/update-tenant-dynamo-stats.handler
+    environment:
+      dbName: ${self:custom.dbName}
+      dbHost: ${self:custom.dbHost}
+      dbUser: ${self:custom.dbUser}
+      dbPassword: ${self:custom.dbPassword}
+      finishedTopic: "arn:aws:sns:#{AWS::Region}:#{AWS::AccountId}:${self:custom.stage}-finished-updating-dynamo-stats"
 
 resources:
   Resources:

@@ -1,14 +1,7 @@
 /* eslint-disable prefer-template */
 import { groupBy, map, reduce } from 'lodash'
 import { getConnection } from '../../db/db'
-
-
-const getDateCondition = (groupDaily) => {
-  if (groupDaily) {
-    return '(DATE(`dateTime`) > DATE(UTC_TIMESTAMP()) - INTERVAL ? DAY) '
-  }
-  return '(`dateTime` >= UTC_TIMESTAMP()  - INTERVAL ? DAY - INTERVAL 1 HOUR) '
-}
+import { getDateCondition } from './common'
 
 export const getTotals = async (tenantId, daysAgo, groupDaily = false) => {
   const connection = await getConnection()

@@ -1,10 +1,13 @@
 /* eslint-disable import/first */
+
 process.env.dbName = 'cloudkeeper'
 process.env.dbHost = 'cloudkeeper.cluster-ckbplh6wfiop.eu-central-1.rds.amazonaws.com'
 process.env.dbUser = 'cloudkeeper'
 process.env.dbPassword = 'ExH58GwqZBnCV49MqWcV'
 
 import { sumBy } from 'lodash'
+
+import { expectDataToBeConsistent } from './common-test'
 import { getConnection } from '../../db/db'
 import {
   getMostErrorsLambdas,
@@ -12,9 +15,9 @@ import {
   getSlowestLambdas,
   getTotals,
   getMostExpensiveLambdas,
-} from './data-collectors'
+} from './lambda-data-collectors'
 
-describe('collectors', () => {
+describe('lambda collectors', () => {
   jest.setTimeout(30000)
 
   it.each`
@@ -86,39 +89,10 @@ describe('collectors', () => {
     })
   })
 
-  const expectLambdaStatsToBeConsistent = (lambdas, statName, days, statType: any = String) => {
-    expect(lambdas).toBeTruthy()
-
-    lambdas.forEach((lambda) => {
-      expect(lambda).toEqual({
-        lambdaName: expect.any(String),
-        [statName]: expect.any(statType),
-        dataPoints: expect.any(Array),
-      })
-
-      if (days > 1) {
-        expect(lambda.dataPoints.length).toBeLessThanOrEqual(days)
-      } else {
-        expect(lambda.dataPoints.length).toBeLessThanOrEqual(24)
-      }
-
-      // @ts-ignore
-      expect(Number(lambda[statName])).toBeCloseTo(sumBy(lambda.dataPoints, dataPoint => Number(dataPoint[statName])))
-
-      lambda.dataPoints.forEach((dataPoint) => {
-        expect(dataPoint).toEqual({
-          dateTime: expect.any(Date),
-          [statName]: expect.any(statType),
-          lambdaName: expect.any(String),
-        })
-      })
-    })
-  }
-
   test('most invoked lambdas', async () => {
     const lambdas = await getMostInvokedLambdas('emarketeer', 1)
 
-    expectLambdaStatsToBeConsistent(lambdas, 'invocations', 1)
+    expectDataToBeConsistent(lambdas, 'invocations', 1, 'lambdaName')
   })
 
   test('most invoked lambdas - 30 days', async () => {
@@ -126,31 +100,31 @@ describe('collectors', () => {
 
     expect(lambdas).toBeTruthy()
 
-    expectLambdaStatsToBeConsistent(lambdas, 'invocations', 30)
+    expectDataToBeConsistent(lambdas, 'invocations', 30, 'lambdaName')
   })
 
   test('most errors lambdas', async () => {
     const lambdas = await getMostErrorsLambdas('emarketeer', 1)
 
-    expectLambdaStatsToBeConsistent(lambdas, 'errors', 1)
+    expectDataToBeConsistent(lambdas, 'errors', 1, 'lambdaName')
   })
 
   test('most errors lambdas - 30 days', async () => {
     const lambdas = await getMostErrorsLambdas('emarketeer', 30, true)
 
-    expectLambdaStatsToBeConsistent(lambdas, 'errors', 30)
+    expectDataToBeConsistent(lambdas, 'errors', 30, 'lambdaName')
   })
 
   test('most expensive lambdas', async () => {
     const lambdas = await getMostExpensiveLambdas('emarketeer', 1)
 
-    expectLambdaStatsToBeConsistent(lambdas, 'cost', 1, Number)
+    expectDataToBeConsistent(lambdas, 'cost', 1, 'lambdaName', Number)
   })
 
   test('most expensive lambdas - 30 days', async () => {
     const lambdas = await getMostExpensiveLambdas('emarketeer', 30, true)
 
-    expectLambdaStatsToBeConsistent(lambdas, 'cost', 30, Number)
+    expectDataToBeConsistent(lambdas, 'cost', 30, 'lambdaName', Number)
   })
 
   afterAll(async () => {

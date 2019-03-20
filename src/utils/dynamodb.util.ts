@@ -52,7 +52,7 @@ export const getTableMetrics = async (tableName, accessKeyId, secretAccessKey, r
   const cloudwatch = new AWS.CloudWatch({ accessKeyId, secretAccessKey, region })
 
   const startTime = DateTime.utc().startOf('hour').minus({ days: 30 }).toJSDate()
-  const endTime = DateTime.utc().startOf('hour').toJSDate()
+  const endTime = DateTime.utc().startOf('hour').minus({ hours: 1 }).toJSDate()
 
   const requests = [
     createDynamoMetric(tableName, 'ConsumedReadCapacityUnits', ['Sum'], startTime, endTime),

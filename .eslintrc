@@ -18,6 +18,7 @@
   },
   "rules": {
     "semi": ["error", "never"],
+    "prefer-template": "off",
     "max-len": ["error", { "code": 120 }],
     "no-console": "off",
     "no-restricted-syntax": "off",

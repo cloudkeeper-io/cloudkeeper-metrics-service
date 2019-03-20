@@ -6,7 +6,7 @@ import {
   getMostInvokedLambdas,
   getSlowestLambdas,
   getTotals,
-} from './data-collectors'
+} from './lambda-data-collectors'
 
 const s3 = new AWS.S3({ apiVersion: '2006-03-01' })
 
