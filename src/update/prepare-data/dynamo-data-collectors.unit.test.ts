@@ -5,23 +5,35 @@ process.env.dbUser = 'cloudkeeper'
 process.env.dbPassword = 'ExH58GwqZBnCV49MqWcV'
 
 import { expectDataToBeConsistent } from './common-test'
-import { getMostReadTables } from './dynamo-data-collectors'
+import { getMostReadTables, getMostWritesTables } from './dynamo-data-collectors'
 import { getConnection } from '../../db/db'
 
 
 describe('dynamo collectors', () => {
   jest.setTimeout(30000)
 
-  test('most read tables', async () => {
+  test('most read tables - 24 hours', async () => {
     const tables = await getMostReadTables('emarketeer', 1)
 
     expectDataToBeConsistent(tables, 'readUnits', 1, 'name')
   })
 
-  test('most read tables', async () => {
+  test('most read tables - 30 days', async () => {
     const tables = await getMostReadTables('emarketeer', 30, true)
 
     expectDataToBeConsistent(tables, 'readUnits', 30, 'name')
+  })
+
+  test('most writes tables - 24 hours', async () => {
+    const tables = await getMostWritesTables('emarketeer', 1)
+
+    expectDataToBeConsistent(tables, 'writeUnits', 1, 'name')
+  })
+
+  test('most writes tables - 30 days', async () => {
+    const tables = await getMostWritesTables('emarketeer', 30, true)
+
+    expectDataToBeConsistent(tables, 'writeUnits', 30, 'name')
   })
 
   afterAll(async () => {
