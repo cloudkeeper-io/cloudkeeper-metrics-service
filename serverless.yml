@@ -60,6 +60,9 @@ functions:
   create-tenant:
     handler: src/tenant/create-tenant.handler
 
+  delete-tenant:
+    handler: src/tenant/delete-tenant.handler
+
   list-tenants:
     handler: src/tenant/list-tenants.handler
 
@@ -104,6 +107,29 @@ resources:
           - AttributeName: id
             KeyType: HASH
         BillingMode: PAY_PER_REQUEST
+
+    TenantAccess:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:custom.stage}-cloudkeeper-tenant-users
+        AttributeDefinitions:
+          - AttributeName: userId
+            AttributeType: S
+          - AttributeName: tenantId
+            AttributeType: S
+        KeySchema:
+          - AttributeName: userId
+            KeyType: HASH
+          - AttributeName: tenantId
+            KeyType: RANGE
+        BillingMode: PAY_PER_REQUEST
+        GlobalSecondaryIndexes:
+          - IndexName: tenantIdIndex
+            KeySchema:
+              - AttributeName: tenantId
+                KeyType: HASH
+            Projection:
+              ProjectionType: ALL
 
     FinishedUpdatingLambdaStats:
       Type: "AWS::SNS::Topic"

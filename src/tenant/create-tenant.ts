@@ -35,19 +35,13 @@ export const handler = async (request) => {
     Item: tenant,
   }).promise()
 
-  const updateResult = await dynamoDb.update({
-    TableName: `${process.env.stage}-users`,
-    Key: {
-      id: request.userId,
-      provider: request.provider,
-    },
-    UpdateExpression: 'SET tenantIds = list_append(tenantIds,:tenantId)',
-    ExpressionAttributeValues: {
-      ':tenantId': [tenant.id],
+  await dynamoDb.put({
+    TableName: `${process.env.stage}-cloudkeeper-tenant-users`,
+    Item: {
+      userId: `${request.provider}|${request.userId}`,
+      tenantId: tenant.id,
     },
   }).promise()
-
-  console.log('Update result', updateResult)
 
   return tenant
 }
