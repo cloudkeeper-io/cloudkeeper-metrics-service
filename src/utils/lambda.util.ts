@@ -33,7 +33,7 @@ export const listAllLambdas = async (tenantId, accessKeyId, secretAccessKey, reg
 
 const period = 3600
 
-const createLambdaMetric = (lambdaName, metricName, stats, startTime, endTime) => ({
+export const createLambdaMetric = (lambdaName, metricName, stats, startTime, endTime) => ({
   StartTime: startTime,
   Namespace: 'AWS/Lambda',
   EndTime: endTime,
