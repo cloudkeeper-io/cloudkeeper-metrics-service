@@ -117,45 +117,133 @@ export const getMostThrottledTables = async (tenantId, daysAgo, groupDaily = fal
   }))
 }
 
-export const getMostExpensiveTables = async (tenantId, daysAgo, groupDaily = false) => {
+const fixStatNames = (table, entity): any => {
+  const fixedEntity = {
+    ...entity,
+  }
+
+  if (table.billingMode === 'PROVISIONED') {
+    fixedEntity.averageReadProvisioned = table.readStat
+    fixedEntity.averageWriteProvisioned = table.writeStat
+  } else {
+    fixedEntity.consumedReadCapacity = table.readStat
+    fixedEntity.consumedWriteCapacity = table.writeStat
+  }
+
+  delete fixedEntity.readStat
+  delete fixedEntity.writeStat
+
+  return fixedEntity
+}
+
+export const getMostExpensiveTables = async (tenantId, region, daysAgo, groupDaily = false) => {
   const connection = await getConnection()
 
-  const tablesQuery = 'select name, sum (throttledRequests) as `throttledRequests`'
-    + 'from DynamoTableStats '
-    + 'where tenantId = ? and throttledRequests > 0 '
-    + getDateCondition(groupDaily)
-    + 'group by name '
-    + 'order by `throttledRequests` desc '
-    + 'having throttledRequests > 0 '
-    + 'limit 5'
+  const tablesQuery = `
+      select DynamoTableStats.name,
+         DynamoTable.billingMode,
+         sizeBytes,
+         sizeBytes / (1024 * 1024 * 1024 * 30 / ${daysAgo})  * gbPerMonthPrice as storagePrice,
+         sum(provisionedRead) * DynamoProvisionedPrice.\`read\` as readPrice,
+         sum(provisionedWrite) * DynamoProvisionedPrice.\`write\` as writePrice,
+         sizeBytes / (1024 * 1024 * 1024 * 30 / ${daysAgo})  * gbPerMonthPrice +
+         sum(provisionedRead) * DynamoProvisionedPrice.\`read\` +
+         sum(provisionedWrite) * DynamoProvisionedPrice.\`write\` as totalPrice,
+         avg(provisionedRead) as readStat,
+         avg(provisionedWrite) as writeStat
+  from DynamoTableStats
+  join DynamoTable on (DynamoTable.name = DynamoTableStats.name and DynamoTable.tenantId = DynamoTableStats.tenantId)
+  join DynamoStoragePrice on DynamoStoragePrice.region = ?
+  join DynamoProvisionedPrice on DynamoProvisionedPrice.region = ?
+  where billingMode = 'PROVISIONED' and DynamoTable.tenantId = ? and ${getDateCondition(groupDaily)}
+  group by DynamoTableStats.name
+  UNION ALL
+  select DynamoTableStats.name,
+         DynamoTable.billingMode,
+         sizeBytes,
+         sizeBytes / (1024 * 1024 * 1024 * 30 / ${daysAgo}) * gbPerMonthPrice as storagePrice,
+         sum(consumedRead) / 1000000 * DynamoPerRequestPrice.\`read\` as readPrice,
+         sum(consumedWrite) / 1000000 * DynamoPerRequestPrice.\`write\` as writePrice,
+         sizeBytes / (1024 * 1024 * 1024 * 30 / ${daysAgo})  * gbPerMonthPrice +
+         sum(consumedRead) / 1000000 * DynamoPerRequestPrice.\`read\` +
+         sum(provisionedWrite) / 1000000 * DynamoPerRequestPrice.\`write\` as totalPrice,
+         sum(consumedRead) as readStat,
+         sum(consumedWrite) as writeStat
+  from DynamoTableStats
+        join DynamoTable 
+          on (DynamoTable.name = DynamoTableStats.name and DynamoTable.tenantId = DynamoTableStats.tenantId)
+        join DynamoStoragePrice on DynamoStoragePrice.region = ?
+        join DynamoPerRequestPrice on DynamoPerRequestPrice.region = ?
+  where billingMode = 'PAY_PER_REQUEST' and DynamoTable.tenantId = ? and ${getDateCondition(groupDaily)}
+  group by DynamoTableStats.name
+  order by totalPrice desc
+  limit 5
+`
 
-  const tables = await connection.query(tablesQuery, [tenantId, daysAgo])
+  const tables = await connection.query(
+    tablesQuery,
+    [region, region, tenantId, daysAgo, region, region, tenantId, daysAgo],
+  )
 
-  const getMostThrottledTablesDataPoints = 'select name, throttledRequests, '
-    + 'dateTime from DynamoTableStats '
-    + 'where tenantId = ? and '
-    + getDateCondition(false)
-    + ' and name in (?) '
-    + 'order by dateTime asc'
+  const expensiveDataPointsQuery = `
+    select DynamoTableStats.name,
+         DynamoTable.billingMode,
+         sizeBytes,
+         sizeBytes / (1024 * 1024 * 1024 * ${groupDaily ? daysAgo : (24 * 30)}) * gbPerMonthPrice as storagePrice,
+         sum(provisionedRead) * DynamoProvisionedPrice.\`read\` as readPrice,
+         sum(provisionedWrite) * DynamoProvisionedPrice.\`write\` as writePrice,
+         sizeBytes / (1024 * 1024 * 1024 * ${groupDaily ? daysAgo : (24 * 30)}) * gbPerMonthPrice +
+         sum(provisionedRead) * DynamoProvisionedPrice.\`read\` +
+         sum(provisionedWrite) * DynamoProvisionedPrice.\`write\` as totalPrice,
+         avg(provisionedRead) as readStat,
+         avg(provisionedWrite) as writeStat,
+         ${groupDaily ? 'DATE(dateTime) as dateTime' : 'dateTime'}
+  from DynamoTableStats
+  join DynamoTable on (DynamoTable.name = DynamoTableStats.name and DynamoTable.tenantId = DynamoTableStats.tenantId)
+  join DynamoStoragePrice on DynamoStoragePrice.region = ?
+  join DynamoProvisionedPrice on DynamoProvisionedPrice.region = ?
+  where billingMode = 'PROVISIONED' and DynamoTable.tenantId = ? and ${getDateCondition(groupDaily)}
+  and DynamoTable.name in (?)
+  group by DynamoTableStats.name, ${groupDaily ? 'DATE(dateTime)' : 'dateTime'}
+  UNION ALL
+  select DynamoTableStats.name,
+         DynamoTable.billingMode,
+         sizeBytes,
+         sizeBytes / (1024 * 1024 * 1024 * ${groupDaily ? daysAgo : (24 * 30)}) * gbPerMonthPrice as storagePrice,
+         sum(consumedRead) / 1000000 * DynamoPerRequestPrice.\`read\` as readPrice,
+         sum(consumedWrite) / 1000000 * DynamoPerRequestPrice.\`write\` as writePrice,
+         sizeBytes / (1024 * 1024 * 1024 * ${groupDaily ? daysAgo : (24 * 30)}) * gbPerMonthPrice +
+         sum(consumedRead) / 1000000 * DynamoPerRequestPrice.\`read\` +
+         sum(provisionedWrite) / 1000000 * DynamoPerRequestPrice.\`write\` as totalPrice,
+         sum(consumedRead) as readStat,
+         sum(consumedWrite) as writeStat,
+         ${groupDaily ? 'DATE(dateTime) as dateTime' : 'dateTime'}
+  from DynamoTableStats
+        join DynamoTable 
+          on (DynamoTable.name = DynamoTableStats.name and DynamoTable.tenantId = DynamoTableStats.tenantId)
+        join DynamoStoragePrice on DynamoStoragePrice.region = ?
+        join DynamoPerRequestPrice on DynamoPerRequestPrice.region = ?
+  where billingMode = 'PAY_PER_REQUEST' and DynamoTable.tenantId = ? and ${getDateCondition(groupDaily)}
+  and DynamoTable.name in (?)
+  group by DynamoTableStats.name, ${groupDaily ? 'DATE(dateTime)' : 'dateTime'}
+  order by ${groupDaily ? 'DATE(dateTime)' : 'dateTime'} asc
+`
 
-  const getMostThrottledTablesDataPointsDaily = 'select name, '
-    + 'sum(throttledRequests) as `throttledRequests`, '
-    + 'DATE(dateTime) as dateTime from DynamoTableStats '
-    + 'where tenantId = ? and '
-    + getDateCondition(true)
-    + ' and name in (?) '
-    + 'group by name, DATE(dateTime) '
-    + 'order by DATE(dateTime) asc'
+  if (tables.length === 0) {
+    return []
+  }
+
+  const tableNames = map(tables, 'name')
 
   const dataPoints = await connection.query(
-    groupDaily ? getMostThrottledTablesDataPointsDaily : getMostThrottledTablesDataPoints,
-    [tenantId, daysAgo, map(tables, 'name')],
+    expensiveDataPointsQuery,
+    [region, region, tenantId, daysAgo, tableNames, region, region, tenantId, daysAgo, tableNames],
   )
 
   const dataPointsMap = groupBy(dataPoints, 'name')
 
   return map(tables, table => ({
-    ...table,
-    dataPoints: dataPointsMap[table.name],
+    ...fixStatNames(table, table),
+    dataPoints: map(dataPointsMap[table.name], dataPoint => fixStatNames(table, dataPoint)),
   }))
 }

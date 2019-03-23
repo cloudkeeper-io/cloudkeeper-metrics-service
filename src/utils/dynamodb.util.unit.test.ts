@@ -17,6 +17,7 @@ describe('dynamo data', () => {
       expect(table).toEqual({
         name: expect.any(String),
         tenantId: expect.any(String),
+        billingMode: expect.any(String),
         sizeBytes: expect.any(Number),
         items: expect.any(Number),
       })
