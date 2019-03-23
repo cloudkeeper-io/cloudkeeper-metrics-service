@@ -24,6 +24,7 @@ export const handler = async (tenant) => {
   const params = flatMap(tables, table => [
     table.tenantId,
     table.name,
+    table.billingMode,
     table.sizeBytes,
     table.items,
   ])

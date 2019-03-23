@@ -42,6 +42,8 @@ export const handler = async (tenant) => {
       const provisionedWriteMap = keyBy(provisionedWriteStats.Datapoints, dataPointToTime)
       const throttledMap = keyBy(throttledStats.Datapoints, dataPointToTime)
 
+      console.log(throttledMap)
+
       const timePoints = uniq([
         ...map(consumedReadStats.Datapoints, dataPointToTimestamp),
         ...map(consumedWriteStats.Datapoints, dataPointToTimestamp),

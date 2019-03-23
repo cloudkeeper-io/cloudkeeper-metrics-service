@@ -22,6 +22,7 @@ export const listTables = async (tenantId, accessKeyId, secretAccessKey, region)
     tables.push({
       tenantId,
       name: table.Table!.TableName,
+      billingMode: get(table, 'Table.BillingModeSummary.BillingMode', 'PROVISIONED'),
       sizeBytes: table.Table!.TableSizeBytes,
       items: table.Table!.ItemCount,
     })
