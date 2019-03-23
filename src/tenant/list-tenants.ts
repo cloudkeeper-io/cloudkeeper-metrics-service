@@ -38,5 +38,5 @@ export const handler = async (request) => {
     delete tenant.secretKey
 
     return tenant
-  }), 'name')
+  }), ['name', 'id'])
 }
