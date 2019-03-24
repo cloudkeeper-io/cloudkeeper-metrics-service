@@ -33,6 +33,10 @@ export const getMostReadTables = async (tenantId, daysAgo, groupDaily = false) =
 
   const tables = await connection.query(tablesQuery, [tenantId, daysAgo])
 
+  if (tables.length === 0) {
+    return []
+  }
+
   const columns = groupDaily
     ? ['sum(consumedRead) as `consumedRead`', 'sum(provisionedRead) * 3600 as `provisionedRead`']
     : ['consumedRead as `consumedRead`', 'provisionedRead * 3600 as `provisionedRead`']
@@ -64,6 +68,10 @@ export const getMostWritesTables = async (tenantId, daysAgo, groupDaily = false)
     + 'limit 5'
 
   const tables = await connection.query(tablesQuery, [tenantId, daysAgo])
+
+  if (tables.length === 0) {
+    return []
+  }
 
   const columns = groupDaily
     ? ['sum(consumedWrite) as `consumedWrite`', 'sum(provisionedWrite) * 3600 as `provisionedWrite`']
