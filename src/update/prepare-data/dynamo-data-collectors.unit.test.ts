@@ -45,13 +45,13 @@ describe('dynamo collectors', () => {
   test('most throttled tables - 24 hours', async () => {
     const tables = await getMostThrottledTables('4eab2bfc-8e8f-49e0-b12c-7a3773007368', 1)
 
-    expectDataToBeConsistent(tables, ['throttledRequests'], 1, 'name')
+    expectDataToBeConsistent(tables, ['throttledRequests', 'throttledReads', 'throttledWrites'], 1, 'name')
   })
 
   test('most throttled tables - 30 days', async () => {
     const tables = await getMostThrottledTables('4eab2bfc-8e8f-49e0-b12c-7a3773007368', 30, true)
 
-    expectDataToBeConsistent(tables, ['throttledRequests'], 30, 'name')
+    expectDataToBeConsistent(tables, ['throttledRequests', 'throttledReads', 'throttledWrites'], 30, 'name')
   })
 
   const expectDynamoExpensiveData = (table, entity) => {

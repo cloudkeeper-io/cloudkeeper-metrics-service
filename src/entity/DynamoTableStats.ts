@@ -24,5 +24,8 @@ export class DynamoTableStats {
   provisionedWrite: number
 
   @Column('bigint')
-  throttledRequests: number
+  throttledReads: number
+
+  @Column('bigint')
+  throttledWrites: number
 }

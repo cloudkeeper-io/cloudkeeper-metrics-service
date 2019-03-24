@@ -25,7 +25,8 @@ export const handler = async (tenant) => {
         consumedWriteStats,
         provisionedReadStats,
         provisionedWriteStats,
-        throttledStats,
+        readThrottleStats,
+        writeThrottleStats,
       ] = await getTableMetrics(
         table.name,
         tenant.accessKey,
@@ -40,16 +41,16 @@ export const handler = async (tenant) => {
       const consumedWriteMap = keyBy(consumedWriteStats.Datapoints, dataPointToTime)
       const provisionedReadMap = keyBy(provisionedReadStats.Datapoints, dataPointToTime)
       const provisionedWriteMap = keyBy(provisionedWriteStats.Datapoints, dataPointToTime)
-      const throttledMap = keyBy(throttledStats.Datapoints, dataPointToTime)
-
-      console.log(throttledMap)
+      const readThrottleMap = keyBy(readThrottleStats.Datapoints, dataPointToTime)
+      const writeThrottleMap = keyBy(writeThrottleStats.Datapoints, dataPointToTime)
 
       const timePoints = uniq([
         ...map(consumedReadStats.Datapoints, dataPointToTimestamp),
         ...map(consumedWriteStats.Datapoints, dataPointToTimestamp),
         ...map(provisionedReadStats.Datapoints, dataPointToTimestamp),
         ...map(provisionedWriteStats.Datapoints, dataPointToTimestamp),
-        ...map(throttledStats.Datapoints, dataPointToTimestamp),
+        ...map(readThrottleStats.Datapoints, dataPointToTimestamp),
+        ...map(writeThrottleStats.Datapoints, dataPointToTimestamp),
       ])
 
       return map(timePoints, (timePoint) => {
@@ -62,7 +63,9 @@ export const handler = async (tenant) => {
         // @ts-ignore
         const provisionedWriteData = provisionedWriteMap[timePoint.getTime()]
         // @ts-ignore
-        const throttledData = throttledMap[timePoint.getTime()]
+        const readThrottleData = readThrottleMap[timePoint.getTime()]
+        // @ts-ignore
+        const writeThrottleData = writeThrottleMap[timePoint.getTime()]
 
         return ({
           tenantId: tenant.id,
@@ -72,7 +75,8 @@ export const handler = async (tenant) => {
           consumedWrite: get(consumedWriteData, 'Sum', 0),
           provisionedRead: get(provisionedReadData, 'Average', 0),
           provisionedWrite: get(provisionedWriteData, 'Average', 0),
-          throttledRequests: get(throttledData, 'Sum', 0),
+          throttledReads: get(readThrottleData, 'Sum', 0),
+          throttledWrites: get(writeThrottleData, 'Sum', 0),
         })
       })
     })))
@@ -87,7 +91,7 @@ export const handler = async (tenant) => {
 
   await sns.publish({
     TopicArn: process.env.finishedTopic,
-    Message: tenant.id,
+    Message: JSON.stringify(tenant),
   }).promise()
 
   return true

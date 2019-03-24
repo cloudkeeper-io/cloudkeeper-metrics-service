@@ -55,7 +55,7 @@ export const handler = async (event) => {
 
     await s3.putObject({
       Bucket: process.env.bucket!,
-      Key: `dashboard/data/${tenantId}.json`,
+      Key: `dashboard/data/lambda/${tenantId}.json`,
       Body: JSON.stringify(data),
       ContentType: 'application/json',
     }).promise()

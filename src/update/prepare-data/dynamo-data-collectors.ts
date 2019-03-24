@@ -85,7 +85,9 @@ export const getMostWritesTables = async (tenantId, daysAgo, groupDaily = false)
 export const getMostThrottledTables = async (tenantId, daysAgo, groupDaily = false) => {
   const connection = await getConnection()
 
-  const tablesQuery = 'select name, sum (throttledRequests) as `throttledRequests`'
+  const tablesQuery = 'select name, sum (throttledReads + throttledWrites) as `throttledRequests`, '
+    + 'sum (throttledReads) as `throttledReads`, '
+    + 'sum (throttledWrites) as `throttledWrites` '
     + 'from DynamoTableStats '
     + 'where tenantId = ? and '
     + getDateCondition(groupDaily)
@@ -101,8 +103,16 @@ export const getMostThrottledTables = async (tenantId, daysAgo, groupDaily = fal
   }
 
   const columns = groupDaily
-    ? ['sum(throttledRequests) as `throttledRequests`']
-    : ['throttledRequests']
+    ? [
+      'sum (throttledReads + throttledWrites) as `throttledRequests`',
+      'sum (throttledReads) as `throttledReads`',
+      'sum (throttledWrites) as `throttledWrites`',
+    ]
+    : [
+      'throttledReads + throttledWrites as `throttledRequests`',
+      'throttledReads',
+      'throttledWrites',
+    ]
 
   const dataPoints = await connection.query(
     dataPointsQuery(columns, groupDaily),

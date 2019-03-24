@@ -60,7 +60,8 @@ export const getTableMetrics = async (tableName, accessKeyId, secretAccessKey, r
     createDynamoMetric(tableName, 'ConsumedWriteCapacityUnits', ['Sum'], startTime, endTime),
     createDynamoMetric(tableName, 'ProvisionedReadCapacityUnits', ['Average'], startTime, endTime),
     createDynamoMetric(tableName, 'ProvisionedWriteCapacityUnits', ['Average'], startTime, endTime),
-    createDynamoMetric(tableName, 'ThrottledRequests', ['Sum'], startTime, endTime),
+    createDynamoMetric(tableName, 'ReadThrottleEvents', ['Sum'], startTime, endTime),
+    createDynamoMetric(tableName, 'WriteThrottleEvents', ['Sum'], startTime, endTime),
   ]
 
   return Promise.all(requests.map(request => cloudwatch.getMetricStatistics(request).promise()))
