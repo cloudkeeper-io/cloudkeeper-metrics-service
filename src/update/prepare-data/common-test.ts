@@ -4,20 +4,12 @@ export const expectDataToBeConsistent = (lambdas, statNames, days, nameField, st
   expect(lambdas).toBeTruthy()
 
   lambdas.forEach((lambda) => {
-    const expectedTopLevel = {
-      [nameField]: expect.any(String),
-      runtime: expect.any(String),
-      size: expect.any(Number),
-      timeout: expect.any(Number),
-      codeSize: expect.any(String),
-      dataPoints: expect.any(Array),
-    }
-
     statNames.forEach((statName) => {
-      expectedTopLevel[statName] = expect.any(statType)
+      expect(lambda[statName]).toEqual(expect.any(statType))
     })
 
-    expect(lambda).toEqual(expectedTopLevel)
+    expect(lambda[nameField]).toEqual(expect.any(String))
+    expect(lambda.dataPoints).toEqual(expect.any(Array))
 
     if (days > 1) {
       expect(lambda.dataPoints.length).toBeLessThanOrEqual(days)

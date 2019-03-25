@@ -97,8 +97,19 @@ describe('lambda collectors', () => {
     })
   })
 
+  const expectLambdaFields = (lambdas) => {
+    lambdas.forEach((lambda) => {
+      expect(lambda.size).toEqual(expect.any(Number))
+      expect(lambda.timeout).toEqual(expect.any(Number))
+      expect(lambda.codeSize).toEqual(expect.any(String))
+      expect(lambda.dataPoints).toEqual(expect.any(Array))
+    })
+  }
+
   test('most invoked lambdas', async () => {
     const lambdas = await getMostInvokedLambdas('emarketeer', 1)
+
+    expectLambdaFields(lambdas)
 
     expectDataToBeConsistent(lambdas, ['invocations'], 1, 'lambdaName')
   })
@@ -108,11 +119,15 @@ describe('lambda collectors', () => {
 
     expect(lambdas).toBeTruthy()
 
+    expectLambdaFields(lambdas)
+
     expectDataToBeConsistent(lambdas, ['invocations'], 30, 'lambdaName')
   })
 
   test('most errors lambdas', async () => {
     const lambdas = await getMostErrorsLambdas('emarketeer', 1)
+
+    expectLambdaFields(lambdas)
 
     expectDataToBeConsistent(lambdas, ['errors'], 1, 'lambdaName')
   })
@@ -120,17 +135,23 @@ describe('lambda collectors', () => {
   test('most errors lambdas - 30 days', async () => {
     const lambdas = await getMostErrorsLambdas('emarketeer', 30, true)
 
+    expectLambdaFields(lambdas)
+
     expectDataToBeConsistent(lambdas, ['errors'], 30, 'lambdaName')
   })
 
   test('most expensive lambdas', async () => {
     const lambdas = await getMostExpensiveLambdas('emarketeer', 1)
 
+    expectLambdaFields(lambdas)
+
     expectDataToBeConsistent(lambdas, ['cost'], 1, 'lambdaName', Number)
   })
 
   test('most expensive lambdas - 30 days', async () => {
     const lambdas = await getMostExpensiveLambdas('emarketeer', 30, true)
+
+    expectLambdaFields(lambdas)
 
     expectDataToBeConsistent(lambdas, ['cost'], 30, 'lambdaName', Number)
   })
