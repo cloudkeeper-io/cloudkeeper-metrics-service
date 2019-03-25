@@ -22,8 +22,8 @@ export const getMostReadTables = async (tenantId, daysAgo, groupDaily = false) =
   const connection = await getConnection()
 
   const tablesQuery = 'select name, sum (consumedRead) as `consumedRead`, '
-    + 'sum (provisionedRead) * 3600 as `provisionedRead`'
-    + ' from DynamoTableStats '
+    + 'sum (provisionedRead) * 3600 as `provisionedRead` '
+    + 'from DynamoTableStats '
     + 'where tenantId = ? and '
     + getDateCondition(groupDaily)
     + 'group by name '

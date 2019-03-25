@@ -66,10 +66,13 @@ export const getSlowestLambdas = async (tenantId, daysAgo, groupDaily = false) =
   const connection = await getConnection()
 
   const getSlowestLambdasQuery = 'select '
-    + 'lambdaName, '
+    + 'lambdaName, size, timeout, runtime, codeSize, '
     + 'sum(averageDuration * invocations) / sum(invocations) as `averageDuration` '
     + 'from LambdaStats '
-    + 'where tenantId = ? and '
+    + 'join LambdaConfiguration '
+    + 'on (LambdaConfiguration.name = LambdaStats.lambdaName '
+    + 'and LambdaConfiguration.tenantId = LambdaStats.tenantId) '
+    + 'where LambdaStats.tenantId = ? and '
     + getDateCondition(groupDaily)
     + 'group by lambdaName '
     + 'order by `averageDuration` desc '
@@ -100,8 +103,12 @@ export const getSlowestLambdas = async (tenantId, daysAgo, groupDaily = false) =
 export const getMostInvokedLambdas = async (tenantId, daysAgo, groupDaily = false) => {
   const connection = await getConnection()
 
-  const getMostInvokedLambdasQuery = 'select lambdaName, sum(invocations) as `invocations` from LambdaStats '
-    + 'where tenantId = ? and '
+  const getMostInvokedLambdasQuery = 'select lambdaName, sum(invocations) as `invocations`,'
+    + 'size, timeout, runtime, codeSize from LambdaStats '
+    + 'join LambdaConfiguration '
+    + 'on (LambdaConfiguration.name = LambdaStats.lambdaName '
+    + 'and LambdaConfiguration.tenantId = LambdaStats.tenantId) '
+    + 'where LambdaStats.tenantId = ? and '
     + getDateCondition(groupDaily)
     + 'group by lambdaName '
     + 'order by `invocations` desc '
@@ -127,8 +134,12 @@ export const getMostInvokedLambdas = async (tenantId, daysAgo, groupDaily = fals
 export const getMostErrorsLambdas = async (tenantId, daysAgo, groupDaily = false) => {
   const connection = await getConnection()
 
-  const getSlowestLambdasQuery = 'select lambdaName, sum(errors) as `errors` from LambdaStats '
-    + 'where tenantId = ? and '
+  const getSlowestLambdasQuery = 'select lambdaName, sum(errors) as `errors`,'
+    + 'size, timeout, runtime, codeSize from LambdaStats '
+    + 'join LambdaConfiguration '
+    + 'on (LambdaConfiguration.name = LambdaStats.lambdaName '
+    + 'and LambdaConfiguration.tenantId = LambdaStats.tenantId) '
+    + 'where LambdaStats.tenantId = ? and '
     + getDateCondition(groupDaily)
     + 'group by lambdaName '
     + 'order by `errors` desc '
@@ -155,7 +166,8 @@ export const getMostErrorsLambdas = async (tenantId, daysAgo, groupDaily = false
 export const getMostExpensiveLambdas = async (tenantId, daysAgo, groupDaily = false) => {
   const connection = await getConnection()
 
-  const getMostExpensiveLambdasQuery = 'select lambdaName, '
+  const getMostExpensiveLambdasQuery = 'select lambdaName, LambdaConfiguration.size as size, '
+    + 'timeout, runtime, codeSize, '
     + 'sum(averageDuration * invocations) / 100 * LambdaPrice.price as cost from LambdaStats '
     + 'join LambdaConfiguration '
     + 'on LambdaStats.lambdaName = LambdaConfiguration.name and LambdaConfiguration.tenantId = ? '

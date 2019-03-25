@@ -50,6 +50,10 @@ describe('lambda collectors', () => {
         lambdaName: expect.any(String),
         averageDuration: expect.any(Number),
         dataPoints: expect.any(Array),
+        runtime: expect.any(String),
+        size: expect.any(Number),
+        timeout: expect.any(Number),
+        codeSize: expect.any(String),
       })
 
       lambda.dataPoints.forEach((dataPoint) => {
@@ -74,6 +78,10 @@ describe('lambda collectors', () => {
         lambdaName: expect.any(String),
         averageDuration: expect.any(Number),
         dataPoints: expect.any(Array),
+        runtime: expect.any(String),
+        size: expect.any(Number),
+        timeout: expect.any(Number),
+        codeSize: expect.any(String),
       })
 
       expect(lambda.dataPoints.length).toBeLessThanOrEqual(30)

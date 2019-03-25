@@ -6,6 +6,10 @@ export const expectDataToBeConsistent = (lambdas, statNames, days, nameField, st
   lambdas.forEach((lambda) => {
     const expectedTopLevel = {
       [nameField]: expect.any(String),
+      runtime: expect.any(String),
+      size: expect.any(Number),
+      timeout: expect.any(Number),
+      codeSize: expect.any(String),
       dataPoints: expect.any(Array),
     }
 
