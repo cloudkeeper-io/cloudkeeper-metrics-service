@@ -36,13 +36,24 @@ describe('create tenant', () => {
         Item: tenant,
       }).promise()
     }
+
+    for (const tenant of tenants) {
+      await dynamoDb.put({
+        TableName: 'dev-cloudkeeper-tenant-users',
+        Item: {
+          userId: 'functional-test|userId',
+          tenantId: tenant.id,
+        },
+      }).promise()
+    }
   })
 
   test('happy path', async () => {
     const response = await lambdaClient.invoke({
       FunctionName: 'cloudkeeper-metrics-service-dev-list-tenants',
       Payload: JSON.stringify({
-        tenantIds: ['test1', 'test2'],
+        provider: 'functional-test',
+        userId: 'userId',
       }),
     }).promise()
 
@@ -56,6 +67,16 @@ describe('create tenant', () => {
       await dynamoDb.delete({
         TableName: 'dev-cloudkeeper-tenants',
         Key: {
+          tenantId: tenant.id,
+        },
+      }).promise()
+    }
+
+    for (const tenant of tenants) {
+      await dynamoDb.delete({
+        TableName: 'dev-cloudkeeper-tenant-users',
+        Key: {
+          userId: 'functional-test|userId',
           tenantId: tenant.id,
         },
       }).promise()

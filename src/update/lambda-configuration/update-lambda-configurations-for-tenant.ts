@@ -4,7 +4,7 @@ import { listAllLambdas } from '../../utils/lambda.util'
 import { LambdaConfiguration } from '../../entity'
 
 export const handler = async (tenant) => {
-  console.log(`Working on tenant ${tenant.tenantId}`)
+  console.log(`Working on tenant ${tenant.id}`)
   const connection = await getConnection()
 
   console.log('Connected to db')

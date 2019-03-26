@@ -9,6 +9,8 @@
   - "dynamodb:*"
   Resource:
   - "arn:aws:dynamodb:*:*:table/${self:custom.stage}-cloudkeeper-tenants"
+  - "arn:aws:dynamodb:*:*:table/${self:custom.stage}-cloudkeeper-tenant-users"
+  - "arn:aws:dynamodb:*:*:table/${self:custom.stage}-cloudkeeper-tenant-users/*"
   - "arn:aws:dynamodb:*:*:table/${self:custom.stage}-users"
 
 - Effect: Allow

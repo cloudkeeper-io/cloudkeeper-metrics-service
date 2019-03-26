@@ -47,6 +47,8 @@ jobs:
           command: yarn lint --format junit -o reports/junit/js-lint-results.xml
       - run:
           name: Tests
+          environment:
+            JEST_JUNIT_OUTPUT: reports/junit/js-test-results.xml
           command: yarn test:unit -w 1 --ci --testResultsProcessor="jest-junit"
       - store_test_results:
           path: reports/junit
@@ -123,6 +125,7 @@ workflows:
     jobs:
       - ensure-deps
       - checks:
+          context: ayankovsky-context
           requires:
             - ensure-deps
       - dev-deploy:
@@ -151,6 +154,7 @@ workflows:
             tags:
               only: /^release.*/
       - checks:
+          context: ayankovsky-context
           requires:
             - ensure-deps
           filters:

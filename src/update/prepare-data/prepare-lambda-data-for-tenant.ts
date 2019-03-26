@@ -6,7 +6,7 @@ import {
   getMostInvokedLambdas,
   getSlowestLambdas,
   getTotals,
-} from './data-collectors'
+} from './lambda-data-collectors'
 
 const s3 = new AWS.S3({ apiVersion: '2006-03-01' })
 
@@ -55,7 +55,7 @@ export const handler = async (event) => {
 
     await s3.putObject({
       Bucket: process.env.bucket!,
-      Key: `dashboard/data/${tenantId}.json`,
+      Key: `dashboard/data/lambda/${tenantId}.json`,
       Body: JSON.stringify(data),
       ContentType: 'application/json',
     }).promise()

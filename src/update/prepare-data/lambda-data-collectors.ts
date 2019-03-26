@@ -1,13 +1,21 @@
 /* eslint-disable prefer-template */
 import { groupBy, map, reduce } from 'lodash'
 import { getConnection } from '../../db/db'
+import { getDateCondition } from './common'
 
+const dataPointsQuery = (columns, groupDaily) => {
+  const dateTimeColumn = groupDaily ? 'DATE(dateTime) as dateTime' : 'dateTime'
 
-const getDateCondition = (groupDaily) => {
-  if (groupDaily) {
-    return '(DATE(`dateTime`) > DATE(UTC_TIMESTAMP()) - INTERVAL ? DAY) '
-  }
-  return '(`dateTime` >= UTC_TIMESTAMP()  - INTERVAL ? DAY - INTERVAL 1 HOUR) '
+  return 'select lambdaName, '
+    + columns.join(', ')
+    + ', '
+    + dateTimeColumn
+    + ' from LambdaStats '
+    + 'where tenantId = ? and '
+    + getDateCondition(groupDaily)
+    + ' and lambdaName in (?) '
+    + (groupDaily ? ' group by lambdaName, DATE(dateTime) ' : '')
+    + 'order by ' + (groupDaily ? 'DATE(dateTime)' : 'dateTime') + ' asc'
 }
 
 export const getTotals = async (tenantId, daysAgo, groupDaily = false) => {
@@ -58,10 +66,13 @@ export const getSlowestLambdas = async (tenantId, daysAgo, groupDaily = false) =
   const connection = await getConnection()
 
   const getSlowestLambdasQuery = 'select '
-    + 'lambdaName, '
+    + 'lambdaName, size, timeout, runtime, codeSize, '
     + 'sum(averageDuration * invocations) / sum(invocations) as `averageDuration` '
     + 'from LambdaStats '
-    + 'where tenantId = ? and '
+    + 'join LambdaConfiguration '
+    + 'on (LambdaConfiguration.name = LambdaStats.lambdaName '
+    + 'and LambdaConfiguration.tenantId = LambdaStats.tenantId) '
+    + 'where LambdaStats.tenantId = ? and '
     + getDateCondition(groupDaily)
     + 'group by lambdaName '
     + 'order by `averageDuration` desc '
@@ -69,23 +80,15 @@ export const getSlowestLambdas = async (tenantId, daysAgo, groupDaily = false) =
 
   const lambdas = await connection.query(getSlowestLambdasQuery, [tenantId, daysAgo])
 
-  const getSlowestLambdasDataPointsQuery = 'select lambdaName, averageDuration, maxDuration, dateTime from LambdaStats '
-    + 'where tenantId = ? and (`dateTime` >= UTC_TIMESTAMP() - INTERVAL ? DAY - INTERVAL 1 HOUR) and lambdaName in (?) '
-    + 'order by dateTime asc'
-
-  const getSlowestLambdasDataPointsQueryGroupingByDay = 'select '
-    + 'lambdaName, '
-    + 'sum(averageDuration * invocations) / sum(invocations) as `averageDuration`, '
-    + 'max(maxDuration) as `maxDuration`, '
-    + 'DATE(dateTime) as `dateTime` from LambdaStats '
-    + 'where tenantId = ? and '
-    + getDateCondition(true)
-    + 'and lambdaName in (?) '
-    + 'group by lambdaName, DATE(`dateTime`) '
-    + 'order by DATE(dateTime) asc'
+  const columns = groupDaily ? [
+    'sum(averageDuration * invocations) / sum(invocations) as `averageDuration`',
+    'max(maxDuration) as `maxDuration`',
+  ] : [
+    'averageDuration', 'maxDuration',
+  ]
 
   const dataPoints = await connection.query(
-    groupDaily ? getSlowestLambdasDataPointsQueryGroupingByDay : getSlowestLambdasDataPointsQuery,
+    dataPointsQuery(columns, groupDaily),
     [tenantId, daysAgo, map(lambdas, 'lambdaName')],
   )
 
@@ -100,8 +103,12 @@ export const getSlowestLambdas = async (tenantId, daysAgo, groupDaily = false) =
 export const getMostInvokedLambdas = async (tenantId, daysAgo, groupDaily = false) => {
   const connection = await getConnection()
 
-  const getMostInvokedLambdasQuery = 'select lambdaName, sum(invocations) as `invocations` from LambdaStats '
-    + 'where tenantId = ? and '
+  const getMostInvokedLambdasQuery = 'select lambdaName, sum(invocations) as `invocations`,'
+    + 'size, timeout, runtime, codeSize from LambdaStats '
+    + 'join LambdaConfiguration '
+    + 'on (LambdaConfiguration.name = LambdaStats.lambdaName '
+    + 'and LambdaConfiguration.tenantId = LambdaStats.tenantId) '
+    + 'where LambdaStats.tenantId = ? and '
     + getDateCondition(groupDaily)
     + 'group by lambdaName '
     + 'order by `invocations` desc '
@@ -109,22 +116,10 @@ export const getMostInvokedLambdas = async (tenantId, daysAgo, groupDaily = fals
 
   const lambdas = await connection.query(getMostInvokedLambdasQuery, [tenantId, daysAgo])
 
-  const getMostInvokedLambdasDataPointsQuery = 'select lambdaName, invocations, dateTime from LambdaStats '
-    + 'where tenantId = ? and '
-    + getDateCondition(false)
-    + ' and lambdaName in (?) '
-    + 'order by dateTime asc'
-
-  const getMostInvokedLambdasDataPointsDailyQuery = 'select lambdaName, '
-    + 'sum(invocations) as invocations, DATE(dateTime) as dateTime from LambdaStats '
-    + 'where tenantId = ? and '
-    + getDateCondition(true)
-    + ' and lambdaName in (?) '
-    + 'group by lambdaName, DATE(dateTime) '
-    + 'order by DATE(dateTime) asc'
+  const columns = groupDaily ? ['sum(invocations) as invocations'] : ['invocations']
 
   const dataPoints = await connection.query(
-    groupDaily ? getMostInvokedLambdasDataPointsDailyQuery : getMostInvokedLambdasDataPointsQuery,
+    dataPointsQuery(columns, groupDaily),
     [tenantId, daysAgo, map(lambdas, 'lambdaName')],
   )
 
@@ -139,8 +134,12 @@ export const getMostInvokedLambdas = async (tenantId, daysAgo, groupDaily = fals
 export const getMostErrorsLambdas = async (tenantId, daysAgo, groupDaily = false) => {
   const connection = await getConnection()
 
-  const getSlowestLambdasQuery = 'select lambdaName, sum(errors) as `errors` from LambdaStats '
-    + 'where tenantId = ? and '
+  const getSlowestLambdasQuery = 'select lambdaName, sum(errors) as `errors`,'
+    + 'size, timeout, runtime, codeSize from LambdaStats '
+    + 'join LambdaConfiguration '
+    + 'on (LambdaConfiguration.name = LambdaStats.lambdaName '
+    + 'and LambdaConfiguration.tenantId = LambdaStats.tenantId) '
+    + 'where LambdaStats.tenantId = ? and '
     + getDateCondition(groupDaily)
     + 'group by lambdaName '
     + 'order by `errors` desc '
@@ -148,22 +147,10 @@ export const getMostErrorsLambdas = async (tenantId, daysAgo, groupDaily = false
 
   const lambdas = await connection.query(getSlowestLambdasQuery, [tenantId, daysAgo])
 
-  const getMostErrorsDataPointsQuery = 'select lambdaName, errors, dateTime from LambdaStats '
-    + 'where tenantId = ? and '
-    + getDateCondition(false)
-    + 'and lambdaName in (?) '
-    + 'order by dateTime asc'
-
-  const getMostErrorsDailyDataPointsQuery = 'select lambdaName, sum(errors) as errors, DATE(dateTime) as dateTime '
-    + 'from LambdaStats '
-    + 'where tenantId = ? and '
-    + getDateCondition(true)
-    + 'and lambdaName in (?) '
-    + 'group by lambdaName, DATE(dateTime) '
-    + 'order by DATE(dateTime) asc'
+  const columns = groupDaily ? ['sum(errors) as errors'] : ['errors']
 
   const dataPoints = await connection.query(
-    groupDaily ? getMostErrorsDailyDataPointsQuery : getMostErrorsDataPointsQuery,
+    dataPointsQuery(columns, groupDaily),
     [tenantId, daysAgo, map(lambdas, 'lambdaName')],
   )
 
@@ -179,7 +166,8 @@ export const getMostErrorsLambdas = async (tenantId, daysAgo, groupDaily = false
 export const getMostExpensiveLambdas = async (tenantId, daysAgo, groupDaily = false) => {
   const connection = await getConnection()
 
-  const getMostExpensiveLambdasQuery = 'select lambdaName, '
+  const getMostExpensiveLambdasQuery = 'select lambdaName, LambdaConfiguration.size as size, '
+    + 'timeout, runtime, codeSize, '
     + 'sum(averageDuration * invocations) / 100 * LambdaPrice.price as cost from LambdaStats '
     + 'join LambdaConfiguration '
     + 'on LambdaStats.lambdaName = LambdaConfiguration.name and LambdaConfiguration.tenantId = ? '
@@ -193,30 +181,20 @@ export const getMostExpensiveLambdas = async (tenantId, daysAgo, groupDaily = fa
   const lambdas = await connection.query(getMostExpensiveLambdasQuery, [tenantId, tenantId, daysAgo])
 
   const getMostExpensiveLambdasDataPointsQuery = 'select lambdaName, '
-    + 'averageDuration * invocations / 100 * LambdaPrice.price as cost, '
-    + '`dateTime` from LambdaStats '
+    + (groupDaily ? 'sum(averageDuration * invocations) / 100 * LambdaPrice.price as cost, '
+      : 'averageDuration * invocations / 100 * LambdaPrice.price as cost, ')
+    + (groupDaily ? 'DATE(`dateTime`) as `dateTime`' : '`dateTime` ')
+    + 'from LambdaStats '
     + 'join LambdaConfiguration '
     + 'on LambdaStats.lambdaName = LambdaConfiguration.name and LambdaConfiguration.tenantId = ? '
     + 'join LambdaPrice on LambdaPrice.size = LambdaConfiguration.size '
     + 'where LambdaStats.tenantId = ? and '
     + getDateCondition(groupDaily)
     + 'and lambdaName in (?) '
-    + 'order by dateTime asc'
-
-  const getMostExpensiveLambdasDataPointsDailyQuery = 'select lambdaName, '
-    + 'sum(averageDuration * invocations) / 100 * LambdaPrice.price as cost, '
-    + 'DATE(`dateTime`) as `dateTime` from LambdaStats '
-    + 'join LambdaConfiguration '
-    + 'on LambdaStats.lambdaName = LambdaConfiguration.name and LambdaConfiguration.tenantId = ? '
-    + 'join LambdaPrice on LambdaPrice.size = LambdaConfiguration.size '
-    + 'where LambdaStats.tenantId = ? and '
-    + getDateCondition(groupDaily)
-    + 'and lambdaName in (?) '
-    + 'group by lambdaName, DATE(dateTime) '
-    + 'order by DATE(dateTime) asc'
+    + (groupDaily ? 'group by lambdaName, DATE(dateTime) order by DATE(dateTime) asc' : 'order by dateTime asc')
 
   const dataPoints = await connection.query(
-    groupDaily ? getMostExpensiveLambdasDataPointsDailyQuery : getMostExpensiveLambdasDataPointsQuery,
+    getMostExpensiveLambdasDataPointsQuery,
     [tenantId, tenantId, daysAgo, map(lambdas, 'lambdaName')],
   )
 

@@ -39,11 +39,29 @@ functions:
       dbUser: ${self:custom.dbUser}
       dbPassword: ${self:custom.dbPassword}
 
+  trigger-dynamo-tables-update:
+    handler: src/update/dynamodb-tables/trigger-dynamo-tables-update.handler
+    events:
+      - schedule: cron(1 * ? * * *)
+
+  update-tenant-dynamo-tables:
+    timeout: 120
+    handler: src/update/dynamodb-tables/update-tenant-dynamo-tables.handler
+    environment:
+      dbName: ${self:custom.dbName}
+      dbHost: ${self:custom.dbHost}
+      dbUser: ${self:custom.dbUser}
+      dbPassword: ${self:custom.dbPassword}
+      finishedTopic: !Ref FinishedUpdatingDynamoStats
+
   setup-tenant:
     handler: src/setup/setup-tenant.handler
 
   create-tenant:
     handler: src/tenant/create-tenant.handler
+
+  delete-tenant:
+    handler: src/tenant/delete-tenant.handler
 
   list-tenants:
     handler: src/tenant/list-tenants.handler
@@ -63,9 +81,9 @@ functions:
       dbPassword: ${self:custom.dbPassword}
       finishedTopic: "arn:aws:sns:#{AWS::Region}:#{AWS::AccountId}:${self:custom.stage}-finished-updating-lambda-stats"
 
-  prepare-data-for-tenant:
+  prepare-lambda-data-for-tenant:
     timeout: 240
-    handler: src/update/prepare-data/prepare-data-for-tenant.handler
+    handler: src/update/prepare-data/prepare-lambda-data-for-tenant.handler
     environment:
       bucket: ${self:custom.stage}-cloudkeeper-tenant-data
       dbName: ${self:custom.dbName}
@@ -75,6 +93,34 @@ functions:
     events:
       - sns:
           arn: "arn:aws:sns:#{AWS::Region}:#{AWS::AccountId}:${self:custom.stage}-finished-updating-lambda-stats"
+
+  trigger-dynamo-stats-update:
+    handler: src/update/dynamodb-table-stats/trigger-dynamo-stats-update.handler
+    events:
+      - schedule: cron(5 * ? * * *)
+
+  update-tenant-dynamo-stats:
+    timeout: 300
+    handler: src/update/dynamodb-table-stats/update-tenant-dynamo-stats.handler
+    environment:
+      dbName: ${self:custom.dbName}
+      dbHost: ${self:custom.dbHost}
+      dbUser: ${self:custom.dbUser}
+      dbPassword: ${self:custom.dbPassword}
+      finishedTopic: "arn:aws:sns:#{AWS::Region}:#{AWS::AccountId}:${self:custom.stage}-finished-updating-dynamo-stats"
+
+  prepare-dynamo-data-for-tenant:
+    timeout: 240
+    handler: src/update/prepare-data/prepare-dynamo-data-for-tenant.handler
+    environment:
+      bucket: ${self:custom.stage}-cloudkeeper-tenant-data
+      dbName: ${self:custom.dbName}
+      dbHost: ${self:custom.dbHost}
+      dbUser: ${self:custom.dbUser}
+      dbPassword: ${self:custom.dbPassword}
+    events:
+      - sns:
+          arn: "arn:aws:sns:#{AWS::Region}:#{AWS::AccountId}:${self:custom.stage}-finished-updating-dynamo-stats"
 
 resources:
   Resources:
@@ -90,11 +136,40 @@ resources:
             KeyType: HASH
         BillingMode: PAY_PER_REQUEST
 
+    TenantAccess:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:custom.stage}-cloudkeeper-tenant-users
+        AttributeDefinitions:
+          - AttributeName: userId
+            AttributeType: S
+          - AttributeName: tenantId
+            AttributeType: S
+        KeySchema:
+          - AttributeName: userId
+            KeyType: HASH
+          - AttributeName: tenantId
+            KeyType: RANGE
+        BillingMode: PAY_PER_REQUEST
+        GlobalSecondaryIndexes:
+          - IndexName: tenantIdIndex
+            KeySchema:
+              - AttributeName: tenantId
+                KeyType: HASH
+            Projection:
+              ProjectionType: ALL
+
     FinishedUpdatingLambdaStats:
       Type: "AWS::SNS::Topic"
       Properties:
         DisplayName: ${self:custom.stage}-finished-updating-lambda-stats
         TopicName: ${self:custom.stage}-finished-updating-lambda-stats
+
+    FinishedUpdatingDynamoStats:
+      Type: "AWS::SNS::Topic"
+      Properties:
+        DisplayName: ${self:custom.stage}-finished-updating-dynamo-stats
+        TopicName: ${self:custom.stage}-finished-updating-dynamo-stats
 
     CloudkeeperTenantData:
       Type: AWS::S3::Bucket

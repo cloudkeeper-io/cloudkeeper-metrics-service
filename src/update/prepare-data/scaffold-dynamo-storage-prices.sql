@@ -1,0 +1,18 @@
+insert into DynamoStoragePrice (region, gbPerMonthPrice) VALUES
+('us-east-2', 0.25),
+('us-west-1', 0.28),
+('us-west-2', 0.25),
+('ap-south-1', 0.285),
+('us-east-1', 0.25),
+('eu-west-1', 0.283),
+('eu-central-1', 0.306),
+('eu-west-2', 0.29715),
+('ca-central-1', 0.275),
+('ap-northeast-1', 0.285),
+('ap-northeast-2', 0.27075),
+('ap-southeast-1', 0.285),
+('ap-southeast-2', 0.285),
+('eu-north-1', 0.269),
+('eu-west-3', 0.29715),
+('sa-east-1', 0.375),
+('ap-northeast-3', 0.285);
