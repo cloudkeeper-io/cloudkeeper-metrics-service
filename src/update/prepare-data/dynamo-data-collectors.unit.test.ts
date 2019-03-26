@@ -18,8 +18,18 @@ import { getConnection } from '../../db/db'
 describe('dynamo collectors', () => {
   jest.setTimeout(30000)
 
+  const expectDynamoTableFields = (tables) => {
+    tables.forEach((table) => {
+      expect(table.items).toEqual(expect.any(String))
+      expect(table.billingMode).toEqual(expect.any(String))
+      expect(table.sizeBytes).toEqual(expect.any(String))
+    })
+  }
+
   test('most read tables - 24 hours', async () => {
     const tables = await getMostReadTables('emarketeer', 1)
+
+    expectDynamoTableFields(tables)
 
     expectDataToBeConsistent(tables, ['consumedRead', 'provisionedRead'], 1, 'name')
   })
@@ -27,11 +37,15 @@ describe('dynamo collectors', () => {
   test('most read tables - 30 days', async () => {
     const tables = await getMostReadTables('emarketeer', 30, true)
 
+    expectDynamoTableFields(tables)
+
     expectDataToBeConsistent(tables, ['consumedRead', 'provisionedRead'], 30, 'name')
   })
 
   test('most writes tables - 24 hours', async () => {
     const tables = await getMostWritesTables('emarketeer', 1)
+
+    expectDynamoTableFields(tables)
 
     expectDataToBeConsistent(tables, ['consumedWrite', 'provisionedWrite'], 1, 'name')
   })
@@ -39,17 +53,23 @@ describe('dynamo collectors', () => {
   test('most writes tables - 30 days', async () => {
     const tables = await getMostWritesTables('emarketeer', 30, true)
 
+    expectDynamoTableFields(tables)
+
     expectDataToBeConsistent(tables, ['consumedWrite', 'provisionedWrite'], 30, 'name')
   })
 
   test('most throttled tables - 24 hours', async () => {
     const tables = await getMostThrottledTables('4eab2bfc-8e8f-49e0-b12c-7a3773007368', 1)
 
+    expectDynamoTableFields(tables)
+
     expectDataToBeConsistent(tables, ['throttledRequests', 'throttledReads', 'throttledWrites'], 1, 'name')
   })
 
   test('most throttled tables - 30 days', async () => {
     const tables = await getMostThrottledTables('4eab2bfc-8e8f-49e0-b12c-7a3773007368', 30, true)
+
+    expectDynamoTableFields(tables)
 
     expectDataToBeConsistent(tables, ['throttledRequests', 'throttledReads', 'throttledWrites'], 30, 'name')
   })
@@ -72,6 +92,8 @@ describe('dynamo collectors', () => {
   }
 
   const expectExpensiveDataToBeConsistent = (tables, dataPointsNumber) => {
+    expectDynamoTableFields(tables)
+
     tables.forEach((table) => {
       expect(table.name).toEqual(expect.any(String))
       expect(table.dataPoints).toEqual(expect.any(Array))

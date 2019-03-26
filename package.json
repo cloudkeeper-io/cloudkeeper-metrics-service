@@ -27,7 +27,7 @@
     "@types/node": "^11.9.5",
     "@typescript-eslint/eslint-plugin": "^1.4.2",
     "@typescript-eslint/parser": "^1.4.2",
-    "aws-sdk": "^2.413.0",
+    "aws-sdk": "^2.429.0",
     "eslint": "^5.14.1",
     "eslint-config-airbnb-base": "13.1.0",
     "eslint-plugin-import": "^2.16.0",

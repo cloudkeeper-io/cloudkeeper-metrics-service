@@ -21,10 +21,12 @@ const dataPointsQuery = (columns, groupDaily) => {
 export const getMostReadTables = async (tenantId, daysAgo, groupDaily = false) => {
   const connection = await getConnection()
 
-  const tablesQuery = 'select name, sum (consumedRead) as `consumedRead`, '
-    + 'sum (provisionedRead) * 3600 as `provisionedRead` '
+  const tablesQuery = 'select DynamoTableStats.name, sum (consumedRead) as `consumedRead`, '
+    + 'sum (provisionedRead) * 3600 as `provisionedRead`, items, billingMode, sizeBytes '
     + 'from DynamoTableStats '
-    + 'where tenantId = ? and '
+    + 'join DynamoTable on (DynamoTableStats.name = DynamoTable.name '
+    + 'and DynamoTableStats.tenantId = DynamoTable.tenantId) '
+    + 'where DynamoTableStats.tenantId = ? and '
     + getDateCondition(groupDaily)
     + 'group by name '
     + 'having consumedRead > 0 '
@@ -57,10 +59,12 @@ export const getMostReadTables = async (tenantId, daysAgo, groupDaily = false) =
 export const getMostWritesTables = async (tenantId, daysAgo, groupDaily = false) => {
   const connection = await getConnection()
 
-  const tablesQuery = 'select name, sum (consumedWrite) as `consumedWrite`,'
-    + ' sum (provisionedWrite) * 3600 as `provisionedWrite` '
+  const tablesQuery = 'select DynamoTableStats.name, sum (consumedWrite) as `consumedWrite`,'
+    + ' sum (provisionedWrite) * 3600 as `provisionedWrite`, items, billingMode, sizeBytes '
     + 'from DynamoTableStats '
-    + 'where tenantId = ? and '
+    + 'join DynamoTable on (DynamoTableStats.name = DynamoTable.name '
+    + 'and DynamoTableStats.tenantId = DynamoTable.tenantId) '
+    + 'where DynamoTableStats.tenantId = ? and '
     + getDateCondition(groupDaily)
     + 'group by name '
     + 'having consumedWrite > 0 '
@@ -93,11 +97,13 @@ export const getMostWritesTables = async (tenantId, daysAgo, groupDaily = false)
 export const getMostThrottledTables = async (tenantId, daysAgo, groupDaily = false) => {
   const connection = await getConnection()
 
-  const tablesQuery = 'select name, sum (throttledReads + throttledWrites) as `throttledRequests`, '
+  const tablesQuery = 'select DynamoTableStats.name, sum (throttledReads + throttledWrites) as `throttledRequests`, '
     + 'sum (throttledReads) as `throttledReads`, '
-    + 'sum (throttledWrites) as `throttledWrites` '
+    + 'sum (throttledWrites) as `throttledWrites`, items, billingMode, sizeBytes '
     + 'from DynamoTableStats '
-    + 'where tenantId = ? and '
+    + 'join DynamoTable on (DynamoTableStats.name = DynamoTable.name '
+    + 'and DynamoTableStats.tenantId = DynamoTable.tenantId) '
+    + 'where DynamoTableStats.tenantId = ? and '
     + getDateCondition(groupDaily)
     + 'group by name '
     + 'having throttledRequests > 0 '
@@ -161,6 +167,7 @@ export const getMostExpensiveTables = async (tenantId, region, daysAgo, groupDai
       select DynamoTableStats.name,
          DynamoTable.billingMode,
          sizeBytes,
+         items,
          sizeBytes / (1024 * 1024 * 1024 * 30 / ${daysAgo})  * gbPerMonthPrice as storagePrice,
          sum(provisionedRead) * DynamoProvisionedPrice.\`read\` as readPrice,
          sum(provisionedWrite) * DynamoProvisionedPrice.\`write\` as writePrice,
@@ -179,6 +186,7 @@ export const getMostExpensiveTables = async (tenantId, region, daysAgo, groupDai
   select DynamoTableStats.name,
          DynamoTable.billingMode,
          sizeBytes,
+         items,
          sizeBytes / (1024 * 1024 * 1024 * 30 / ${daysAgo}) * gbPerMonthPrice as storagePrice,
          sum(consumedRead) / 1000000 * DynamoPerRequestPrice.\`read\` as readPrice,
          sum(consumedWrite) / 1000000 * DynamoPerRequestPrice.\`write\` as writePrice,
