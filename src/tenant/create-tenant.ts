@@ -1,8 +1,8 @@
 import * as uuid from 'uuidv4'
-// eslint-disable-next-line import/no-extraneous-dependencies
 import * as AWS from 'aws-sdk'
-import { checkAccess } from '../utils/lambda.util'
 import * as Lambda from 'aws-sdk/clients/lambda'
+
+import { checkAccess } from '../utils/lambda.util'
 
 const dynamoDb = new AWS.DynamoDB.DocumentClient({ apiVersion: '2012-08-10' })
 const lambda = new Lambda({ apiVersion: '2015-03-31' })
