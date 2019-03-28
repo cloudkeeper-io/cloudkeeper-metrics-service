@@ -17,7 +17,7 @@ describe('Update Lambda Stats', async () => {
       accessKey: 'AKIAJI7Y7EUA4WTJYTUA',
       region: 'eu-west-1',
       secretKey: '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',
-      tenantId: 'emarketeer',
+      id: 'emarketeer',
     })
   })
 })

@@ -49,6 +49,7 @@ describe('lambda collectors', () => {
       expect(lambda).toEqual({
         lambdaName: expect.any(String),
         averageDuration: expect.any(Number),
+        maxDuration: expect.any(Number),
         dataPoints: expect.any(Array),
         runtime: expect.any(String),
         size: expect.any(Number),
@@ -77,6 +78,7 @@ describe('lambda collectors', () => {
       expect(lambda).toEqual({
         lambdaName: expect.any(String),
         averageDuration: expect.any(Number),
+        maxDuration: expect.any(Number),
         dataPoints: expect.any(Array),
         runtime: expect.any(String),
         size: expect.any(Number),
