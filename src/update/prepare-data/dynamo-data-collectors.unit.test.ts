@@ -31,7 +31,7 @@ describe('dynamo collectors', () => {
 
     expectDynamoTableFields(tables)
 
-    tables.forEach(table => {
+    tables.forEach((table) => {
       expect(table.averageConsumedRead).toEqual(expect.any(String))
     })
 
@@ -43,7 +43,7 @@ describe('dynamo collectors', () => {
 
     expectDynamoTableFields(tables)
 
-    tables.forEach(table => {
+    tables.forEach((table) => {
       expect(table.averageConsumedRead).toEqual(expect.any(String))
     })
 
@@ -55,7 +55,7 @@ describe('dynamo collectors', () => {
 
     expectDynamoTableFields(tables)
 
-    tables.forEach(table => {
+    tables.forEach((table) => {
       expect(table.averageConsumedWrite).toEqual(expect.any(String))
     })
 
@@ -67,7 +67,7 @@ describe('dynamo collectors', () => {
 
     expectDynamoTableFields(tables)
 
-    tables.forEach(table => {
+    tables.forEach((table) => {
       expect(table.averageConsumedWrite).toEqual(expect.any(String))
     })
 
