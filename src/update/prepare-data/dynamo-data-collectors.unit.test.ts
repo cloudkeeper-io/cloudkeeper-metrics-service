@@ -31,6 +31,10 @@ describe('dynamo collectors', () => {
 
     expectDynamoTableFields(tables)
 
+    tables.forEach(table => {
+      expect(table.averageConsumedRead).toEqual(expect.any(String))
+    })
+
     expectDataToBeConsistent(tables, ['consumedRead', 'provisionedRead'], 1, 'name')
   })
 
@@ -38,6 +42,10 @@ describe('dynamo collectors', () => {
     const tables = await getMostReadTables('emarketeer', 30, true)
 
     expectDynamoTableFields(tables)
+
+    tables.forEach(table => {
+      expect(table.averageConsumedRead).toEqual(expect.any(String))
+    })
 
     expectDataToBeConsistent(tables, ['consumedRead', 'provisionedRead'], 30, 'name')
   })
@@ -47,6 +55,10 @@ describe('dynamo collectors', () => {
 
     expectDynamoTableFields(tables)
 
+    tables.forEach(table => {
+      expect(table.averageConsumedWrite).toEqual(expect.any(String))
+    })
+
     expectDataToBeConsistent(tables, ['consumedWrite', 'provisionedWrite'], 1, 'name')
   })
 
@@ -54,6 +66,10 @@ describe('dynamo collectors', () => {
     const tables = await getMostWritesTables('emarketeer', 30, true)
 
     expectDynamoTableFields(tables)
+
+    tables.forEach(table => {
+      expect(table.averageConsumedWrite).toEqual(expect.any(String))
+    })
 
     expectDataToBeConsistent(tables, ['consumedWrite', 'provisionedWrite'], 30, 'name')
   })

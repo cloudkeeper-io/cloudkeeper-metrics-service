@@ -22,6 +22,7 @@ export const getMostReadTables = async (tenantId, daysAgo, groupDaily = false) =
   const connection = await getConnection()
 
   const tablesQuery = 'select DynamoTableStats.name, sum (consumedRead) as `consumedRead`, '
+    + 'sum(consumedRead) / (? * 3600 * 24) as `averageConsumedRead`,'
     + 'sum (provisionedRead) * 3600 as `provisionedRead`, items, billingMode, sizeBytes '
     + 'from DynamoTableStats '
     + 'join DynamoTable on (DynamoTableStats.name = DynamoTable.name '
@@ -33,7 +34,7 @@ export const getMostReadTables = async (tenantId, daysAgo, groupDaily = false) =
     + 'order by `consumedRead` desc '
     + 'limit 5'
 
-  const tables = await connection.query(tablesQuery, [tenantId, daysAgo])
+  const tables = await connection.query(tablesQuery, [daysAgo, tenantId, daysAgo])
 
   if (tables.length === 0) {
     return []
@@ -60,7 +61,8 @@ export const getMostWritesTables = async (tenantId, daysAgo, groupDaily = false)
   const connection = await getConnection()
 
   const tablesQuery = 'select DynamoTableStats.name, sum (consumedWrite) as `consumedWrite`,'
-    + ' sum (provisionedWrite) * 3600 as `provisionedWrite`, items, billingMode, sizeBytes '
+    + 'sum(consumedWrite) / (? * 3600 * 24) as `averageConsumedWrite`,'
+    + 'sum (provisionedWrite) * 3600 as `provisionedWrite`, items, billingMode, sizeBytes '
     + 'from DynamoTableStats '
     + 'join DynamoTable on (DynamoTableStats.name = DynamoTable.name '
     + 'and DynamoTableStats.tenantId = DynamoTable.tenantId) '
@@ -71,7 +73,7 @@ export const getMostWritesTables = async (tenantId, daysAgo, groupDaily = false)
     + 'order by `consumedWrite` desc '
     + 'limit 5'
 
-  const tables = await connection.query(tablesQuery, [tenantId, daysAgo])
+  const tables = await connection.query(tablesQuery, [daysAgo, tenantId, daysAgo])
 
   if (tables.length === 0) {
     return []
