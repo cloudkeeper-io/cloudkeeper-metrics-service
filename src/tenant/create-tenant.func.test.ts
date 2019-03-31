@@ -28,8 +28,8 @@ describe('create tenant', () => {
         userId: 'test@test.com',
         provider: 'funcTest',
         name: 'test tenant',
-        accessKey: 'AKIAIL5SDDNRS6QSDEUQ',
-        secretKey: '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',
+        accessKey: 'AKIAIKQYZB6YL4KUKA4A',
+        secretKey: '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',
         region: 'eu-central-1',
       }),
     }).promise()
