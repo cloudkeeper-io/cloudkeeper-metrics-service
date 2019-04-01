@@ -1,7 +1,7 @@
 /* eslint-disable prefer-template */
 import { groupBy, map, reduce } from 'lodash'
 import { getConnection } from '../../db/db'
-import { getDateCondition } from './common'
+import { getDateCondition, fillEmptyDataPoints } from './common'
 
 const dataPointsQuery = (columns, groupDaily) => {
   const dateTimeColumn = groupDaily ? 'DATE(dateTime) as dateTime' : 'dateTime'
@@ -56,8 +56,14 @@ export const getTotals = async (tenantId, daysAgo, groupDaily = false) => {
     return acc
   }, { invocations: 0, errors: 0, cost: 0 })
 
+  const allDataPoints = fillEmptyDataPoints(dataPoints, groupDaily, daysAgo, {
+    cost: 0,
+    errors: '0',
+    invocations: '0',
+  })
+
   return {
-    dataPoints,
+    dataPoints: allDataPoints,
     ...totals,
   }
 }
@@ -99,10 +105,20 @@ export const getSlowestLambdas = async (tenantId, daysAgo, groupDaily = false) =
 
   const dataPointsMap = groupBy(dataPoints, 'lambdaName')
 
-  return map(lambdas, lambda => ({
-    ...lambda,
-    dataPoints: dataPointsMap[lambda.lambdaName],
-  }))
+  return map(lambdas, (lambda) => {
+    const lambdaDataPoints = dataPointsMap[lambda.lambdaName]
+
+    const allDataPoints = fillEmptyDataPoints(lambdaDataPoints, groupDaily, daysAgo, {
+      averageDuration: 0,
+      maxDuration: 0,
+      lambdaName: lambda.lambdaName,
+    })
+
+    return ({
+      ...lambda,
+      dataPoints: allDataPoints,
+    })
+  })
 }
 
 export const getMostInvokedLambdas = async (tenantId, daysAgo, groupDaily = false) => {
@@ -135,10 +151,19 @@ export const getMostInvokedLambdas = async (tenantId, daysAgo, groupDaily = fals
 
   const dataPointsMap = groupBy(dataPoints, 'lambdaName')
 
-  return map(lambdas, lambda => ({
-    ...lambda,
-    dataPoints: dataPointsMap[lambda.lambdaName],
-  }))
+  return map(lambdas, (lambda) => {
+    const lambdaDataPoints = dataPointsMap[lambda.lambdaName]
+
+    const allDataPoints = fillEmptyDataPoints(lambdaDataPoints, groupDaily, daysAgo, {
+      invocations: '0',
+      lambdaName: lambda.lambdaName,
+    })
+
+    return ({
+      ...lambda,
+      dataPoints: allDataPoints,
+    })
+  })
 }
 
 export const getMostErrorsLambdas = async (tenantId, daysAgo, groupDaily = false) => {
@@ -171,10 +196,19 @@ export const getMostErrorsLambdas = async (tenantId, daysAgo, groupDaily = false
 
   const dataPointsMap = groupBy(dataPoints, 'lambdaName')
 
-  return map(lambdas, lambda => ({
-    ...lambda,
-    dataPoints: dataPointsMap[lambda.lambdaName],
-  }))
+  return map(lambdas, (lambda) => {
+    const lambdaDataPoints = dataPointsMap[lambda.lambdaName]
+
+    const allDataPoints = fillEmptyDataPoints(lambdaDataPoints, groupDaily, daysAgo, {
+      errors: '0',
+      lambdaName: lambda.lambdaName,
+    })
+
+    return ({
+      ...lambda,
+      dataPoints: allDataPoints,
+    })
+  })
 }
 
 
@@ -219,8 +253,17 @@ export const getMostExpensiveLambdas = async (tenantId, daysAgo, groupDaily = fa
 
   const dataPointsMap = groupBy(dataPoints, 'lambdaName')
 
-  return map(lambdas, lambda => ({
-    ...lambda,
-    dataPoints: dataPointsMap[lambda.lambdaName],
-  }))
+  return map(lambdas, (lambda) => {
+    const lambdaDataPoints = dataPointsMap[lambda.lambdaName]
+
+    const allDataPoints = fillEmptyDataPoints(lambdaDataPoints, groupDaily, daysAgo, {
+      cost: 0,
+      lambdaName: lambda.lambdaName,
+    })
+
+    return ({
+      ...lambda,
+      dataPoints: allDataPoints,
+    })
+  })
 }

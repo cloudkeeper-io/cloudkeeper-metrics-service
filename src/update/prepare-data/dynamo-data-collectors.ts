@@ -1,7 +1,7 @@
 import { groupBy, map } from 'lodash'
 
 import { getConnection } from '../../db/db'
-import { getDateCondition } from './common'
+import { fillEmptyDataPoints, getDateCondition } from './common'
 
 const dataPointsQuery = (columns, groupDaily) => {
   const dateTimeColumn = groupDaily ? 'DATE(dateTime) as dateTime' : 'dateTime'
@@ -51,10 +51,20 @@ export const getMostReadTables = async (tenantId, daysAgo, groupDaily = false) =
 
   const dataPointsMap = groupBy(dataPoints, 'name')
 
-  return map(tables, table => ({
-    ...table,
-    dataPoints: dataPointsMap[table.name],
-  }))
+  return map(tables, (table) => {
+    const tableDataPoints = dataPointsMap[table.name]
+
+    const allDataPoints = fillEmptyDataPoints(tableDataPoints, groupDaily, daysAgo, {
+      consumedRead: '0',
+      provisionedRead: '0',
+      name: table.name,
+    })
+
+    return ({
+      ...table,
+      dataPoints: allDataPoints,
+    })
+  })
 }
 
 export const getMostWritesTables = async (tenantId, daysAgo, groupDaily = false) => {
@@ -90,10 +100,20 @@ export const getMostWritesTables = async (tenantId, daysAgo, groupDaily = false)
 
   const dataPointsMap = groupBy(dataPoints, 'name')
 
-  return map(tables, table => ({
-    ...table,
-    dataPoints: dataPointsMap[table.name],
-  }))
+  return map(tables, (table) => {
+    const tableDataPoints = dataPointsMap[table.name]
+
+    const allDataPoints = fillEmptyDataPoints(tableDataPoints, groupDaily, daysAgo, {
+      consumedWrite: '0',
+      provisionedWrite: '0',
+      name: table.name,
+    })
+
+    return ({
+      ...table,
+      dataPoints: allDataPoints,
+    })
+  })
 }
 
 export const getMostThrottledTables = async (tenantId, daysAgo, groupDaily = false) => {
@@ -137,10 +157,21 @@ export const getMostThrottledTables = async (tenantId, daysAgo, groupDaily = fal
 
   const dataPointsMap = groupBy(dataPoints, 'name')
 
-  return map(tables, table => ({
-    ...table,
-    dataPoints: dataPointsMap[table.name],
-  }))
+  return map(tables, (table) => {
+    const tableDataPoints = dataPointsMap[table.name]
+
+    const allDataPoints = fillEmptyDataPoints(tableDataPoints, groupDaily, daysAgo, {
+      throttledReads: '0',
+      throttledWrites: '0',
+      throttledRequests: '0',
+      name: table.name,
+    })
+
+    return ({
+      ...table,
+      dataPoints: allDataPoints,
+    })
+  })
 }
 
 const fixStatNames = (table, entity): any => {
@@ -270,8 +301,24 @@ export const getMostExpensiveTables = async (tenantId, region, daysAgo, groupDai
 
   const dataPointsMap = groupBy(dataPoints, 'name')
 
-  return map(tables, table => ({
-    ...fixStatNames(table, table),
-    dataPoints: map(dataPointsMap[table.name], dataPoint => fixStatNames(table, dataPoint)),
-  }))
+  return map(tables, (table) => {
+    const tableDataPoints = dataPointsMap[table.name]
+
+    const allDataPoints = fillEmptyDataPoints(tableDataPoints, groupDaily, daysAgo, {
+      billingMode: tableDataPoints[0].billingMode,
+      readPrice: 0,
+      readStat: '0',
+      sizeBytes: tableDataPoints[0].sizeBytes,
+      storagePrice: 0,
+      totalPrice: 0,
+      writePrice: 0,
+      writeStat: '0',
+      name: table.name,
+    })
+
+    return ({
+      ...fixStatNames(table, table),
+      dataPoints: map(allDataPoints, dataPoint => fixStatNames(table, dataPoint)),
+    })
+  })
 }
