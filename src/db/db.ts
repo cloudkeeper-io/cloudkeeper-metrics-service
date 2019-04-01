@@ -17,6 +17,7 @@ export const config: MysqlConnectionOptions = {
   ],
   logging: true,
   synchronize: true,
+  timezone: 'Z',
   extra: {
     connectionLimit: 1,
   },

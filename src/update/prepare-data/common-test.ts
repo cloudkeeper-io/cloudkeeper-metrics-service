@@ -12,9 +12,9 @@ export const expectDataToBeConsistent = (lambdas, statNames, days, nameField, st
     expect(lambda.dataPoints).toEqual(expect.any(Array))
 
     if (days > 1) {
-      expect(lambda.dataPoints.length).toBeLessThanOrEqual(days)
+      expect(lambda.dataPoints.length).toBe(days)
     } else {
-      expect(lambda.dataPoints.length).toBeLessThanOrEqual(24)
+      expect(lambda.dataPoints.length).toBe(24)
     }
 
     // @ts-ignore

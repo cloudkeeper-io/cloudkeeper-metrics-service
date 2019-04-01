@@ -86,7 +86,7 @@ describe('lambda collectors', () => {
         codeSize: expect.any(String),
       })
 
-      expect(lambda.dataPoints.length).toBeLessThanOrEqual(30)
+      expect(lambda.dataPoints.length).toBe(30)
 
       lambda.dataPoints.forEach((dataPoint) => {
         expect(dataPoint).toEqual({
