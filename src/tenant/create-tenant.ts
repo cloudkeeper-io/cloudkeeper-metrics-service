@@ -16,6 +16,7 @@ export const handler = async (request) => {
     console.log('error setting up access for tenant ', err)
     return {
       status: 'FAILED',
+      error: 'KEYS_ISSUE',
     }
   }
 
