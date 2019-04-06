@@ -15,7 +15,7 @@ export const config: MysqlConnectionOptions = {
   entities: [
     ...map(entities),
   ],
-  logging: true,
+  logging: false,
   synchronize: true,
   timezone: 'Z',
   extra: {
