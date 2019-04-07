@@ -43,7 +43,45 @@ describe('create tenant', () => {
     expect(payload.isSetupCompleted).toBe(true)
   })
 
-  afterAll(async () => {
+  test('create tenant with the same name twice', async () => {
+    const response = await lambdaClient.invoke({
+      FunctionName: 'cloudkeeper-metrics-service-dev-create-tenant',
+      Payload: JSON.stringify({
+        userId: 'test@test.com',
+        provider: 'funcTest',
+        name: 'test tenant',
+        accessKey: 'AKIAIKQYZB6YL4KUKA4A',
+        secretKey: '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',
+        region: 'eu-central-1',
+      }),
+    }).promise()
+
+    const payload = JSON.parse(response.Payload!.toString())
+
+    tenantId = payload.id
+
+    expect(payload.id).toEqual(expect.any(String))
+    expect(payload.name).toBe('test tenant')
+    expect(payload.isSetupCompleted).toBe(true)
+
+    const response2 = await lambdaClient.invoke({
+      FunctionName: 'cloudkeeper-metrics-service-dev-create-tenant',
+      Payload: JSON.stringify({
+        userId: 'test@test.com',
+        provider: 'funcTest',
+        name: 'test tenant',
+        accessKey: 'AKIAIKQYZB6YL4KUKA4A',
+        secretKey: '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',
+        region: 'eu-central-1',
+      }),
+    }).promise()
+
+    const payload2 = JSON.parse(response2.Payload!.toString())
+
+    expect(payload2.errorMessage).toBe('Tenant name must be unique')
+  })
+
+  afterEach(async () => {
     await dynamoDb.delete({
       Key: {
         provider: 'funcTest',
