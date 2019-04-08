@@ -14,7 +14,6 @@ describe('create tenant', () => {
       Item: {
         provider: 'funcTest',
         id: 'test@test.com',
-        tenantIds: [],
       },
     }).promise()
   })
@@ -28,9 +27,6 @@ describe('create tenant', () => {
         userId: 'test@test.com',
         provider: 'funcTest',
         name: 'test tenant',
-        accessKey: 'AKIAIKQYZB6YL4KUKA4A',
-        secretKey: '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',
-        region: 'eu-central-1',
       }),
     }).promise()
 
@@ -40,7 +36,7 @@ describe('create tenant', () => {
 
     expect(payload.id).toEqual(expect.any(String))
     expect(payload.name).toBe('test tenant')
-    expect(payload.isSetupCompleted).toBe(true)
+    expect(payload.isSetupCompleted).toBe(false)
   })
 
   test('create tenant with the same name twice', async () => {
@@ -50,9 +46,6 @@ describe('create tenant', () => {
         userId: 'test@test.com',
         provider: 'funcTest',
         name: 'test tenant',
-        accessKey: 'AKIAIKQYZB6YL4KUKA4A',
-        secretKey: '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',
-        region: 'eu-central-1',
       }),
     }).promise()
 
@@ -62,7 +55,7 @@ describe('create tenant', () => {
 
     expect(payload.id).toEqual(expect.any(String))
     expect(payload.name).toBe('test tenant')
-    expect(payload.isSetupCompleted).toBe(true)
+    expect(payload.isSetupCompleted).toBe(false)
 
     const response2 = await lambdaClient.invoke({
       FunctionName: 'cloudkeeper-metrics-service-dev-create-tenant',
@@ -70,9 +63,6 @@ describe('create tenant', () => {
         userId: 'test@test.com',
         provider: 'funcTest',
         name: 'test tenant',
-        accessKey: 'AKIAIKQYZB6YL4KUKA4A',
-        secretKey: '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',
-        region: 'eu-central-1',
       }),
     }).promise()
 

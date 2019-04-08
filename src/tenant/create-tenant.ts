@@ -3,24 +3,13 @@ import * as AWS from 'aws-sdk'
 import { find } from 'lodash'
 import * as Lambda from 'aws-sdk/clients/lambda'
 
-import { checkAccess } from '../utils/lambda.util'
 import { listTenants } from './utils'
 
 const dynamoDb = new AWS.DynamoDB.DocumentClient({ apiVersion: '2012-08-10' })
 const lambda = new Lambda({ apiVersion: '2015-03-31' })
 
 export const handler = async (request) => {
-  const { accessKey, secretKey, region, name, userId, provider } = request
-
-  try {
-    await checkAccess(accessKey, secretKey, region)
-  } catch (err) {
-    console.log('error setting up access for tenant ', err)
-    return {
-      status: 'FAILED',
-      error: 'KEYS_ISSUE',
-    }
-  }
+  const { name, userId, provider } = request
 
   const tenants = await listTenants(userId, provider)
 
@@ -35,10 +24,7 @@ export const handler = async (request) => {
       provider: request.provider,
     },
     name,
-    isSetupCompleted: true,
-    accessKey,
-    secretKey,
-    region,
+    isSetupCompleted: false,
     createdAt: new Date().getTime(),
   }
 
