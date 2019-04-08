@@ -22,8 +22,8 @@ describe('lambda collectors', () => {
 
   it.each`
     tenantId        | daysAgo | groupDaily
-    ${'emarketeer'} | ${1}    | ${false}
-    ${'emarketeer'} | ${30}   | ${true}
+    ${'8719b290-66f2-4138-ab35-67a3350dfb75'} | ${1}    | ${false}
+    ${'8719b290-66f2-4138-ab35-67a3350dfb75'} | ${30}   | ${true}
   `('totals  - $daysAgo',
   async ({ tenantId, daysAgo, groupDaily }) => {
     const totals = await getTotals(tenantId, daysAgo, groupDaily)
@@ -41,7 +41,7 @@ describe('lambda collectors', () => {
   })
 
   test('slowest lambdas', async () => {
-    const lambdas = await getSlowestLambdas('emarketeer', 1)
+    const lambdas = await getSlowestLambdas('8719b290-66f2-4138-ab35-67a3350dfb75', 1)
 
     expect(lambdas).toBeTruthy()
 
@@ -69,7 +69,7 @@ describe('lambda collectors', () => {
   })
 
   test('slowest lambdas 30 days', async () => {
-    const lambdas = await getSlowestLambdas('emarketeer', 30, true)
+    const lambdas = await getSlowestLambdas('8719b290-66f2-4138-ab35-67a3350dfb75', 30, true)
 
     expect(lambdas).toBeTruthy()
     expect(lambdas.length).toBe(5)
@@ -109,7 +109,7 @@ describe('lambda collectors', () => {
   }
 
   test('most invoked lambdas', async () => {
-    const lambdas = await getMostInvokedLambdas('emarketeer', 1)
+    const lambdas = await getMostInvokedLambdas('8719b290-66f2-4138-ab35-67a3350dfb75', 1)
 
     expectLambdaFields(lambdas)
 
@@ -117,7 +117,7 @@ describe('lambda collectors', () => {
   })
 
   test('most invoked lambdas - 30 days', async () => {
-    const lambdas = await getMostInvokedLambdas('emarketeer', 30, true)
+    const lambdas = await getMostInvokedLambdas('8719b290-66f2-4138-ab35-67a3350dfb75', 30, true)
 
     expect(lambdas).toBeTruthy()
 
@@ -127,7 +127,7 @@ describe('lambda collectors', () => {
   })
 
   test('most errors lambdas', async () => {
-    const lambdas = await getMostErrorsLambdas('emarketeer', 1)
+    const lambdas = await getMostErrorsLambdas('8719b290-66f2-4138-ab35-67a3350dfb75', 1)
 
     expectLambdaFields(lambdas)
 
@@ -135,7 +135,7 @@ describe('lambda collectors', () => {
   })
 
   test('most errors lambdas - 30 days', async () => {
-    const lambdas = await getMostErrorsLambdas('emarketeer', 30, true)
+    const lambdas = await getMostErrorsLambdas('8719b290-66f2-4138-ab35-67a3350dfb75', 30, true)
 
     expectLambdaFields(lambdas)
 
@@ -143,7 +143,7 @@ describe('lambda collectors', () => {
   })
 
   test('most expensive lambdas', async () => {
-    const lambdas = await getMostExpensiveLambdas('emarketeer', 1)
+    const lambdas = await getMostExpensiveLambdas('8719b290-66f2-4138-ab35-67a3350dfb75', 1)
 
     expectLambdaFields(lambdas)
 
@@ -151,7 +151,7 @@ describe('lambda collectors', () => {
   })
 
   test('most expensive lambdas - 30 days', async () => {
-    const lambdas = await getMostExpensiveLambdas('emarketeer', 30, true)
+    const lambdas = await getMostExpensiveLambdas('8719b290-66f2-4138-ab35-67a3350dfb75', 30, true)
 
     expectLambdaFields(lambdas)
 

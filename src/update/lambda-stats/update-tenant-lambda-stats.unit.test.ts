@@ -14,10 +14,9 @@ describe('Update Lambda Stats', async () => {
   // TODO: refactor to be a functional test
   test.skip('happy path', async () => {
     await handler({
-      accessKey: 'AKIAJI7Y7EUA4WTJYTUA',
       region: 'eu-west-1',
-      secretKey: '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',
-      id: 'emarketeer',
+      roleArn: 'arn:aws:iam::377460527677:role/CloudkeeperDelegationRole',
+      id: '8719b290-66f2-4138-ab35-67a3350dfb75',
     })
   })
 })

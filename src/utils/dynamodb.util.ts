@@ -2,9 +2,11 @@
 import * as AWS from 'aws-sdk'
 import { get } from 'lodash'
 import { DateTime } from 'luxon'
+import { getAwsCredentials } from './aws.utils'
 
-export const listTables = async (tenantId, accessKeyId, secretAccessKey, region) => {
-  const dynamoDb = new AWS.DynamoDB({ accessKeyId, secretAccessKey, region })
+export const listTables = async (tenantId, roleArn, region) => {
+  const credentials = await getAwsCredentials(tenantId, roleArn)
+  const dynamoDb = new AWS.DynamoDB({ ...credentials, region })
 
   const tableNamesResponse = await dynamoDb.listTables().promise()
 
@@ -49,8 +51,9 @@ export const createDynamoMetric = (tableName, metricName, stats, startTime, endT
 })
 
 
-export const getTableMetrics = async (tableName, accessKeyId, secretAccessKey, region) => {
-  const cloudwatch = new AWS.CloudWatch({ accessKeyId, secretAccessKey, region })
+export const getTableMetrics = async (tableName, tenantId, roleArn, region) => {
+  const credentials = await getAwsCredentials(tenantId, roleArn)
+  const cloudwatch = new AWS.CloudWatch({ ...credentials, region })
 
   const startTime = DateTime.utc().startOf('hour').minus({ days: 30 }).toJSDate()
   const endTime = DateTime.utc().startOf('hour').toJSDate()

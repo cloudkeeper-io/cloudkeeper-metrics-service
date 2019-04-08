@@ -3,9 +3,11 @@ import * as AWS from 'aws-sdk'
 import { map } from 'lodash'
 import { DateTime } from 'luxon'
 import { LambdaConfiguration } from '../entity'
+import { getAwsCredentials } from './aws.utils'
 
-export const listAllLambdas = async (tenantId, accessKeyId, secretAccessKey, region) => {
-  const lambdaClient = new AWS.Lambda({ accessKeyId, secretAccessKey, region })
+export const listAllLambdas = async (tenantId, roleArn, region) => {
+  const credentials = await getAwsCredentials(tenantId, roleArn)
+  const lambdaClient = new AWS.Lambda({ ...credentials, region })
 
   const lambdas: LambdaConfiguration[] = []
 
@@ -48,8 +50,8 @@ export const createLambdaMetric = (lambdaName, metricName, stats, startTime, end
   ],
 })
 
-export const getLambdaMetrics = async (lambdaName, accessKeyId, secretAccessKey, region) => {
-  const cloudwatch = new AWS.CloudWatch({ accessKeyId, secretAccessKey, region })
+export const getLambdaMetrics = async (lambdaName, credentials, region) => {
+  const cloudwatch = new AWS.CloudWatch({ ...credentials, region })
 
   const startTime = DateTime.utc().startOf('hour').minus({ days: 30 }).toJSDate()
   const endTime = DateTime.utc().startOf('hour').toJSDate()
@@ -63,8 +65,9 @@ export const getLambdaMetrics = async (lambdaName, accessKeyId, secretAccessKey,
   return Promise.all(requests.map(request => cloudwatch.getMetricStatistics(request).promise()))
 }
 
-export const checkAccess = async (accessKeyId, secretAccessKey, region) => {
-  const lambdaClient = new AWS.Lambda({ accessKeyId, secretAccessKey, region })
+export const checkAccess = async (tenantId, roleArn, region) => {
+  const credentials = await getAwsCredentials(tenantId, roleArn)
+  const lambdaClient = new AWS.Lambda({ ...credentials, region })
 
   const listResult = await lambdaClient.listFunctions().promise()
 
@@ -74,7 +77,7 @@ export const checkAccess = async (accessKeyId, secretAccessKey, region) => {
     }
   }
 
-  await getLambdaMetrics(listResult.Functions[0].FunctionName, accessKeyId, secretAccessKey, region)
+  await getLambdaMetrics(listResult.Functions[0].FunctionName, credentials, region)
 
   return {
     functions: listResult.Functions.length,

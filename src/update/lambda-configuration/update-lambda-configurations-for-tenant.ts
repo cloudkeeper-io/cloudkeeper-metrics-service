@@ -13,7 +13,7 @@ export const handler = async (tenant) => {
 
   console.log('Connected to db')
 
-  const lambdas = await listAllLambdas(tenant.id, tenant.accessKey, tenant.secretKey, tenant.region)
+  const lambdas = await listAllLambdas(tenant.id, tenant.roleArn, tenant.region)
 
   console.log(`Tenant has ${lambdas.length} lambdas`)
 

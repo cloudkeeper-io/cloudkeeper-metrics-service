@@ -14,7 +14,7 @@ export const handler = async (tenant) => {
 
   console.log('Connected to db')
 
-  const tables = await listTables(tenant.id, tenant.accessKey, tenant.secretKey, tenant.region)
+  const tables = await listTables(tenant.id, tenant.roleArn, tenant.region)
 
   console.log(`Tenant has ${tables.length} tables`)
 

@@ -4,11 +4,14 @@ import * as AWS from 'aws-sdk'
 import { LambdaConfiguration, LambdaStats } from '../../entity'
 import { getConnection } from '../../db/db'
 import { getLambdaMetrics } from '../../utils/lambda.util'
+import { getAwsCredentials } from '../../utils/aws.utils'
 
 const sns = new AWS.SNS({ apiVersion: '2010-03-31' })
 
 export const handler = async (tenant) => {
   const connection = await getConnection()
+
+  console.log(`Working on tenant ${tenant.id}`)
 
   const lambdas = await connection.getRepository(LambdaConfiguration).find({
     tenantId: tenant.id,
@@ -18,12 +21,13 @@ export const handler = async (tenant) => {
 
   const chunks = chunk(lambdas, 10)
 
+  const credentials = await getAwsCredentials(tenant.id, tenant.roleArn)
+
   for (const lambdasChunk of chunks) {
     const batchData: any[] = flatten(await Promise.all(map(lambdasChunk, async (lambdaConfig) => {
       const [invocationStats, errorStats, durationStats] = await getLambdaMetrics(
         lambdaConfig.name,
-        tenant.accessKey,
-        tenant.secretKey,
+        credentials,
         tenant.region,
       )
 

@@ -39,3 +39,9 @@
   Action:
     - sns:*
   Resource: "*"
+
+- Effect: Allow
+  Action:
+    - sts:assumeRole
+  Resource:
+    - "*"

@@ -1,6 +1,6 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
 import * as Lambda from 'aws-sdk/clients/lambda'
-import { map } from 'lodash'
+import { map, filter } from 'lodash'
 import { scanForArray } from '../../utils/dynamodb'
 
 const lambda = new Lambda({ apiVersion: '2015-03-31' })
@@ -10,10 +10,12 @@ export const handler = async () => {
     TableName: `${process.env.stage}-cloudkeeper-tenants`,
   })
 
-  console.log(`Updating ${tenants.length} tenants`)
+  const setupTenants = filter(tenants, { isSetupCompleted: true })
+
+  console.log(`Updating ${setupTenants.length} tenants`)
 
   await Promise.all(
-    map(tenants, tenant => lambda.invoke({
+    map(setupTenants, tenant => lambda.invoke({
       FunctionName: `cloudkeeper-metrics-service-${process.env.stage}-update-tenant-lambdas`,
       InvocationType: 'Event',
       LogType: 'None',

@@ -10,6 +10,8 @@ const sns = new AWS.SNS({ apiVersion: '2010-03-31' })
 export const handler = async (tenant) => {
   const connection = await getConnection()
 
+  console.log(`Working on tenant ${tenant.id}`)
+
   const tables = await connection.getRepository(DynamoTable).find({
     tenantId: tenant.id,
   })
@@ -29,8 +31,8 @@ export const handler = async (tenant) => {
         writeThrottleStats,
       ] = await getTableMetrics(
         table.name,
-        tenant.accessKey,
-        tenant.secretKey,
+        tenant.id,
+        tenant.roleArn,
         tenant.region,
       )
 

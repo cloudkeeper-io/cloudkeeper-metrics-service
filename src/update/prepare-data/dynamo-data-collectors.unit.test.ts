@@ -75,7 +75,7 @@ describe('dynamo collectors', () => {
   })
 
   test('most throttled tables - 24 hours', async () => {
-    const tables = await getMostThrottledTables('4eab2bfc-8e8f-49e0-b12c-7a3773007368', 1)
+    const tables = await getMostThrottledTables('8719b290-66f2-4138-ab35-67a3350dfb75', 1)
 
     expectDynamoTableFields(tables)
 
@@ -83,7 +83,7 @@ describe('dynamo collectors', () => {
   })
 
   test('most throttled tables - 30 days', async () => {
-    const tables = await getMostThrottledTables('4eab2bfc-8e8f-49e0-b12c-7a3773007368', 30, true)
+    const tables = await getMostThrottledTables('8719b290-66f2-4138-ab35-67a3350dfb75', 30, true)
 
     expectDynamoTableFields(tables)
 
@@ -137,13 +137,13 @@ describe('dynamo collectors', () => {
   }
 
   test('most expensive tables - 24 hours', async () => {
-    const tables = await getMostExpensiveTables('4eab2bfc-8e8f-49e0-b12c-7a3773007368', 'eu-west-1', 1)
+    const tables = await getMostExpensiveTables('8719b290-66f2-4138-ab35-67a3350dfb75', 'eu-west-1', 1)
 
     expectExpensiveDataToBeConsistent(tables, 24)
   })
 
   test('most expensive tables - 30 days', async () => {
-    const tables = await getMostExpensiveTables('4eab2bfc-8e8f-49e0-b12c-7a3773007368', 'eu-west-1', 30, true)
+    const tables = await getMostExpensiveTables('8719b290-66f2-4138-ab35-67a3350dfb75', 'eu-west-1', 30, true)
 
     expect(tables).toBeTruthy()
 
