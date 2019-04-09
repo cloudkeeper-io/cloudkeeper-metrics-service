@@ -1,4 +1,4 @@
-import { chunk, flatten, map, keyBy } from 'lodash'
+import { chunk, flatten, map, keyBy, groupBy } from 'lodash'
 // eslint-disable-next-line import/no-extraneous-dependencies
 import * as AWS from 'aws-sdk'
 import { LambdaConfiguration, LambdaStats } from '../../entity'
@@ -7,6 +7,44 @@ import { getLambdaMetrics } from '../../utils/lambda.util'
 import { getAwsCredentials } from '../../utils/aws.utils'
 
 const sns = new AWS.SNS({ apiVersion: '2010-03-31' })
+
+const updateLambdasChunk = async (lambdasChunk, credentials, tenant, connection) => {
+  const batchData: any[] = flatten(await Promise.all(map(lambdasChunk, async (lambdaConfig) => {
+    const [invocationStats, errorStats, durationStats] = await getLambdaMetrics(
+      lambdaConfig.name,
+      credentials,
+      tenant.region,
+    )
+
+    const errorDataMap = keyBy(errorStats.Datapoints, dataPoint => dataPoint.Timestamp!.getTime())
+    const durationDataMap = keyBy(durationStats.Datapoints, dataPoint => dataPoint.Timestamp!.getTime())
+
+    return map(invocationStats.Datapoints!, (datapoint) => {
+      // @ts-ignore
+      const errorEntry = errorDataMap[datapoint.Timestamp.getTime()]
+      // @ts-ignore
+      const durationEntry = durationDataMap[datapoint.Timestamp.getTime()]
+
+      return ({
+        tenantId: tenant.id,
+        lambdaName: lambdaConfig.name,
+        region: lambdaConfig.region,
+        dateTime: datapoint.Timestamp!,
+        invocations: datapoint.Sum,
+        errors: errorEntry.Sum,
+        maxDuration: durationEntry.Maximum,
+        averageDuration: durationEntry.Average,
+      })
+    })
+  })))
+
+  await connection.createQueryBuilder()
+    .insert()
+    .into(LambdaStats)
+    .values(batchData)
+    .orIgnore()
+    .execute()
+}
 
 export const handler = async (tenant) => {
   const connection = await getConnection()
@@ -19,45 +57,20 @@ export const handler = async (tenant) => {
 
   console.log(`Updating ${lambdas.length} lambdas`)
 
-  const chunks = chunk(lambdas, 10)
+  const lambdasMap = groupBy(lambdas, 'region')
 
-  const credentials = await getAwsCredentials(tenant.id, tenant.roleArn)
+  for (const region of Object.keys(lambdasMap)) {
+    const regionLambdas = lambdasMap[region]
 
-  for (const lambdasChunk of chunks) {
-    const batchData: any[] = flatten(await Promise.all(map(lambdasChunk, async (lambdaConfig) => {
-      const [invocationStats, errorStats, durationStats] = await getLambdaMetrics(
-        lambdaConfig.name,
-        credentials,
-        tenant.region,
-      )
+    console.log(`Tenant ${tenant.id} has ${regionLambdas.length} in ${region}`)
 
-      const errorDataMap = keyBy(errorStats.Datapoints, dataPoint => dataPoint.Timestamp!.getTime())
-      const durationDataMap = keyBy(durationStats.Datapoints, dataPoint => dataPoint.Timestamp!.getTime())
+    const chunks = chunk(regionLambdas, 10)
 
-      return map(invocationStats.Datapoints!, (datapoint) => {
-        // @ts-ignore
-        const errorEntry = errorDataMap[datapoint.Timestamp.getTime()]
-        // @ts-ignore
-        const durationEntry = durationDataMap[datapoint.Timestamp.getTime()]
+    const credentials = await getAwsCredentials(tenant.id, tenant.roleArn)
 
-        return ({
-          tenantId: tenant.id,
-          lambdaName: lambdaConfig.name,
-          dateTime: datapoint.Timestamp!,
-          invocations: datapoint.Sum,
-          errors: errorEntry.Sum,
-          maxDuration: durationEntry.Maximum,
-          averageDuration: durationEntry.Average,
-        })
-      })
-    })))
-
-    await connection.createQueryBuilder()
-      .insert()
-      .into(LambdaStats)
-      .values(batchData)
-      .orIgnore()
-      .execute()
+    for (const lambdasChunk of chunks) {
+      await updateLambdasChunk(lambdasChunk, credentials, tenant, connection)
+    }
   }
 
   await sns.publish({

@@ -4,6 +4,7 @@ import { flatMap } from 'lodash'
 import { getConnection } from '../../db/db'
 import { listTables } from '../../utils/dynamodb.util'
 import { DynamoTable } from '../../entity'
+import { getAwsRegions } from '../../utils/aws.utils'
 
 const lambda = new Lambda({ apiVersion: '2015-03-31' })
 
@@ -14,35 +15,38 @@ export const handler = async (tenant) => {
 
   console.log('Connected to db')
 
-  const tables = await listTables(tenant.id, tenant.roleArn, tenant.region)
+  const regions = await getAwsRegions()
 
-  console.log(`Tenant has ${tables.length} tables`)
+  for (const region of regions) {
+    const tables = await listTables(tenant.id, tenant.roleArn, region)
 
-  const query = connection.createQueryBuilder()
-    .insert()
-    .into(DynamoTable)
-    .values(tables)
-    .getQuery()
-    .replace('INSERT INTO', 'REPLACE INTO')
+    console.log(`Tenant has ${tables.length} tables in ${region}`)
 
-  const params = flatMap(tables, table => [
-    table.tenantId,
-    table.name,
-    table.billingMode,
-    table.sizeBytes,
-    table.items,
-  ])
+    const query = connection.createQueryBuilder()
+      .insert()
+      .into(DynamoTable)
+      .values(tables)
+      .getQuery()
+      .replace('INSERT INTO', 'REPLACE INTO')
 
-  await connection.query(query, params)
+    const params = flatMap(tables, table => [
+      table.tenantId,
+      table.name,
+      region,
+      table.billingMode,
+      table.sizeBytes,
+      table.items,
+    ])
 
-  console.log('Finished updating lambdas')
-
-  if (tenant.triggerStatsUpdate) {
-    await lambda.invoke({
-      FunctionName: `cloudkeeper-metrics-service-${process.env.stage}-update-tenant-dynamo-stats`,
-      InvocationType: 'Event',
-      LogType: 'None',
-      Payload: JSON.stringify(tenant),
-    }).promise()
+    await connection.query(query, params)
   }
+
+  console.log('Finished updating dynamo tables')
+
+  await lambda.invoke({
+    FunctionName: `cloudkeeper-metrics-service-${process.env.stage}-update-tenant-dynamo-stats`,
+    InvocationType: 'Event',
+    LogType: 'None',
+    Payload: JSON.stringify(tenant),
+  }).promise()
 }

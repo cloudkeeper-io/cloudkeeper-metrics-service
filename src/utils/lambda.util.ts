@@ -19,6 +19,7 @@ export const listAllLambdas = async (tenantId, roleArn, region) => {
     const lambdaDatas: LambdaConfiguration[] = map(listResult.Functions, lambdaData => ({
       tenantId,
       name: lambdaData.FunctionName!,
+      region,
       runtime: lambdaData.Runtime!,
       codeSize: lambdaData.CodeSize!,
       timeout: lambdaData.Timeout!,

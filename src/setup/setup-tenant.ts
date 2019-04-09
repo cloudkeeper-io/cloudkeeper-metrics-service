@@ -43,20 +43,14 @@ export const handler = async (request) => {
       FunctionName: `cloudkeeper-metrics-service-${process.env.stage}-update-tenant-lambdas`,
       InvocationType: 'Event',
       LogType: 'None',
-      Payload: JSON.stringify({
-        triggerStatsUpdate: true,
-        ...tenant,
-      }),
+      Payload: JSON.stringify(tenant),
     }).promise()
 
     await lambda.invoke({
       FunctionName: `cloudkeeper-metrics-service-${process.env.stage}-update-tenant-dynamo-tables`,
       InvocationType: 'Event',
       LogType: 'None',
-      Payload: JSON.stringify({
-        triggerStatsUpdate: true,
-        ...tenant,
-      }),
+      Payload: JSON.stringify(tenant),
     }).promise()
 
     return {

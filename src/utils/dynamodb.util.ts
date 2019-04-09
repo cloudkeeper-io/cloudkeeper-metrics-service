@@ -24,6 +24,7 @@ export const listTables = async (tenantId, roleArn, region) => {
     tables.push({
       tenantId,
       name: table.Table!.TableName,
+      region,
       billingMode: get(table, 'Table.BillingModeSummary.BillingMode', 'PROVISIONED'),
       sizeBytes: table.Table!.TableSizeBytes,
       items: table.Table!.ItemCount,

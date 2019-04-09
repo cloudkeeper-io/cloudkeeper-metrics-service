@@ -68,8 +68,6 @@ functions:
 
   trigger-lambda-stats-update:
     handler: src/update/lambda-stats/trigger-lambda-stats-update.handler
-    events:
-      - schedule: cron(5 * ? * * *)
 
   update-tenant-lambda-stats:
     timeout: 300
@@ -96,8 +94,6 @@ functions:
 
   trigger-dynamo-stats-update:
     handler: src/update/dynamodb-table-stats/trigger-dynamo-stats-update.handler
-    events:
-      - schedule: cron(5 * ? * * *)
 
   update-tenant-dynamo-stats:
     timeout: 300

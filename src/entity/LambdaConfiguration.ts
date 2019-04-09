@@ -8,6 +8,9 @@ export class LambdaConfiguration {
   @PrimaryColumn({ type: 'varchar', length: 64 })
   name: string
 
+  @PrimaryColumn({ type: 'varchar', length: 64 })
+  region: string
+
   @Column({ type: 'varchar', length: 64 })
   runtime: string
 

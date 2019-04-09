@@ -8,6 +8,9 @@ export class DynamoTableStats {
   @PrimaryColumn({ type: 'varchar', length: 128 })
   name: string
 
+  @PrimaryColumn({ type: 'varchar', length: 64 })
+  region: string
+
   @PrimaryColumn({ type: 'datetime' })
   dateTime: Date
 

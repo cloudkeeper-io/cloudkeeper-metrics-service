@@ -4,6 +4,7 @@ import { flatMap } from 'lodash'
 import { getConnection } from '../../db/db'
 import { listAllLambdas } from '../../utils/lambda.util'
 import { LambdaConfiguration } from '../../entity'
+import { getAwsRegions } from '../../utils/aws.utils'
 
 const lambdaService = new Lambda({ apiVersion: '2015-03-31' })
 
@@ -13,36 +14,39 @@ export const handler = async (tenant) => {
 
   console.log('Connected to db')
 
-  const lambdas = await listAllLambdas(tenant.id, tenant.roleArn, tenant.region)
+  const regions = await getAwsRegions()
 
-  console.log(`Tenant has ${lambdas.length} lambdas`)
+  for (const region of regions) {
+    const lambdas = await listAllLambdas(tenant.id, tenant.roleArn, region)
 
-  const query = connection.createQueryBuilder()
-    .insert()
-    .into(LambdaConfiguration)
-    .values(lambdas)
-    .getQuery()
-    .replace('INSERT INTO', 'REPLACE INTO')
+    console.log(`Tenant has ${lambdas.length} lambdas in ${region}`)
 
-  const params = flatMap(lambdas, lambda => [
-    lambda.tenantId,
-    lambda.name,
-    lambda.runtime,
-    lambda.codeSize,
-    lambda.timeout,
-    lambda.size,
-  ])
+    const query = connection.createQueryBuilder()
+      .insert()
+      .into(LambdaConfiguration)
+      .values(lambdas)
+      .getQuery()
+      .replace('INSERT INTO', 'REPLACE INTO')
 
-  await connection.query(query, params)
+    const params = flatMap(lambdas, lambda => [
+      lambda.tenantId,
+      lambda.name,
+      lambda.region,
+      lambda.runtime,
+      lambda.codeSize,
+      lambda.timeout,
+      lambda.size,
+    ])
+
+    await connection.query(query, params)
+  }
 
   console.log('Finished updating lambdas')
 
-  if (tenant.triggerStatsUpdate) {
-    await lambdaService.invoke({
-      FunctionName: `cloudkeeper-metrics-service-${process.env.stage}-update-tenant-lambda-stats`,
-      InvocationType: 'Event',
-      LogType: 'None',
-      Payload: JSON.stringify(tenant),
-    }).promise()
-  }
+  await lambdaService.invoke({
+    FunctionName: `cloudkeeper-metrics-service-${process.env.stage}-update-tenant-lambda-stats`,
+    InvocationType: 'Event',
+    LogType: 'None',
+    Payload: JSON.stringify(tenant),
+  }).promise()
 }

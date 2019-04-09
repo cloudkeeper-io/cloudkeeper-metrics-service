@@ -8,6 +8,9 @@ export class LambdaStats {
   @PrimaryColumn({ type: 'varchar', length: 64 })
   lambdaName: string
 
+  @PrimaryColumn({ type: 'varchar', length: 64 })
+  region: string
+
   @PrimaryColumn({ type: 'datetime' })
   dateTime: Date
 

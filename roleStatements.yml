@@ -45,3 +45,8 @@
     - sts:assumeRole
   Resource:
     - "*"
+
+- Effect: Allow
+  Action:
+    - "ec2:DescribeRegions"
+  Resource: "*"
