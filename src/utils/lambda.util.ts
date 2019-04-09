@@ -65,9 +65,9 @@ export const getLambdaMetrics = async (lambdaName, credentials, region) => {
   return Promise.all(requests.map(request => cloudwatch.getMetricStatistics(request).promise()))
 }
 
-export const checkAccess = async (tenantId, roleArn, region) => {
+export const checkAccess = async (tenantId, roleArn) => {
   const credentials = await getAwsCredentials(tenantId, roleArn)
-  const lambdaClient = new AWS.Lambda({ ...credentials, region })
+  const lambdaClient = new AWS.Lambda({ ...credentials, region: 'us-east-1' })
 
   const listResult = await lambdaClient.listFunctions().promise()
 
@@ -77,7 +77,7 @@ export const checkAccess = async (tenantId, roleArn, region) => {
     }
   }
 
-  await getLambdaMetrics(listResult.Functions[0].FunctionName, credentials, region)
+  await getLambdaMetrics(listResult.Functions[0].FunctionName, credentials, 'us-east-1')
 
   return {
     functions: listResult.Functions.length,
