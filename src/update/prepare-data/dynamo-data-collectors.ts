@@ -1,35 +1,39 @@
-import { groupBy, map } from 'lodash'
+import { groupBy, flatMap, map, times, constant } from 'lodash'
 
 import { getConnection } from '../../db/db'
 import { fillEmptyDataPoints, getDateCondition } from './common'
 
-const dataPointsQuery = (columns, groupDaily) => {
+const dataPointsQuery = (columns, groupDaily, tablesNum) => {
   const dateTimeColumn = groupDaily ? 'DATE(dateTime) as dateTime' : 'dateTime'
 
-  return 'select name, '
+  return 'select name, region, '
     + columns.join(', ')
     + ', '
     + dateTimeColumn
     + ' from DynamoTableStats '
     + 'where tenantId = ? and '
     + getDateCondition(groupDaily)
-    + ' and name in (?) '
-    + (groupDaily ? ' group by name, DATE(dateTime) ' : '')
-    + 'order by ' + (groupDaily ? 'DATE(dateTime)' : 'dateTime') + ' asc'
+    + ' and ('
+    + times(tablesNum, constant('(name = ? and region = ?)')).join(' or ')
+    + ')'
+    + (groupDaily ? ' group by name, region, DATE(dateTime) ' : '')
+    + ' order by ' + (groupDaily ? 'DATE(dateTime)' : 'dateTime') + ' asc'
 }
 
 export const getMostReadTables = async (tenantId, daysAgo, groupDaily = false) => {
   const connection = await getConnection()
 
-  const tablesQuery = 'select DynamoTableStats.name, sum (consumedRead) as `consumedRead`, '
+  const tablesQuery = 'select DynamoTableStats.name, DynamoTableStats.region as region, '
+    + 'sum (consumedRead) as `consumedRead`, '
     + 'sum(consumedRead) / (? * 3600 * 24) as `averageConsumedRead`,'
     + 'sum (provisionedRead) * 3600 as `provisionedRead`, items, billingMode, sizeBytes '
     + 'from DynamoTableStats '
     + 'join DynamoTable on (DynamoTableStats.name = DynamoTable.name '
-    + 'and DynamoTableStats.tenantId = DynamoTable.tenantId) '
+    + 'and DynamoTableStats.tenantId = DynamoTable.tenantId '
+    + 'and DynamoTableStats.region = DynamoTable.region) '
     + 'where DynamoTableStats.tenantId = ? and '
     + getDateCondition(groupDaily)
-    + 'group by name '
+    + 'group by name, region '
     + 'having consumedRead > 0 '
     + 'order by `consumedRead` desc '
     + 'limit 5'
@@ -45,19 +49,20 @@ export const getMostReadTables = async (tenantId, daysAgo, groupDaily = false) =
     : ['consumedRead as `consumedRead`', 'provisionedRead * 3600 as `provisionedRead`']
 
   const dataPoints = await connection.query(
-    dataPointsQuery(columns, groupDaily),
-    [tenantId, daysAgo, map(tables, 'name')],
+    dataPointsQuery(columns, groupDaily, tables.length),
+    [tenantId, daysAgo, ...flatMap(tables, table => [table.name, table.region])],
   )
 
-  const dataPointsMap = groupBy(dataPoints, 'name')
+  const dataPointsMap = groupBy(dataPoints, dataPoint => `${dataPoint.name} ${dataPoint.region}`)
 
   return map(tables, (table) => {
-    const tableDataPoints = dataPointsMap[table.name]
+    const tableDataPoints = dataPointsMap[`${table.name} ${table.region}`]
 
     const allDataPoints = fillEmptyDataPoints(tableDataPoints, groupDaily, daysAgo, {
       consumedRead: '0',
       provisionedRead: '0',
       name: table.name,
+      region: table.region,
     })
 
     return ({
@@ -71,11 +76,13 @@ export const getMostWritesTables = async (tenantId, daysAgo, groupDaily = false)
   const connection = await getConnection()
 
   const tablesQuery = 'select DynamoTableStats.name, sum (consumedWrite) as `consumedWrite`,'
+    + 'DynamoTableStats.region as region, '
     + 'sum(consumedWrite) / (? * 3600 * 24) as `averageConsumedWrite`,'
     + 'sum (provisionedWrite) * 3600 as `provisionedWrite`, items, billingMode, sizeBytes '
     + 'from DynamoTableStats '
     + 'join DynamoTable on (DynamoTableStats.name = DynamoTable.name '
-    + 'and DynamoTableStats.tenantId = DynamoTable.tenantId) '
+    + 'and DynamoTableStats.tenantId = DynamoTable.tenantId '
+    + 'and DynamoTableStats.region = DynamoTable.region) '
     + 'where DynamoTableStats.tenantId = ? and '
     + getDateCondition(groupDaily)
     + 'group by name '
@@ -94,19 +101,20 @@ export const getMostWritesTables = async (tenantId, daysAgo, groupDaily = false)
     : ['consumedWrite', 'provisionedWrite * 3600 as `provisionedWrite`']
 
   const dataPoints = await connection.query(
-    dataPointsQuery(columns, groupDaily),
-    [tenantId, daysAgo, map(tables, 'name')],
+    dataPointsQuery(columns, groupDaily, tables.length),
+    [tenantId, daysAgo, ...flatMap(tables, table => [table.name, table.region])],
   )
 
-  const dataPointsMap = groupBy(dataPoints, 'name')
+  const dataPointsMap = groupBy(dataPoints, dataPoint => `${dataPoint.name} ${dataPoint.region}`)
 
   return map(tables, (table) => {
-    const tableDataPoints = dataPointsMap[table.name]
+    const tableDataPoints = dataPointsMap[`${table.name} ${table.region}`]
 
     const allDataPoints = fillEmptyDataPoints(tableDataPoints, groupDaily, daysAgo, {
       consumedWrite: '0',
       provisionedWrite: '0',
       name: table.name,
+      region: table.region,
     })
 
     return ({
@@ -120,6 +128,7 @@ export const getMostThrottledTables = async (tenantId, daysAgo, groupDaily = fal
   const connection = await getConnection()
 
   const tablesQuery = 'select DynamoTableStats.name, sum (throttledReads + throttledWrites) as `throttledRequests`, '
+    + 'DynamoTableStats.region as region, '
     + 'sum (throttledReads) as `throttledReads`, '
     + 'sum (throttledWrites) as `throttledWrites`, items, billingMode, sizeBytes '
     + 'from DynamoTableStats '
@@ -151,20 +160,21 @@ export const getMostThrottledTables = async (tenantId, daysAgo, groupDaily = fal
     ]
 
   const dataPoints = await connection.query(
-    dataPointsQuery(columns, groupDaily),
-    [tenantId, daysAgo, map(tables, 'name')],
+    dataPointsQuery(columns, groupDaily, tables.length),
+    [tenantId, daysAgo, ...flatMap(tables, table => [table.name, table.region])],
   )
 
-  const dataPointsMap = groupBy(dataPoints, 'name')
+  const dataPointsMap = groupBy(dataPoints, dataPoint => `${dataPoint.name} ${dataPoint.region}`)
 
   return map(tables, (table) => {
-    const tableDataPoints = dataPointsMap[table.name]
+    const tableDataPoints = dataPointsMap[`${table.name} ${table.region}`]
 
     const allDataPoints = fillEmptyDataPoints(tableDataPoints, groupDaily, daysAgo, {
       throttledReads: '0',
       throttledWrites: '0',
       throttledRequests: '0',
       name: table.name,
+      region: table.region,
     })
 
     return ({
@@ -193,11 +203,12 @@ const fixStatNames = (table, entity): any => {
   return fixedEntity
 }
 
-export const getMostExpensiveTables = async (tenantId, region, daysAgo, groupDaily = false) => {
+export const getMostExpensiveTables = async (tenantId, daysAgo, groupDaily = false) => {
   const connection = await getConnection()
 
   const tablesQuery = `
       select DynamoTableStats.name,
+         DynamoTable.region,
          DynamoTable.billingMode,
          sizeBytes,
          items,
@@ -210,13 +221,16 @@ export const getMostExpensiveTables = async (tenantId, region, daysAgo, groupDai
          avg(provisionedRead) as readStat,
          avg(provisionedWrite) as writeStat
   from DynamoTableStats
-  join DynamoTable on (DynamoTable.name = DynamoTableStats.name and DynamoTable.tenantId = DynamoTableStats.tenantId)
-  join DynamoStoragePrice on DynamoStoragePrice.region = ?
-  join DynamoProvisionedPrice on DynamoProvisionedPrice.region = ?
+  join DynamoTable on (DynamoTable.name = DynamoTableStats.name and 
+                       DynamoTable.tenantId = DynamoTableStats.tenantId and 
+                       DynamoTable.region = DynamoTableStats.region)
+  join DynamoStoragePrice on DynamoStoragePrice.region = DynamoTable.region
+  join DynamoProvisionedPrice on DynamoProvisionedPrice.region = DynamoTable.region
   where billingMode = 'PROVISIONED' and DynamoTable.tenantId = ? and ${getDateCondition(groupDaily)}
   group by DynamoTableStats.name
   UNION ALL
   select DynamoTableStats.name,
+         DynamoTable.region,
          DynamoTable.billingMode,
          sizeBytes,
          items,
@@ -230,9 +244,11 @@ export const getMostExpensiveTables = async (tenantId, region, daysAgo, groupDai
          sum(consumedWrite) as writeStat
   from DynamoTableStats
         join DynamoTable 
-          on (DynamoTable.name = DynamoTableStats.name and DynamoTable.tenantId = DynamoTableStats.tenantId)
-        join DynamoStoragePrice on DynamoStoragePrice.region = ?
-        join DynamoPerRequestPrice on DynamoPerRequestPrice.region = ?
+          on (DynamoTable.name = DynamoTableStats.name and 
+                DynamoTable.tenantId = DynamoTableStats.tenantId and 
+                DynamoTable.region = DynamoTableStats.region)
+        join DynamoStoragePrice on DynamoStoragePrice.region = DynamoTable.region
+        join DynamoPerRequestPrice on DynamoPerRequestPrice.region = DynamoTable.region
   where billingMode = 'PAY_PER_REQUEST' and DynamoTable.tenantId = ? and ${getDateCondition(groupDaily)}
   group by DynamoTableStats.name
   order by totalPrice desc
@@ -241,11 +257,12 @@ export const getMostExpensiveTables = async (tenantId, region, daysAgo, groupDai
 
   const tables = await connection.query(
     tablesQuery,
-    [region, region, tenantId, daysAgo, region, region, tenantId, daysAgo],
+    [tenantId, daysAgo, tenantId, daysAgo],
   )
 
   const expensiveDataPointsQuery = `
     select DynamoTableStats.name,
+         DynamoTable.region,
          DynamoTable.billingMode,
          sizeBytes,
          sizeBytes / (1024 * 1024 * 1024 * ${groupDaily ? daysAgo : (24 * 30)}) * gbPerMonthPrice as storagePrice,
@@ -258,14 +275,17 @@ export const getMostExpensiveTables = async (tenantId, region, daysAgo, groupDai
          avg(provisionedWrite) as writeStat,
          ${groupDaily ? 'DATE(dateTime) as dateTime' : 'dateTime'}
   from DynamoTableStats
-  join DynamoTable on (DynamoTable.name = DynamoTableStats.name and DynamoTable.tenantId = DynamoTableStats.tenantId)
-  join DynamoStoragePrice on DynamoStoragePrice.region = ?
-  join DynamoProvisionedPrice on DynamoProvisionedPrice.region = ?
+  join DynamoTable on (DynamoTable.name = DynamoTableStats.name and 
+                        DynamoTable.tenantId = DynamoTableStats.tenantId and 
+                        DynamoTable.region = DynamoTableStats.region)
+  join DynamoStoragePrice on DynamoStoragePrice.region = DynamoTable.region
+  join DynamoProvisionedPrice on DynamoProvisionedPrice.region = DynamoTable.region
   where billingMode = 'PROVISIONED' and DynamoTable.tenantId = ? and ${getDateCondition(groupDaily)}
   and DynamoTable.name in (?)
   group by DynamoTableStats.name, ${groupDaily ? 'DATE(dateTime)' : 'dateTime'}
   UNION ALL
   select DynamoTableStats.name,
+         DynamoTable.region,
          DynamoTable.billingMode,
          sizeBytes,
          sizeBytes / (1024 * 1024 * 1024 * ${groupDaily ? daysAgo : (24 * 30)}) * gbPerMonthPrice as storagePrice,
@@ -279,9 +299,11 @@ export const getMostExpensiveTables = async (tenantId, region, daysAgo, groupDai
          ${groupDaily ? 'DATE(dateTime) as dateTime' : 'dateTime'}
   from DynamoTableStats
         join DynamoTable 
-          on (DynamoTable.name = DynamoTableStats.name and DynamoTable.tenantId = DynamoTableStats.tenantId)
-        join DynamoStoragePrice on DynamoStoragePrice.region = ?
-        join DynamoPerRequestPrice on DynamoPerRequestPrice.region = ?
+          on (DynamoTable.name = DynamoTableStats.name and 
+                DynamoTable.tenantId = DynamoTableStats.tenantId and 
+                DynamoTable.region = DynamoTableStats.region)
+        join DynamoStoragePrice on DynamoStoragePrice.region = DynamoTable.region
+        join DynamoPerRequestPrice on DynamoPerRequestPrice.region = DynamoTable.region
   where billingMode = 'PAY_PER_REQUEST' and DynamoTable.tenantId = ? and ${getDateCondition(groupDaily)}
   and DynamoTable.name in (?)
   group by DynamoTableStats.name, ${groupDaily ? 'DATE(dateTime)' : 'dateTime'}
@@ -296,7 +318,7 @@ export const getMostExpensiveTables = async (tenantId, region, daysAgo, groupDai
 
   const dataPoints = await connection.query(
     expensiveDataPointsQuery,
-    [region, region, tenantId, daysAgo, tableNames, region, region, tenantId, daysAgo, tableNames],
+    [tenantId, daysAgo, tableNames, tenantId, daysAgo, tableNames],
   )
 
   const dataPointsMap = groupBy(dataPoints, 'name')

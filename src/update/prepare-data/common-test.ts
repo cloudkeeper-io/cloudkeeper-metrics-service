@@ -9,6 +9,7 @@ export const expectDataToBeConsistent = (lambdas, statNames, days, nameField, st
     })
 
     expect(lambda[nameField]).toEqual(expect.any(String))
+    expect(lambda.region).toEqual(expect.any(String))
     expect(lambda.dataPoints).toEqual(expect.any(Array))
 
     if (days > 1) {
@@ -26,7 +27,7 @@ export const expectDataToBeConsistent = (lambdas, statNames, days, nameField, st
       const expectedDataPoint = {
         [nameField]: expect.any(String),
         dateTime: expect.any(Date),
-        region: expect.any(String)
+        region: expect.any(String),
       }
 
       statNames.forEach((statName) => {
