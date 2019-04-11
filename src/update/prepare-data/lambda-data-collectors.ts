@@ -1,19 +1,21 @@
 /* eslint-disable prefer-template */
-import { groupBy, map, reduce } from 'lodash'
+import { groupBy, map, flatMap, reduce, times, constant } from 'lodash'
 import { getConnection } from '../../db/db'
 import { getDateCondition, fillEmptyDataPoints } from './common'
 
-const dataPointsQuery = (columns, groupDaily) => {
+const dataPointsQuery = (columns, groupDaily, lambdasNum) => {
   const dateTimeColumn = groupDaily ? 'DATE(dateTime) as dateTime' : 'dateTime'
 
-  return 'select lambdaName, '
+  return 'select lambdaName, region, '
     + columns.join(', ')
     + ', '
     + dateTimeColumn
     + ' from LambdaStats '
     + 'where tenantId = ? and '
     + getDateCondition(groupDaily)
-    + ' and lambdaName in (?) '
+    + ' and ('
+    + times(lambdasNum, constant('(lambdaName = ? and region = ?)')).join(' or ')
+    + ') '
     + (groupDaily ? ' group by lambdaName, DATE(dateTime) ' : '')
     + 'order by ' + (groupDaily ? 'DATE(dateTime)' : 'dateTime') + ' asc'
 }
@@ -72,13 +74,14 @@ export const getSlowestLambdas = async (tenantId, daysAgo, groupDaily = false) =
   const connection = await getConnection()
 
   const getSlowestLambdasQuery = 'select '
-    + 'lambdaName, size, timeout, runtime, codeSize, '
+    + 'lambdaName, LambdaConfiguration.region as region, size, timeout, runtime, codeSize, '
     + 'sum(averageDuration * invocations) / sum(invocations) as `averageDuration`, '
     + 'max(maxDuration) as `maxDuration` '
     + 'from LambdaStats '
     + 'join LambdaConfiguration '
     + 'on (LambdaConfiguration.name = LambdaStats.lambdaName '
-    + 'and LambdaConfiguration.tenantId = LambdaStats.tenantId) '
+    + 'and LambdaConfiguration.tenantId = LambdaStats.tenantId '
+    + 'and LambdaConfiguration.region = LambdaStats.region) '
     + 'where LambdaStats.tenantId = ? and '
     + getDateCondition(groupDaily)
     + 'group by lambdaName '
@@ -99,19 +102,20 @@ export const getSlowestLambdas = async (tenantId, daysAgo, groupDaily = false) =
   ]
 
   const dataPoints = await connection.query(
-    dataPointsQuery(columns, groupDaily),
-    [tenantId, daysAgo, map(lambdas, 'lambdaName')],
+    dataPointsQuery(columns, groupDaily, lambdas.length),
+    [tenantId, daysAgo, ...flatMap(lambdas, lambda => [lambda.lambdaName, lambda.region])],
   )
 
-  const dataPointsMap = groupBy(dataPoints, 'lambdaName')
+  const dataPointsMap = groupBy(dataPoints, dataPoint => `${dataPoint.lambdaName} ${dataPoint.region}`)
 
   return map(lambdas, (lambda) => {
-    const lambdaDataPoints = dataPointsMap[lambda.lambdaName]
+    const lambdaDataPoints = dataPointsMap[`${lambda.lambdaName} ${lambda.region}`]
 
     const allDataPoints = fillEmptyDataPoints(lambdaDataPoints, groupDaily, daysAgo, {
       averageDuration: 0,
       maxDuration: 0,
       lambdaName: lambda.lambdaName,
+      region: lambda.region,
     })
 
     return ({
@@ -124,12 +128,14 @@ export const getSlowestLambdas = async (tenantId, daysAgo, groupDaily = false) =
 export const getMostInvokedLambdas = async (tenantId, daysAgo, groupDaily = false) => {
   const connection = await getConnection()
 
-  const getMostInvokedLambdasQuery = 'select lambdaName, sum(invocations) as `invocations`,'
+  const getMostInvokedLambdasQuery = 'select lambdaName, LambdaConfiguration.region as region, '
+    + 'sum(invocations) as `invocations`,'
     + 'sum(invocations) / (? * 3600 * 24) as `invocationsPerSecond`,'
     + 'size, timeout, runtime, codeSize from LambdaStats '
     + 'join LambdaConfiguration '
     + 'on (LambdaConfiguration.name = LambdaStats.lambdaName '
-    + 'and LambdaConfiguration.tenantId = LambdaStats.tenantId) '
+    + 'and LambdaConfiguration.tenantId = LambdaStats.tenantId '
+    + 'and LambdaConfiguration.region = LambdaStats.region) '
     + 'where LambdaStats.tenantId = ? and '
     + getDateCondition(groupDaily)
     + 'group by lambdaName '
@@ -145,18 +151,19 @@ export const getMostInvokedLambdas = async (tenantId, daysAgo, groupDaily = fals
   const columns = groupDaily ? ['sum(invocations) as invocations'] : ['invocations']
 
   const dataPoints = await connection.query(
-    dataPointsQuery(columns, groupDaily),
-    [tenantId, daysAgo, map(lambdas, 'lambdaName')],
+    dataPointsQuery(columns, groupDaily, lambdas.length),
+    [tenantId, daysAgo, ...flatMap(lambdas, lambda => [lambda.lambdaName, lambda.region])],
   )
 
-  const dataPointsMap = groupBy(dataPoints, 'lambdaName')
+  const dataPointsMap = groupBy(dataPoints, dataPoint => `${dataPoint.lambdaName} ${dataPoint.region}`)
 
   return map(lambdas, (lambda) => {
-    const lambdaDataPoints = dataPointsMap[lambda.lambdaName]
+    const lambdaDataPoints = dataPointsMap[`${lambda.lambdaName} ${lambda.region}`]
 
     const allDataPoints = fillEmptyDataPoints(lambdaDataPoints, groupDaily, daysAgo, {
       invocations: '0',
       lambdaName: lambda.lambdaName,
+      region: lambda.region,
     })
 
     return ({
@@ -169,12 +176,13 @@ export const getMostInvokedLambdas = async (tenantId, daysAgo, groupDaily = fals
 export const getMostErrorsLambdas = async (tenantId, daysAgo, groupDaily = false) => {
   const connection = await getConnection()
 
-  const getSlowestLambdasQuery = 'select lambdaName, sum(errors) as `errors`,'
+  const getSlowestLambdasQuery = 'select lambdaName, LambdaConfiguration.region as region, sum(errors) as `errors`,'
     + 'sum(errors) / sum(invocations) as `errorRate`,'
     + 'size, timeout, runtime, codeSize from LambdaStats '
     + 'join LambdaConfiguration '
     + 'on (LambdaConfiguration.name = LambdaStats.lambdaName '
-    + 'and LambdaConfiguration.tenantId = LambdaStats.tenantId) '
+    + 'and LambdaConfiguration.tenantId = LambdaStats.tenantId '
+    + 'and LambdaConfiguration.region = LambdaStats.region) '
     + 'where LambdaStats.tenantId = ? and '
     + getDateCondition(groupDaily)
     + 'group by lambdaName '
@@ -190,18 +198,19 @@ export const getMostErrorsLambdas = async (tenantId, daysAgo, groupDaily = false
   const columns = groupDaily ? ['sum(errors) as errors'] : ['errors']
 
   const dataPoints = await connection.query(
-    dataPointsQuery(columns, groupDaily),
-    [tenantId, daysAgo, map(lambdas, 'lambdaName')],
+    dataPointsQuery(columns, groupDaily, lambdas.length),
+    [tenantId, daysAgo, ...flatMap(lambdas, lambda => [lambda.lambdaName, lambda.region])],
   )
 
-  const dataPointsMap = groupBy(dataPoints, 'lambdaName')
+  const dataPointsMap = groupBy(dataPoints, dataPoint => `${dataPoint.lambdaName} ${dataPoint.region}`)
 
   return map(lambdas, (lambda) => {
-    const lambdaDataPoints = dataPointsMap[lambda.lambdaName]
+    const lambdaDataPoints = dataPointsMap[`${lambda.lambdaName} ${lambda.region}`]
 
     const allDataPoints = fillEmptyDataPoints(lambdaDataPoints, groupDaily, daysAgo, {
       errors: '0',
       lambdaName: lambda.lambdaName,
+      region: lambda.region,
     })
 
     return ({
@@ -215,11 +224,13 @@ export const getMostErrorsLambdas = async (tenantId, daysAgo, groupDaily = false
 export const getMostExpensiveLambdas = async (tenantId, daysAgo, groupDaily = false) => {
   const connection = await getConnection()
 
-  const getMostExpensiveLambdasQuery = 'select lambdaName, LambdaConfiguration.size as size, '
+  const getMostExpensiveLambdasQuery = 'select lambdaName, LambdaConfiguration.region as region, '
+    + 'LambdaConfiguration.size as size, '
     + 'timeout, runtime, codeSize, '
     + 'sum(averageDuration * invocations) / 100 * LambdaPrice.price as cost from LambdaStats '
     + 'join LambdaConfiguration '
     + 'on LambdaStats.lambdaName = LambdaConfiguration.name and LambdaConfiguration.tenantId = ? '
+    + 'and LambdaConfiguration.region = LambdaStats.region '
     + 'join LambdaPrice on LambdaPrice.size = LambdaConfiguration.size '
     + 'where LambdaStats.tenantId = ? and '
     + getDateCondition(groupDaily)
@@ -233,32 +244,36 @@ export const getMostExpensiveLambdas = async (tenantId, daysAgo, groupDaily = fa
     return []
   }
 
-  const getMostExpensiveLambdasDataPointsQuery = 'select lambdaName, '
+  const getMostExpensiveLambdasDataPointsQuery = 'select lambdaName, LambdaConfiguration.region as region, '
     + (groupDaily ? 'sum(averageDuration * invocations) / 100 * LambdaPrice.price as cost, '
       : 'averageDuration * invocations / 100 * LambdaPrice.price as cost, ')
     + (groupDaily ? 'DATE(`dateTime`) as `dateTime`' : '`dateTime` ')
-    + 'from LambdaStats '
+    + ' from LambdaStats '
     + 'join LambdaConfiguration '
     + 'on LambdaStats.lambdaName = LambdaConfiguration.name and LambdaConfiguration.tenantId = ? '
+    + ' and LambdaConfiguration.region = LambdaStats.region '
     + 'join LambdaPrice on LambdaPrice.size = LambdaConfiguration.size '
     + 'where LambdaStats.tenantId = ? and '
     + getDateCondition(groupDaily)
-    + 'and lambdaName in (?) '
+    + 'and ( '
+    + times(lambdas.length, constant('(lambdaName = ? and LambdaConfiguration.region = ?)')).join(' or ')
+    + ' ) '
     + (groupDaily ? 'group by lambdaName, DATE(dateTime) order by DATE(dateTime) asc' : 'order by dateTime asc')
 
   const dataPoints = await connection.query(
     getMostExpensiveLambdasDataPointsQuery,
-    [tenantId, tenantId, daysAgo, map(lambdas, 'lambdaName')],
+    [tenantId, tenantId, daysAgo, ...flatMap(lambdas, lambda => [lambda.lambdaName, lambda.region])],
   )
 
-  const dataPointsMap = groupBy(dataPoints, 'lambdaName')
+  const dataPointsMap = groupBy(dataPoints, dataPoint => `${dataPoint.lambdaName} ${dataPoint.region}`)
 
   return map(lambdas, (lambda) => {
-    const lambdaDataPoints = dataPointsMap[lambda.lambdaName]
+    const lambdaDataPoints = dataPointsMap[`${lambda.lambdaName} ${lambda.region}`]
 
     const allDataPoints = fillEmptyDataPoints(lambdaDataPoints, groupDaily, daysAgo, {
       cost: 0,
       lambdaName: lambda.lambdaName,
+      region: lambda.region,
     })
 
     return ({

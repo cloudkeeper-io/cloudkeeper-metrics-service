@@ -48,6 +48,7 @@ describe('lambda collectors', () => {
     lambdas.forEach((lambda) => {
       expect(lambda).toEqual({
         lambdaName: expect.any(String),
+        region: expect.any(String),
         averageDuration: expect.any(Number),
         maxDuration: expect.any(Number),
         dataPoints: expect.any(Array),
@@ -63,6 +64,7 @@ describe('lambda collectors', () => {
           dateTime: expect.any(Date),
           maxDuration: expect.any(Number),
           lambdaName: expect.any(String),
+          region: expect.any(String),
         })
       })
     })
@@ -77,6 +79,7 @@ describe('lambda collectors', () => {
     lambdas.forEach((lambda) => {
       expect(lambda).toEqual({
         lambdaName: expect.any(String),
+        region: expect.any(String),
         averageDuration: expect.any(Number),
         maxDuration: expect.any(Number),
         dataPoints: expect.any(Array),
@@ -94,6 +97,7 @@ describe('lambda collectors', () => {
           dateTime: expect.any(Date),
           maxDuration: expect.any(Number),
           lambdaName: expect.any(String),
+          region: expect.any(String),
         })
       })
     })
