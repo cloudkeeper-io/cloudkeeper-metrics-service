@@ -1,3 +1,4 @@
+/* eslint-disable max-len,class-methods-use-this */
 import { MigrationInterface, QueryRunner } from 'typeorm'
 
 export class initialSchemaCreation1554948981868 implements MigrationInterface {

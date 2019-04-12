@@ -31,7 +31,7 @@ const getConfig = async (): Promise<MysqlConnectionOptions> => {
     entities: [
       ...map(entities),
     ],
-    logging: false,
+    logging: true,
     synchronize: false,
     timezone: 'Z',
     migrations: ['src/db/migrations/*.ts'],

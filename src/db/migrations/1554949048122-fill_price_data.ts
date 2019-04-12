@@ -1,3 +1,4 @@
+/* eslint-disable max-len,class-methods-use-this */
 import { MigrationInterface, QueryRunner } from 'typeorm'
 
 export class fillPriceData1554949048122 implements MigrationInterface {
