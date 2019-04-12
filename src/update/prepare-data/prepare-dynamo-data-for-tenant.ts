@@ -13,7 +13,7 @@ export const handler = async (event) => {
   await Promise.all(event.Records.map(async (record) => {
     const tenant = JSON.parse(record.Sns.Message)
 
-    const { id, region } = tenant
+    const { id } = tenant
 
     console.log(`Preparing data for tenant ${id}`)
 
