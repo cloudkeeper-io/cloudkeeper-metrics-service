@@ -70,7 +70,7 @@ jobs:
             - v1-yarn-
       - run:
           name: Run db migration
-          command: STAGE=dev ts-node scripts/migrate-db.ts
+          command: STAGE=dev node node_modules/.bin/ts-node scripts/migrate-db.ts
 
   prod-migrate-database:
     environment:
@@ -87,7 +87,7 @@ jobs:
             - v1-yarn-
       - run:
           name: Run db migration
-          command: STAGE=prod ts-node scripts/migrate-db.ts
+          command: STAGE=prod node node_modules/.bin/ts-node scripts/migrate-db.ts
 
   functional-tests:
     environment:
@@ -185,7 +185,7 @@ workflows:
                 - master
           context: ayankovsky-context
           requires:
-            - dev-migrate-database
+            - dev-deploy
 
   build-and-deploy-prod:
     jobs:
