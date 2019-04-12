@@ -23,7 +23,7 @@ export const handler = async (event) => {
 
     const mostThrottledTables = await getMostThrottledTables(id, 1)
 
-    const mostExpensiveTables = await getMostExpensiveTables(id, region, 1)
+    const mostExpensiveTables = await getMostExpensiveTables(id, 1)
 
     const last30DaysMostReadTables = await getMostReadTables(id, 30, true)
 
@@ -31,7 +31,7 @@ export const handler = async (event) => {
 
     const last30DaysMostThrottledTables = await getMostThrottledTables(id, 30, true)
 
-    const last30DaysMostExpensiveTables = await getMostExpensiveTables(id, region, 30, true)
+    const last30DaysMostExpensiveTables = await getMostExpensiveTables(id, 30, true)
 
     const data = {
       last24Hours: {

@@ -162,14 +162,6 @@ workflows:
           context: ayankovsky-context
           requires:
             - ensure-deps
-      - dev-deploy:
-          filters:
-            branches:
-              only:
-                - master
-          context: ayankovsky-context
-          requires:
-            - checks
       - dev-migrate-database:
           filters:
             branches:
@@ -177,7 +169,15 @@ workflows:
                 - master
           context: ayankovsky-context
           requires:
-            - dev-deploy
+            - checks
+      - dev-deploy:
+          filters:
+            branches:
+              only:
+                - master
+          context: ayankovsky-context
+          requires:
+            - dev-migrate-database
       - functional-tests:
           filters:
             branches:
