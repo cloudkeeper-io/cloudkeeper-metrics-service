@@ -9,7 +9,8 @@
     "test:unit": "jest unit",
     "test:func": "jest func",
     "lint": "eslint '*/**'",
-    "lint:fix": "eslint '*/**' --fix"
+    "lint:fix": "eslint '*/**' --fix",
+    "db:migrate": "ts-node scripts/migrate-db.ts"
   },
   "dependencies": {
     "aws-sdk": "^2.430.0",
@@ -28,6 +29,7 @@
     "@types/node": "^11.9.5",
     "@typescript-eslint/eslint-plugin": "^1.4.2",
     "@typescript-eslint/parser": "^1.4.2",
+    "cross-env": "^5.2.0",
     "eslint": "^5.14.1",
     "eslint-config-airbnb-base": "13.1.0",
     "eslint-plugin-import": "^2.16.0",
@@ -41,6 +43,7 @@
     "serverless-webpack": "^5.2.0",
     "ts-jest": "^24.0.0",
     "ts-loader": "^5.3.3",
+    "ts-node": "^8.0.3",
     "typescript": "^3.3.3333",
     "webpack": "^4.26.1"
   },

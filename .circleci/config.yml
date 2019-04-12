@@ -55,6 +55,40 @@ jobs:
       - store_artifacts:
           path: reports/junit
 
+  dev-migrate-database:
+    environment:
+      PROJECT: cloudkeeper-metrics-service
+    working_directory: ~/repo
+    docker:
+      - image: ayankovsky/node-serverless-aws
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - v1-yarn-{{ .Branch }}-{{ checksum "yarn.lock" }}
+            - v1-yarn-{{ .Branch }}-
+            - v1-yarn-
+      - run:
+          name: Run db migration
+          command: STAGE=dev ts-node scripts/migrate-db.ts
+
+  prod-migrate-database:
+    environment:
+      PROJECT: cloudkeeper-metrics-service
+    working_directory: ~/repo
+    docker:
+      - image: ayankovsky/node-serverless-aws
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - v1-yarn-{{ .Branch }}-{{ checksum "yarn.lock" }}
+            - v1-yarn-{{ .Branch }}-
+            - v1-yarn-
+      - run:
+          name: Run db migration
+          command: STAGE=prod ts-node scripts/migrate-db.ts
+
   functional-tests:
     environment:
       PROJECT: cloudkeeper-metrics-service
@@ -136,7 +170,7 @@ workflows:
           context: ayankovsky-context
           requires:
             - checks
-      - functional-tests:
+      - dev-migrate-database:
           filters:
             branches:
               only:
@@ -144,6 +178,14 @@ workflows:
           context: ayankovsky-context
           requires:
             - dev-deploy
+      - functional-tests:
+          filters:
+            branches:
+              only:
+                - master
+          context: ayankovsky-context
+          requires:
+            - dev-migrate-database
 
   build-and-deploy-prod:
     jobs:
@@ -162,10 +204,19 @@ workflows:
               ignore: /.*/
             tags:
               only: /^release.*/
-      - prod-deploy:
+      - prod-migrate-database:
           context: ayankovsky-context
           requires:
             - checks
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /^release.*/
+      - prod-deploy:
+          context: ayankovsky-context
+          requires:
+            - prod-migrate-database
           filters:
             branches:
               ignore: /.*/
