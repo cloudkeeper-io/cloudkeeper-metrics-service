@@ -43,8 +43,14 @@ const getConfig = async (): Promise<MysqlConnectionOptions> => {
 }
 
 const runMigrations = async () => {
-  const config = await getConfig()
-  await createConnection(config)
+  try {
+    const config = await getConfig()
+    await createConnection(config)
+  } catch (err) {
+    console.log(err)
+    process.exit(1)
+  }
+  process.exit(0)
 }
 
 runMigrations()
