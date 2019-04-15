@@ -1,5 +1,4 @@
-/* eslint-disable no-param-reassign */
-import { map, orderBy } from 'lodash'
+import { orderBy } from 'lodash'
 import { listTenants } from './utils'
 
 export const handler = async (request) => {
@@ -7,10 +6,5 @@ export const handler = async (request) => {
 
   const tenants = await listTenants(userId, provider)
 
-  return orderBy(map(tenants, (tenant) => {
-    delete tenant.accessKey
-    delete tenant.secretKey
-
-    return tenant
-  }), ['name', 'id'])
+  return orderBy(tenants, ['createdAt', 'id'])
 }
