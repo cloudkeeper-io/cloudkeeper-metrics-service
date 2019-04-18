@@ -72,7 +72,7 @@ export const checkAccess = async (tenantId, roleArn) => {
 
   const listResult = await lambdaClient.listFunctions().promise()
 
-  if (!listResult.Functions) {
+  if (!listResult.Functions || !listResult.Functions.length) {
     return {
       functions: 0,
     }

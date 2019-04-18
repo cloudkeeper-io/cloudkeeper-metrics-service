@@ -66,9 +66,6 @@ functions:
   list-tenants:
     handler: src/tenant/list-tenants.handler
 
-  trigger-lambda-stats-update:
-    handler: src/update/lambda-stats/trigger-lambda-stats-update.handler
-
   update-tenant-lambda-stats:
     timeout: 300
     handler: src/update/lambda-stats/update-tenant-lambda-stats.handler
@@ -91,9 +88,6 @@ functions:
     events:
       - sns:
           arn: "arn:aws:sns:#{AWS::Region}:#{AWS::AccountId}:${self:custom.stage}-finished-updating-lambda-stats"
-
-  trigger-dynamo-stats-update:
-    handler: src/update/dynamodb-table-stats/trigger-dynamo-stats-update.handler
 
   update-tenant-dynamo-stats:
     timeout: 300

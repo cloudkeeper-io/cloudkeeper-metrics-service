@@ -27,7 +27,8 @@ export const getTotals = async (tenantId, daysAgo, groupDaily = false) => {
     + 'sum(averageDuration * invocations / 100 * LambdaPrice.price) as cost '
     + 'from LambdaStats '
     + 'join LambdaConfiguration '
-    + 'on LambdaStats.lambdaName = LambdaConfiguration.name and LambdaConfiguration.tenantId = ? '
+    + 'on LambdaStats.lambdaName = LambdaConfiguration.name and LambdaStats.region = LambdaConfiguration.region '
+    + 'and LambdaConfiguration.tenantId = ? '
     + 'join LambdaPrice on LambdaPrice.size = LambdaConfiguration.size '
     + 'where LambdaStats.tenantId = ? and  '
     + getDateCondition(false)
@@ -41,7 +42,8 @@ export const getTotals = async (tenantId, daysAgo, groupDaily = false) => {
     + 'sum(averageDuration * invocations / 100 * LambdaPrice.price) as cost '
     + 'from LambdaStats '
     + 'join LambdaConfiguration '
-    + 'on LambdaStats.lambdaName = LambdaConfiguration.name and LambdaConfiguration.tenantId = ? '
+    + 'on LambdaStats.lambdaName = LambdaConfiguration.name and LambdaStats.region = LambdaConfiguration.region '
+    + 'and LambdaConfiguration.tenantId = ? '
     + 'join LambdaPrice on LambdaPrice.size = LambdaConfiguration.size '
     + 'where LambdaStats.tenantId = ? and '
     + getDateCondition(true)

@@ -8,12 +8,12 @@ import { getAwsCredentials } from '../../utils/aws.utils'
 
 const sns = new AWS.SNS({ apiVersion: '2010-03-31' })
 
-const updateLambdasChunk = async (lambdasChunk, credentials, tenant, connection) => {
-  const batchData: any[] = flatten(await Promise.all(map(lambdasChunk, async (lambdaConfig) => {
+const updateLambdasChunk = async (lambdasChunk, credentials, tenant, region, connection) => {
+  const batchData: any[] = flatten((await Promise.all(map(lambdasChunk, async (lambdaConfig) => {
     const [invocationStats, errorStats, durationStats] = await getLambdaMetrics(
       lambdaConfig.name,
       credentials,
-      tenant.region,
+      region,
     )
 
     const errorDataMap = keyBy(errorStats.Datapoints, dataPoint => dataPoint.Timestamp!.getTime())
@@ -36,7 +36,9 @@ const updateLambdasChunk = async (lambdasChunk, credentials, tenant, connection)
         averageDuration: durationEntry.Average,
       })
     })
-  })))
+  }))))
+
+  console.log(batchData)
 
   await connection.createQueryBuilder()
     .insert()
@@ -69,7 +71,7 @@ export const handler = async (tenant) => {
     const credentials = await getAwsCredentials(tenant.id, tenant.roleArn)
 
     for (const lambdasChunk of chunks) {
-      await updateLambdasChunk(lambdasChunk, credentials, tenant, connection)
+      await updateLambdasChunk(lambdasChunk, credentials, tenant, region, connection)
     }
   }
 
