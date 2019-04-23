@@ -30,27 +30,29 @@ export const handler = async (request) => {
   try {
     const additionalInfo = await checkAccess(tenantId, roleArn)
 
+    const updatedTenant = {
+      ...tenant,
+      isSetupCompleted: true,
+      roleArn,
+    }
+
     await dynamoDb.put({
       TableName: `${process.env.stage}-cloudkeeper-tenants`,
-      Item: {
-        ...tenant,
-        isSetupCompleted: true,
-        roleArn,
-      },
+      Item: updatedTenant,
     }).promise()
 
     await lambda.invoke({
       FunctionName: `cloudkeeper-metrics-service-${process.env.stage}-update-tenant-lambdas`,
       InvocationType: 'Event',
       LogType: 'None',
-      Payload: JSON.stringify(tenant),
+      Payload: JSON.stringify(updatedTenant),
     }).promise()
 
     await lambda.invoke({
       FunctionName: `cloudkeeper-metrics-service-${process.env.stage}-update-tenant-dynamo-tables`,
       InvocationType: 'Event',
       LogType: 'None',
-      Payload: JSON.stringify(tenant),
+      Payload: JSON.stringify(updatedTenant),
     }).promise()
 
     return {
