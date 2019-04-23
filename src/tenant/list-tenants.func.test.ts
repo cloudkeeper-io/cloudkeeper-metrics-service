@@ -4,7 +4,7 @@ import * as AWS from 'aws-sdk'
 const lambdaClient = new AWS.Lambda({ region: 'eu-central-1' })
 const dynamoDb = new AWS.DynamoDB.DocumentClient({ apiVersion: '2012-08-10', region: 'eu-central-1' })
 
-describe('create tenant', () => {
+describe('list tenants', () => {
   jest.setTimeout(30000)
 
   const tenants = [{
@@ -33,14 +33,12 @@ describe('create tenant', () => {
         TableName: 'dev-cloudkeeper-tenants',
         Item: tenant,
       }).promise()
-    }
 
-    for (const tenant of tenants) {
       await dynamoDb.put({
         TableName: 'dev-cloudkeeper-tenant-users',
         Item: {
-          userId: 'userId',
           tenantId: tenant.id,
+          userId: 'userId',
         },
       }).promise()
     }
@@ -64,17 +62,15 @@ describe('create tenant', () => {
       await dynamoDb.delete({
         TableName: 'dev-cloudkeeper-tenants',
         Key: {
-          tenantId: tenant.id,
+          id: tenant.id,
         },
       }).promise()
-    }
 
-    for (const tenant of tenants) {
       await dynamoDb.delete({
         TableName: 'dev-cloudkeeper-tenant-users',
         Key: {
-          userId: 'userId',
           tenantId: tenant.id,
+          userId: 'userId',
         },
       }).promise()
     }
