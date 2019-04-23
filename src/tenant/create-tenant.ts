@@ -7,9 +7,9 @@ import { listTenants } from './utils'
 const dynamoDb = new AWS.DynamoDB.DocumentClient({ apiVersion: '2012-08-10' })
 
 export const handler = async (request) => {
-  const { name, userId, provider } = request
+  const { name, userId } = request
 
-  const tenants = await listTenants(userId, provider)
+  const tenants = await listTenants(userId)
 
   if (find(tenants, { name })) {
     throw new Error('Tenant name must be unique')
@@ -18,8 +18,7 @@ export const handler = async (request) => {
   const tenant = {
     id: uuid(),
     owner: {
-      id: request.userId,
-      provider: request.provider,
+      id: userId,
     },
     name,
     isSetupCompleted: false,
@@ -34,7 +33,7 @@ export const handler = async (request) => {
   await dynamoDb.put({
     TableName: `${process.env.stage}-cloudkeeper-tenant-users`,
     Item: {
-      userId: `${request.provider}|${request.userId}`,
+      userId,
       tenantId: tenant.id,
     },
   }).promise()

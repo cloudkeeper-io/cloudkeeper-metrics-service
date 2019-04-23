@@ -4,12 +4,12 @@ import { queryForArray } from '../utils/dynamodb'
 
 const dynamoDb = new AWS.DynamoDB.DocumentClient({ apiVersion: '2012-08-10' })
 
-export const listTenants = async (userId, provider) => {
+export const listTenants = async (userId) => {
   const tenantAccessRows = await queryForArray({
     TableName: `${process.env.stage}-cloudkeeper-tenant-users`,
     KeyConditionExpression: 'userId = :userId',
     ExpressionAttributeValues: {
-      ':userId': `${provider}|${userId}`,
+      ':userId': userId,
     },
   })
 

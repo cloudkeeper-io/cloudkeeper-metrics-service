@@ -16,7 +16,7 @@ const dataPointsQuery = (columns, groupDaily, lambdasNum) => {
     + ' and ('
     + times(lambdasNum, constant('(lambdaName = ? and region = ?)')).join(' or ')
     + ') '
-    + (groupDaily ? ' group by lambdaName, DATE(dateTime) ' : '')
+    + (groupDaily ? ' group by lambdaName, region, DATE(dateTime) ' : '')
     + 'order by ' + (groupDaily ? 'DATE(dateTime)' : 'dateTime') + ' asc'
 }
 
@@ -86,7 +86,7 @@ export const getSlowestLambdas = async (tenantId, daysAgo, groupDaily = false) =
     + 'and LambdaConfiguration.region = LambdaStats.region) '
     + 'where LambdaStats.tenantId = ? and '
     + getDateCondition(groupDaily)
-    + 'group by lambdaName '
+    + 'group by lambdaName, region '
     + 'order by `averageDuration` desc '
     + 'limit 5'
 
@@ -140,7 +140,7 @@ export const getMostInvokedLambdas = async (tenantId, daysAgo, groupDaily = fals
     + 'and LambdaConfiguration.region = LambdaStats.region) '
     + 'where LambdaStats.tenantId = ? and '
     + getDateCondition(groupDaily)
-    + 'group by lambdaName '
+    + 'group by lambdaName, region '
     + 'order by `invocations` desc '
     + 'limit 5'
 
@@ -187,7 +187,7 @@ export const getMostErrorsLambdas = async (tenantId, daysAgo, groupDaily = false
     + 'and LambdaConfiguration.region = LambdaStats.region) '
     + 'where LambdaStats.tenantId = ? and '
     + getDateCondition(groupDaily)
-    + 'group by lambdaName '
+    + 'group by lambdaName, region '
     + 'order by `errors` desc '
     + 'limit 5'
 
@@ -236,7 +236,7 @@ export const getMostExpensiveLambdas = async (tenantId, daysAgo, groupDaily = fa
     + 'join LambdaPrice on LambdaPrice.size = LambdaConfiguration.size '
     + 'where LambdaStats.tenantId = ? and '
     + getDateCondition(groupDaily)
-    + 'group by lambdaName '
+    + 'group by lambdaName, region '
     + 'order by cost desc '
     + 'limit 5'
 
@@ -260,7 +260,7 @@ export const getMostExpensiveLambdas = async (tenantId, daysAgo, groupDaily = fa
     + 'and ( '
     + times(lambdas.length, constant('(lambdaName = ? and LambdaConfiguration.region = ?)')).join(' or ')
     + ' ) '
-    + (groupDaily ? 'group by lambdaName, DATE(dateTime) order by DATE(dateTime) asc' : 'order by dateTime asc')
+    + (groupDaily ? 'group by lambdaName, region, DATE(dateTime) order by DATE(dateTime) asc' : 'order by dateTime asc')
 
   const dataPoints = await connection.query(
     getMostExpensiveLambdasDataPointsQuery,

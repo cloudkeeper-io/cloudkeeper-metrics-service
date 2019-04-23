@@ -7,7 +7,7 @@ const dynamoDb = new AWS.DynamoDB.DocumentClient({ apiVersion: '2012-08-10' })
 export const handler = async (request) => {
   console.log('Request: ', request)
 
-  const { tenantId, userId, provider } = request
+  const { tenantId, userId } = request
 
   const tenantResponse = await dynamoDb.get({
     TableName: `${process.env.stage}-cloudkeeper-tenants`,
@@ -22,7 +22,7 @@ export const handler = async (request) => {
 
   const tenant = tenantResponse.Item
 
-  if (tenant.owner.id !== userId || tenant.owner.provider !== provider) {
+  if (tenant.owner.id !== userId) {
     throw new Error('Tenant not found')
   }
 

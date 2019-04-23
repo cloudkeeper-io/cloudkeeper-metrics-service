@@ -16,7 +16,6 @@ describe('setup', () => {
         id: 'func-test-setup-tenant',
         owner: {
           id: 'test@test.com',
-          provider: 'func-test',
         },
         name: 'test-tenant',
         isSetupCompleted: false,
@@ -30,7 +29,6 @@ describe('setup', () => {
       FunctionName: 'cloudkeeper-metrics-service-dev-setup-tenant',
       Payload: JSON.stringify({
         userId: 'test@test.com',
-        provider: 'func-test',
         region: 'eu-central-1',
         tenantId: 'func-test-setup-tenant',
         roleArn: 'arn:aws:iam::537011205135:role/CloudkeeperDelegationRole',

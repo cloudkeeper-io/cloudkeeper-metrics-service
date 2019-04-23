@@ -2,9 +2,9 @@ import { orderBy } from 'lodash'
 import { listTenants } from './utils'
 
 export const handler = async (request) => {
-  const { userId, provider } = request
+  const { userId } = request
 
-  const tenants = await listTenants(userId, provider)
+  const tenants = await listTenants(userId)
 
   return orderBy(tenants, ['createdAt', 'id'])
 }

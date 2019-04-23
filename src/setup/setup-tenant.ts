@@ -8,7 +8,7 @@ const lambda = new Lambda({ apiVersion: '2015-03-31' })
 export const handler = async (request) => {
   console.log('Request: ', request)
 
-  const { roleArn, tenantId, userId, provider } = request
+  const { roleArn, tenantId, userId } = request
 
   const tenantResponse = await dynamoDb.get({
     TableName: `${process.env.stage}-cloudkeeper-tenants`,
@@ -23,7 +23,7 @@ export const handler = async (request) => {
 
   const tenant = tenantResponse.Item
 
-  if (tenant.owner.id !== userId || tenant.owner.provider !== provider) {
+  if (tenant.owner.id !== userId) {
     throw new Error('Tenant not found')
   }
 

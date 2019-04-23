@@ -15,7 +15,6 @@ describe('create tenant', () => {
     secretKey: 'test key',
     owner: {
       id: 'userId',
-      provider: 'functional-test',
     },
   }
 
@@ -28,7 +27,7 @@ describe('create tenant', () => {
     await dynamoDb.put({
       TableName: 'dev-cloudkeeper-tenant-users',
       Item: {
-        userId: 'functional-test|userId',
+        userId: 'userId',
         tenantId: tenant.id,
       },
     }).promise()
@@ -38,7 +37,6 @@ describe('create tenant', () => {
     const response = await lambdaClient.invoke({
       FunctionName: 'cloudkeeper-metrics-service-dev-delete-tenant',
       Payload: JSON.stringify({
-        provider: 'functional-test',
         userId: 'userId',
         tenantId: tenant.id,
       }),
@@ -60,7 +58,7 @@ describe('create tenant', () => {
     const accessRow = await dynamoDb.get({
       TableName: 'dev-cloudkeeper-tenant-users',
       Key: {
-        userId: 'functional-test|userId',
+        userId: 'userId',
         tenantId: tenant.id,
       },
     }).promise()
