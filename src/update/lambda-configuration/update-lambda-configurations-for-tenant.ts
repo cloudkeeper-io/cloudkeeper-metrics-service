@@ -17,28 +17,32 @@ export const handler = async (tenant) => {
   const regions = await getAwsRegions()
 
   for (const region of regions) {
-    const lambdas = await listAllLambdas(tenant.id, tenant.roleArn, region)
+    try {
+      const lambdas = await listAllLambdas(tenant.id, tenant.roleArn, region)
 
-    console.log(`Tenant has ${lambdas.length} lambdas in ${region}`)
+      console.log(`Tenant has ${lambdas.length} lambdas in ${region}`)
 
-    const query = connection.createQueryBuilder()
-      .insert()
-      .into(LambdaConfiguration)
-      .values(lambdas)
-      .getQuery()
-      .replace('INSERT INTO', 'REPLACE INTO')
+      const query = connection.createQueryBuilder()
+        .insert()
+        .into(LambdaConfiguration)
+        .values(lambdas)
+        .getQuery()
+        .replace('INSERT INTO', 'REPLACE INTO')
 
-    const params = flatMap(lambdas, lambda => [
-      lambda.tenantId,
-      lambda.name,
-      lambda.region,
-      lambda.runtime,
-      lambda.codeSize,
-      lambda.timeout,
-      lambda.size,
-    ])
+      const params = flatMap(lambdas, lambda => [
+        lambda.tenantId,
+        lambda.name,
+        lambda.region,
+        lambda.runtime,
+        lambda.codeSize,
+        lambda.timeout,
+        lambda.size,
+      ])
 
-    await connection.query(query, params)
+      await connection.query(query, params)
+    } catch (err) {
+      console.log(`Error updating region: ${region}`, err)
+    }
   }
 
   console.log('Finished updating lambdas')

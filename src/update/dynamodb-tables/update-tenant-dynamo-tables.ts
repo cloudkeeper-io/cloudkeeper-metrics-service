@@ -18,27 +18,31 @@ export const handler = async (tenant) => {
   const regions = await getAwsRegions()
 
   for (const region of regions) {
-    const tables = await listTables(tenant.id, tenant.roleArn, region)
+    try {
+      const tables = await listTables(tenant.id, tenant.roleArn, region)
 
-    console.log(`Tenant has ${tables.length} tables in ${region}`)
+      console.log(`Tenant has ${tables.length} tables in ${region}`)
 
-    const query = connection.createQueryBuilder()
-      .insert()
-      .into(DynamoTable)
-      .values(tables)
-      .getQuery()
-      .replace('INSERT INTO', 'REPLACE INTO')
+      const query = connection.createQueryBuilder()
+        .insert()
+        .into(DynamoTable)
+        .values(tables)
+        .getQuery()
+        .replace('INSERT INTO', 'REPLACE INTO')
 
-    const params = flatMap(tables, table => [
-      table.tenantId,
-      table.name,
-      region,
-      table.billingMode,
-      table.sizeBytes,
-      table.items,
-    ])
+      const params = flatMap(tables, table => [
+        table.tenantId,
+        table.name,
+        region,
+        table.billingMode,
+        table.sizeBytes,
+        table.items,
+      ])
 
-    await connection.query(query, params)
+      await connection.query(query, params)
+    } catch (err) {
+      console.log(`Error updating region: ${region}`, err)
+    }
   }
 
   console.log('Finished updating dynamo tables')
