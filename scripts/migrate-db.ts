@@ -6,7 +6,7 @@ import * as entities from '../src/entity'
 
 const ssm = new AWS.SSM({ region: 'eu-central-1' })
 
-async function getParameter(name) {
+async function getParameter(name: string) {
   return (await ssm.getParameter({
     Name: name,
   }).promise()).Parameter!.Value

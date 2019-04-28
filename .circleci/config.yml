@@ -46,6 +46,9 @@ jobs:
           name: Lint
           command: yarn lint --format junit -o reports/junit/js-lint-results.xml
       - run:
+          name: TSC
+          command: tsc
+      - run:
           name: Tests
           environment:
             JEST_JUNIT_OUTPUT: reports/junit/js-test-results.xml

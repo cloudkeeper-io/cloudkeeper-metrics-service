@@ -4,7 +4,6 @@
     "target": "es6",
     "allowSyntheticDefaultImports": true,
     "strictNullChecks": true,
-    "noImplicitAny": true,
     "experimentalDecorators": true,
     "lib": ["es2018"],
     "outDir": "../build"
