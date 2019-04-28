@@ -8,6 +8,7 @@
   "scripts": {
     "test:unit": "jest unit",
     "test:func": "jest func",
+    "tsc": "tsc",
     "lint": "eslint '*/**'",
     "lint:fix": "eslint '*/**' --fix",
     "db:migrate": "ts-node scripts/migrate-db.ts"
