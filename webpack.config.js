@@ -17,6 +17,7 @@ module.exports = {
     filename: '[name].js',
   },
   target: 'node',
+  devtool: 'source-map',
   optimization: {
     minimize: false,
     mangleWasmImports: false,
