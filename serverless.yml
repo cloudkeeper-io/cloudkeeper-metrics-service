@@ -5,13 +5,18 @@ plugins:
   - serverless-webpack
   - serverless-pseudo-parameters
   - serverless-offline
+  - serverless-plugin-tracing
+
+package:
+  individually: true
 
 provider:
   name: aws
   runtime: nodejs8.10
   versionFunctions: false
-  memorySize: 512
+  memorySize: 1024
   region: eu-central-1
+  tracing: true
   environment:
     stage: ${self:custom.stage}
   iamRoleStatements:

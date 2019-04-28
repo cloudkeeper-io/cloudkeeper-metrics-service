@@ -6,6 +6,13 @@
 
 - Effect: "Allow"
   Action:
+    - "xray:PutTraceSegments"
+    - "xray:PutTelemetryRecords"
+  Resource:
+    - "*"
+
+- Effect: "Allow"
+  Action:
   - "dynamodb:*"
   Resource:
   - "arn:aws:dynamodb:*:*:table/${self:custom.stage}-cloudkeeper-tenants"

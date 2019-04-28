@@ -1,10 +1,10 @@
-import * as AWS from 'aws-sdk'
 import { map } from 'lodash'
 import { queryForArray } from '../utils/dynamodb'
-
-const dynamoDb = new AWS.DynamoDB.DocumentClient({ apiVersion: '2012-08-10' })
+import { getDynamo } from '../utils/aws.utils'
 
 export const listTenants = async (userId) => {
+  const dynamoDb = await getDynamo()
+
   const tenantAccessRows = await queryForArray({
     TableName: `${process.env.stage}-cloudkeeper-tenant-users`,
     KeyConditionExpression: 'userId = :userId',

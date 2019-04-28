@@ -14,6 +14,7 @@
   },
   "dependencies": {
     "aws-sdk": "^2.430.0",
+    "aws-xray-sdk-core": "^2.2.0",
     "lodash": "^4.17.11",
     "luxon": "^1.11.3",
     "mysql": "^2.16.0",
@@ -40,6 +41,7 @@
     "node-fetch": "^2.3.0",
     "serverless-offline": "^3.31.3",
     "serverless-pseudo-parameters": "^2.4.0",
+    "serverless-plugin-tracing": "^2.0.0",
     "serverless-webpack": "^5.2.0",
     "ts-jest": "^24.0.0",
     "ts-loader": "^5.3.3",

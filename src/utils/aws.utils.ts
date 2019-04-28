@@ -1,8 +1,21 @@
-/* eslint-disable import/no-extraneous-dependencies */
 import * as AWS from 'aws-sdk'
-import { map } from 'lodash'
+import { DocumentClient } from 'aws-sdk/clients/dynamodb'
+// @ts-ignore
+import * as AWSXRay from 'aws-xray-sdk-core'
+import { memoize, map } from 'lodash'
 
-const ec2 = new AWS.EC2()
+const getAws = memoize(() => {
+  if (AWSXRay.getNamespace().get('segment')) {
+    return AWSXRay.captureAWS(AWS)
+  }
+
+  return AWS
+})
+
+export const getDynamo = memoize((): DocumentClient => {
+  const aws = getAws()
+  return new aws.DynamoDB.DocumentClient({ apiVersion: '2012-08-10' })
+})
 
 export const getAwsCredentials = async (tenantId, roleArn) => {
   const sts = new AWS.STS()
@@ -23,5 +36,6 @@ export const getAwsCredentials = async (tenantId, roleArn) => {
 }
 
 export const getAwsRegions = async () => {
+  const ec2 = new AWS.EC2()
   return map((await ec2.describeRegions().promise()).Regions, 'RegionName')
 }

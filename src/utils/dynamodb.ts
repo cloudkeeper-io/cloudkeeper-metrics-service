@@ -1,14 +1,14 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import { ScanInput } from 'aws-sdk/clients/dynamodb'
-import * as AWS from 'aws-sdk'
 import { DocumentClient } from 'aws-sdk/lib/dynamodb/document_client'
+
+import { getDynamo } from './aws.utils'
 
 import AttributeMap = DocumentClient.AttributeMap
 import QueryInput = DocumentClient.QueryInput
 
-const dynamoDb = new AWS.DynamoDB.DocumentClient({ apiVersion: '2012-08-10' })
-
 export const scanForArray = async (params: ScanInput) => {
+  const dynamoDb = await getDynamo()
   const scanParams = {
     ...params,
   }
@@ -33,6 +33,8 @@ export const scanForArray = async (params: ScanInput) => {
 }
 
 export const queryForArray = async (params: QueryInput) => {
+  const dynamoDb = await getDynamo()
+
   const queryParams = {
     ...params,
   }
