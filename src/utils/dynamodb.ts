@@ -1,11 +1,8 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import { ScanInput } from 'aws-sdk/clients/dynamodb'
+
 import { DocumentClient } from 'aws-sdk/lib/dynamodb/document_client'
-
 import { getDynamo } from './aws.utils'
-
-import AttributeMap = DocumentClient.AttributeMap
-import QueryInput = DocumentClient.QueryInput
 
 export const scanForArray = async (params: ScanInput) => {
   const dynamoDb = await getDynamo()
@@ -13,7 +10,7 @@ export const scanForArray = async (params: ScanInput) => {
     ...params,
   }
 
-  const results: AttributeMap[] = []
+  const results: DocumentClient.AttributeMap[] = []
 
   while (true) {
     const scanResults = await dynamoDb.scan(scanParams).promise()
@@ -32,14 +29,14 @@ export const scanForArray = async (params: ScanInput) => {
   }
 }
 
-export const queryForArray = async (params: QueryInput) => {
+export const queryForArray = async (params: DocumentClient.QueryInput) => {
   const dynamoDb = await getDynamo()
 
   const queryParams = {
     ...params,
   }
 
-  const results: AttributeMap[] = []
+  const results: DocumentClient.AttributeMap[] = []
 
   while (true) {
     const queryResults = await dynamoDb.query(queryParams).promise()

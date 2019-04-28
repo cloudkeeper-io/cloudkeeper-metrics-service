@@ -9,6 +9,7 @@ plugins:
 
 package:
   individually: true
+  excludeDevDependencies: false
 
 provider:
   name: aws
@@ -28,6 +29,8 @@ custom:
   dbHost: ${ssm:${self:custom.stage}-metrics-db-host}
   dbUser: ${ssm:${self:custom.stage}-metrics-db-user}
   dbPassword: ${ssm:${self:custom.stage}-metrics-db-password}
+  webpack:
+    packager: 'yarn'
 
 functions:
   trigger-update-lambdas:

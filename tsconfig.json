@@ -1,12 +1,19 @@
 {
   "compilerOptions": {
-    "sourceMap": true,
+    "module": "commonjs",
     "target": "es6",
-    "lib": ["esnext"],
-    "moduleResolution": "node",
+    "allowSyntheticDefaultImports": true,
     "strictNullChecks": true,
-    "noImplicitAny": false,
+    "noImplicitAny": true,
     "experimentalDecorators": true,
-    "rootDir": "./"
+    "lib": ["es2018"],
+    "outDir": "../build"
   },
+  "include": [
+    "**/*.ts"
+  ],
+  "exclude": [
+    "../node_modules",
+    "../*.js"
+  ]
 }
