@@ -135,7 +135,7 @@ jobs:
             - v1-yarn-
       - run:
           name: deploy
-          command: NODE_OPTIONS=--max-old-space-size=4096 sls deploy
+          command: NODE_OPTIONS=--max-old-space-size=3000 sls deploy
 
   prod-deploy:
     environment:
@@ -154,7 +154,7 @@ jobs:
             - v1-yarn-
       - run:
           name: deploy
-          command: NODE_OPTIONS=--max-old-space-size=4096 sls deploy --stage prod
+          command: NODE_OPTIONS=--max-old-space-size=3000 sls deploy --stage prod
 
 workflows:
   version: 2
