@@ -8,7 +8,7 @@
   "scripts": {
     "test:unit": "jest unit",
     "test:func": "jest func",
-    "tsc": "tsc",
+    "tsc": "tsc --noEmit",
     "lint": "eslint '*/**'",
     "lint:fix": "eslint '*/**' --fix",
     "db:migrate": "ts-node scripts/migrate-db.ts"
@@ -23,11 +23,6 @@
     "uuidv4": "^3.0.1"
   },
   "devDependencies": {
-    "@babel/core": "7.4.0",
-    "@babel/plugin-proposal-decorators": "^7.4.0",
-    "@babel/plugin-proposal-class-properties": "7.4.4",
-    "@babel/preset-env": "7.4.2",
-    "@babel/preset-typescript": "^7.3.3",
     "@types/aws-lambda": "8.10.15",
     "@types/jest": "^24.0.9",
     "@types/jsonwebtoken": "^8.3.0",
@@ -36,8 +31,6 @@
     "@types/node": "^11.9.5",
     "@typescript-eslint/eslint-plugin": "^1.4.2",
     "@typescript-eslint/parser": "^1.4.2",
-    "babel-jest": "^24.7.1",
-    "babel-loader": "^8.0.5",
     "cross-env": "^5.2.0",
     "eslint": "^5.14.1",
     "eslint-config-airbnb-base": "13.1.0",
@@ -51,24 +44,31 @@
     "serverless-plugin-tracing": "^2.0.0",
     "serverless-pseudo-parameters": "^2.4.0",
     "serverless-webpack": "^5.2.0",
+    "ts-jest": "^24.0.0",
+    "ts-loader": "^5.3.3",
     "ts-node": "^8.0.3",
     "typescript": "^3.3.3333",
-    "webpack": "^4.26.1",
-    "webpack-node-externals": "^1.7.2"
+    "webpack": "^4.26.1"
   },
   "jest": {
-    "testEnvironment": "node",
-    "transform": {
-      "^.+\\.tsx?$": "babel-jest"
-    },
-    "testRegex": "(/__tests__/.*|(\\.|/)(test|spec))\\.(jsx?|tsx?)$",
+    "testMatch": [
+      "<rootDir>/src/**/?(*.)(spec|test).ts"
+    ],
     "moduleFileExtensions": [
+      "web.ts",
       "ts",
+      "web.tsx",
       "tsx",
+      "web.js",
       "js",
+      "web.jsx",
       "jsx",
       "json",
-      "node"
-    ]
+      "node",
+      "mjs"
+    ],
+    "transform": {
+      "^.+\\.tsx?$": "ts-jest"
+    }
   }
 }
