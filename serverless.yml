@@ -71,6 +71,30 @@ functions:
   list-tenants:
     handler: src/tenant/list-tenants.handler
 
+  list-lambdas:
+    handler: src/lambda/list-lambdas.handler
+    environment:
+      dbName: ${self:custom.dbName}
+      dbHost: ${self:custom.dbHost}
+      dbUser: ${self:custom.dbUser}
+      dbPassword: ${self:custom.dbPassword}
+
+  get-lambda:
+    handler: src/lambda/get-lambda.handler
+    environment:
+      dbName: ${self:custom.dbName}
+      dbHost: ${self:custom.dbHost}
+      dbUser: ${self:custom.dbUser}
+      dbPassword: ${self:custom.dbPassword}
+
+  get-lambda-stats:
+    handler: src/lambda/get-lambda-stats.handler
+    environment:
+      dbName: ${self:custom.dbName}
+      dbHost: ${self:custom.dbHost}
+      dbUser: ${self:custom.dbUser}
+      dbPassword: ${self:custom.dbPassword}
+
   update-tenant-lambda-stats:
     timeout: 300
     handler: src/update/lambda-stats/update-tenant-lambda-stats.handler

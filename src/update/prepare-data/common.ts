@@ -8,11 +8,7 @@ export const getDateCondition = (groupDaily, parameterString = '?') => {
   return `(\`dateTime\` >= UTC_TIMESTAMP()  - INTERVAL ${parameterString} DAY - INTERVAL 1 HOUR) `
 }
 
-
-export const fillEmptyDataPoints = (dataPoints, groupDaily, daysAgo, emptyDataPoint) => {
-  const endDate = DateTime.utc().minus({ hour: 1 }).startOf(groupDaily ? 'day' : 'hour')
-
-  const startDate = endDate.minus({ days: daysAgo })
+export const fillEmptyDataPointsWithDates = (dataPoints, groupDaily, startDate, endDate, emptyDataPoint) => {
   const expectedDates = map(
     Interval
       .fromDateTimes(startDate, endDate)
@@ -29,4 +25,12 @@ export const fillEmptyDataPoints = (dataPoints, groupDaily, daysAgo, emptyDataPo
   const completeDataPoints = [...dataPoints, ...dataPointsToAdd]
 
   return orderBy(completeDataPoints, ['dateTime'], ['asc'])
+}
+
+export const fillEmptyDataPoints = (dataPoints, groupDaily, daysAgo, emptyDataPoint) => {
+  const endDate = DateTime.utc().minus({ hour: 1 }).startOf(groupDaily ? 'day' : 'hour')
+
+  const startDate = endDate.minus({ days: daysAgo })
+
+  return fillEmptyDataPointsWithDates(dataPoints, groupDaily, startDate, endDate, emptyDataPoint)
 }
