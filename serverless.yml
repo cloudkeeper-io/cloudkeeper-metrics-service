@@ -95,6 +95,14 @@ functions:
       dbUser: ${self:custom.dbUser}
       dbPassword: ${self:custom.dbPassword}
 
+  list-dynamo-tables:
+    handler: src/dynamodb/list-tables.handler
+    environment:
+      dbName: ${self:custom.dbName}
+      dbHost: ${self:custom.dbHost}
+      dbUser: ${self:custom.dbUser}
+      dbPassword: ${self:custom.dbPassword}
+
   update-tenant-lambda-stats:
     timeout: 300
     handler: src/update/lambda-stats/update-tenant-lambda-stats.handler
