@@ -4,14 +4,14 @@ import { DateTime } from 'luxon'
 
 const lambdaClient = new AWS.Lambda({ region: 'eu-central-1' })
 
-describe('list lambdas', () => {
+describe('list tables', () => {
   jest.setTimeout(30000)
 
   test('happy path', async () => {
     const startDate = DateTime.utc().minus({ days: 1 }).toISO()
     const endDate = DateTime.utc().toISO()
     const response = await lambdaClient.invoke({
-      FunctionName: 'cloudkeeper-metrics-service-dev-list-tables',
+      FunctionName: 'cloudkeeper-metrics-service-dev-list-dynamo-tables',
       Payload: JSON.stringify({
         tenantId: '839c5d7e-5c15-49ae-b4d6-6bbdf161d9e2',
         startDate,
@@ -27,16 +27,16 @@ describe('list lambdas', () => {
       expect(lambda).toEqual({
         tenantId: expect.any(String),
         name: expect.any(String),
+        items: expect.any(String),
+        sizeBytes: expect.any(String),
         region: expect.any(String),
-        runtime: expect.any(String),
-        size: expect.any(Number),
-        codeSize: expect.any(String),
-        timeout: expect.any(Number),
-        avgExecutionTime: expect.any(Number),
-        invocations: expect.any(String),
-        errors: expect.any(String),
-        errorRate: expect.any(String),
-        cost: expect.any(Number),
+        billingMode: expect.any(String),
+        avgConsumedRead: expect.any(String),
+        avgConsumedWrite: expect.any(String),
+        avgProvisionedRead: expect.any(String),
+        avgProvisionedWrite: expect.any(String),
+        throttledReads: expect.any(String),
+        throttledWrites: expect.any(String),
       })
     }
   })
