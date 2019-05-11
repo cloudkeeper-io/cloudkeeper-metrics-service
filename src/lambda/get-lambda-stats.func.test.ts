@@ -4,7 +4,7 @@ import { DateTime } from 'luxon'
 
 const lambdaClient = new AWS.Lambda({ region: 'eu-central-1' })
 
-describe('get lambda details', () => {
+describe('get lambda stats', () => {
   jest.setTimeout(30000)
 
   test('happy path', async () => {
