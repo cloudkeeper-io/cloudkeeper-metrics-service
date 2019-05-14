@@ -12,7 +12,7 @@ async function getParameter(name: string) {
   }).promise()).Parameter!.Value
 }
 
-const getConfig = async (): Promise<MysqlConnectionOptions> => {
+export const getConfig = async (): Promise<MysqlConnectionOptions> => {
   const stage = process.env.STAGE
 
   const dbName = await getParameter(`${stage}-metrics-db-name`)
