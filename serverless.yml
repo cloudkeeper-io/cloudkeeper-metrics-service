@@ -44,6 +44,20 @@ functions:
       dbUser: ${self:custom.dbUser}
       dbPassword: ${self:custom.dbPassword}
 
+  trigger-costs-data-update:
+    handler: src/update/costs/trigger-costs-update.handler
+    events:
+      - schedule: cron(5 0 ? * * *)
+
+  update-costs-for-tenant:
+    handler: src/update/costs/update-costs-for-tenant.handler
+    environment:
+      dbName: ${self:custom.dbName}
+      dbHost: ${self:custom.dbHost}
+      dbUser: ${self:custom.dbUser}
+      dbPassword: ${self:custom.dbPassword}
+      finishedTopic: "arn:aws:sns:#{AWS::Region}:#{AWS::AccountId}:${self:custom.stage}-finished-updating-costs"
+
   trigger-dynamo-tables-update:
     handler: src/update/dynamodb-tables/trigger-dynamo-tables-update.handler
     events:
@@ -213,6 +227,12 @@ resources:
       Properties:
         DisplayName: ${self:custom.stage}-finished-updating-dynamo-stats
         TopicName: ${self:custom.stage}-finished-updating-dynamo-stats
+
+    FinishedUpdatingCosts:
+      Type: "AWS::SNS::Topic"
+      Properties:
+        DisplayName: ${self:custom.stage}-finished-updating-costs
+        TopicName: ${self:custom.stage}-finished-updating-costs
 
     CloudkeeperTenantData:
       Type: AWS::S3::Bucket

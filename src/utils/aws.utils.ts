@@ -17,7 +17,7 @@ export const getDynamo = memoize((): DocumentClient => {
   return new aws.DynamoDB.DocumentClient({ apiVersion: '2012-08-10' })
 })
 
-export const getAwsCredentials = async (tenantId, roleArn) => {
+export const getAwsCredentials = memoize(async (tenantId, roleArn) => {
   const sts = new AWS.STS()
   const params = {
     RoleArn: roleArn,
@@ -33,7 +33,7 @@ export const getAwsCredentials = async (tenantId, roleArn) => {
     secretAccessKey: assumeRoleResponse.Credentials!.SecretAccessKey,
     sessionToken: assumeRoleResponse.Credentials!.SessionToken,
   }
-}
+})
 
 export const getAwsRegions = async () => {
   const ec2 = new AWS.EC2()

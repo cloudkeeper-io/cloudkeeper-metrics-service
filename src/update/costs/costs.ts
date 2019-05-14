@@ -62,8 +62,8 @@ export const run = async () => {
     item.tenantId,
     item.serviceName,
     item.stackName,
-    item.blendedCost,
     item.date,
+    item.blendedCost,
   ])
 
   await connection.query(query, params)
