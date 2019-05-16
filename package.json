@@ -11,7 +11,8 @@
     "tsc": "tsc --noEmit",
     "lint": "eslint '*/**'",
     "lint:fix": "eslint '*/**' --fix",
-    "db:migrate": "ts-node scripts/migrate-db.ts"
+    "db:migrate": "ts-node scripts/migrate-db.ts",
+    "deploy": "NODE_OPTIONS=--max_old_space_size=2048 sls deploy"
   },
   "dependencies": {
     "aws-sdk": "^2.430.0",
