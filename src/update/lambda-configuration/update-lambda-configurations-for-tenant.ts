@@ -2,7 +2,7 @@ import * as Lambda from 'aws-sdk/clients/lambda'
 
 import { flatMap } from 'lodash'
 import { getConnection } from '../../db/db'
-import { listAllLambdas } from '../../utils/lambda.util'
+import { listAllLambdas } from '../../utils/lambda-metrics.util'
 import { LambdaConfiguration } from '../../entity'
 import { getAwsRegions } from '../../utils/aws.utils'
 

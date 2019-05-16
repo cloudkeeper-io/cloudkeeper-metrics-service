@@ -1,6 +1,6 @@
 import * as AWS from 'aws-sdk'
 import * as Lambda from 'aws-sdk/clients/lambda'
-import { checkAccess } from '../utils/lambda.util'
+import { checkAccess } from '../utils/lambda-metrics.util'
 
 const dynamoDb = new AWS.DynamoDB.DocumentClient({ apiVersion: '2012-08-10' })
 const lambda = new Lambda({ apiVersion: '2015-03-31' })
@@ -50,6 +50,13 @@ export const handler = async (request) => {
 
     await lambda.invoke({
       FunctionName: `cloudkeeper-metrics-service-${process.env.stage}-update-tenant-dynamo-tables`,
+      InvocationType: 'Event',
+      LogType: 'None',
+      Payload: JSON.stringify(updatedTenant),
+    }).promise()
+
+    await lambda.invoke({
+      FunctionName: `cloudkeeper-metrics-service-${process.env.stage}-update-costs-for-tenant`,
       InvocationType: 'Event',
       LogType: 'None',
       Payload: JSON.stringify(updatedTenant),

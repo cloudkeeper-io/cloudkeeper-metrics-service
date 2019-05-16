@@ -30,7 +30,6 @@ module.exports = {
           {
             loader: 'ts-loader',
             options: {
-              onlyCompileBundledFiles: true,
               transpileOnly: true,
             },
           },

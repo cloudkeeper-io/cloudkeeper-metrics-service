@@ -3,7 +3,7 @@ import { chunk, flatten, map, keyBy, uniq, get, groupBy } from 'lodash'
 import * as AWS from 'aws-sdk'
 import { DynamoTable, DynamoTableStats } from '../../entity'
 import { getConnection } from '../../db/db'
-import { getTableMetrics } from '../../utils/dynamodb.util'
+import { getTableMetrics } from '../../utils/dynamodb-metrics.util'
 
 const sns = new AWS.SNS({ apiVersion: '2010-03-31' })
 

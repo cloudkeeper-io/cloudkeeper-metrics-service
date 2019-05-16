@@ -50,6 +50,7 @@ functions:
       - schedule: cron(5 0 ? * * *)
 
   update-costs-for-tenant:
+    timeout: 240
     handler: src/update/costs/update-costs-for-tenant.handler
     environment:
       dbName: ${self:custom.dbName}
@@ -57,6 +58,19 @@ functions:
       dbUser: ${self:custom.dbUser}
       dbPassword: ${self:custom.dbPassword}
       finishedTopic: "arn:aws:sns:#{AWS::Region}:#{AWS::AccountId}:${self:custom.stage}-finished-updating-costs"
+
+  prepare-costs-data-for-tenant:
+    timeout: 240
+    handler: src/update/prepare-data/prepare-costs-data-for-tenant.handler
+    environment:
+      bucket: ${self:custom.stage}-cloudkeeper-tenant-data
+      dbName: ${self:custom.dbName}
+      dbHost: ${self:custom.dbHost}
+      dbUser: ${self:custom.dbUser}
+      dbPassword: ${self:custom.dbPassword}
+    events:
+      - sns:
+          arn: "arn:aws:sns:#{AWS::Region}:#{AWS::AccountId}:${self:custom.stage}-finished-updating-costs"
 
   trigger-dynamo-tables-update:
     handler: src/update/dynamodb-tables/trigger-dynamo-tables-update.handler

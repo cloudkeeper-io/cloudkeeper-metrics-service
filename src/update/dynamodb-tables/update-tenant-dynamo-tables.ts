@@ -2,7 +2,7 @@ import * as Lambda from 'aws-sdk/clients/lambda'
 import { flatMap } from 'lodash'
 
 import { getConnection } from '../../db/db'
-import { listTables } from '../../utils/dynamodb.util'
+import { listTables } from '../../utils/dynamodb-metrics.util'
 import { DynamoTable } from '../../entity'
 import { getAwsRegions } from '../../utils/aws.utils'
 

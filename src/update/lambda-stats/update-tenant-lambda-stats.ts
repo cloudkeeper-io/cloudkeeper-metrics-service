@@ -3,7 +3,7 @@ import { chunk, flatten, map, keyBy, groupBy } from 'lodash'
 import * as AWS from 'aws-sdk'
 import { LambdaConfiguration, LambdaStats } from '../../entity'
 import { getConnection } from '../../db/db'
-import { getLambdaMetrics } from '../../utils/lambda.util'
+import { getLambdaMetrics } from '../../utils/lambda-metrics.util'
 import { getAwsCredentials } from '../../utils/aws.utils'
 
 const sns = new AWS.SNS({ apiVersion: '2010-03-31' })

@@ -28,7 +28,7 @@ describe('dynamo collectors', () => {
   }
 
   test('most read tables - 24 hours', async () => {
-    const tables = await getMostReadTables('8719b290-66f2-4138-ab35-67a3350dfb75', 1)
+    const tables = await getMostReadTables('7ec85367-20e1-40f2-8725-52b245354045', 1)
 
     expectDynamoTableFields(tables)
 
@@ -40,7 +40,7 @@ describe('dynamo collectors', () => {
   })
 
   test('most read tables - 30 days', async () => {
-    const tables = await getMostReadTables('8719b290-66f2-4138-ab35-67a3350dfb75', 30, true)
+    const tables = await getMostReadTables('7ec85367-20e1-40f2-8725-52b245354045', 30, true)
 
     expectDynamoTableFields(tables)
 
@@ -52,7 +52,7 @@ describe('dynamo collectors', () => {
   })
 
   test('most writes tables - 24 hours', async () => {
-    const tables = await getMostWritesTables('8719b290-66f2-4138-ab35-67a3350dfb75', 1)
+    const tables = await getMostWritesTables('7ec85367-20e1-40f2-8725-52b245354045', 1)
 
     expectDynamoTableFields(tables)
 
@@ -64,7 +64,7 @@ describe('dynamo collectors', () => {
   })
 
   test('most writes tables - 30 days', async () => {
-    const tables = await getMostWritesTables('8719b290-66f2-4138-ab35-67a3350dfb75', 30, true)
+    const tables = await getMostWritesTables('7ec85367-20e1-40f2-8725-52b245354045', 30, true)
 
     expectDynamoTableFields(tables)
 
@@ -76,7 +76,7 @@ describe('dynamo collectors', () => {
   })
 
   test('most throttled tables - 24 hours', async () => {
-    const tables = await getMostThrottledTables('8719b290-66f2-4138-ab35-67a3350dfb75', 1)
+    const tables = await getMostThrottledTables('7ec85367-20e1-40f2-8725-52b245354045', 1)
 
     expectDynamoTableFields(tables)
 
@@ -84,7 +84,7 @@ describe('dynamo collectors', () => {
   })
 
   test('most throttled tables - 30 days', async () => {
-    const tables = await getMostThrottledTables('8719b290-66f2-4138-ab35-67a3350dfb75', 30, true)
+    const tables = await getMostThrottledTables('7ec85367-20e1-40f2-8725-52b245354045', 30, true)
 
     expectDynamoTableFields(tables)
 
@@ -138,13 +138,13 @@ describe('dynamo collectors', () => {
   }
 
   test('most expensive tables - 24 hours', async () => {
-    const tables = await getMostExpensiveTables('8719b290-66f2-4138-ab35-67a3350dfb75', 1)
+    const tables = await getMostExpensiveTables('7ec85367-20e1-40f2-8725-52b245354045', 1)
 
     expectExpensiveDataToBeConsistent(tables, 24)
   })
 
   test('most expensive tables - 30 days', async () => {
-    const tables = await getMostExpensiveTables('8719b290-66f2-4138-ab35-67a3350dfb75', 30, true)
+    const tables = await getMostExpensiveTables('7ec85367-20e1-40f2-8725-52b245354045', 30, true)
 
     expect(tables).toBeTruthy()
 
