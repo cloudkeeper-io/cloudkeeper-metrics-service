@@ -10,7 +10,7 @@ describe('get lambda details', () => {
     const response = await lambdaClient.invoke({
       FunctionName: 'cloudkeeper-metrics-service-dev-get-lambda',
       Payload: JSON.stringify({
-        tenantId: '839c5d7e-5c15-49ae-b4d6-6bbdf161d9e2',
+        tenantId: '7ec85367-20e1-40f2-8725-52b245354045',
         name: 'company-service-dev-get-companies-by-id',
         region: 'eu-west-1',
       }),

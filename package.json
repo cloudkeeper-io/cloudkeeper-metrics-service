@@ -12,7 +12,7 @@
     "lint": "eslint '*/**'",
     "lint:fix": "eslint '*/**' --fix",
     "db:migrate": "ts-node scripts/migrate-db.ts",
-    "deploy": "NODE_OPTIONS=--max_old_space_size=2048 sls deploy"
+    "deploy": "NODE_OPTIONS=--max_old_space_size=2048 sls deploy --force"
   },
   "dependencies": {
     "aws-sdk": "^2.430.0",
