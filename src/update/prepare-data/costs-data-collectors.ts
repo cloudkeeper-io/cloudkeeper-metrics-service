@@ -15,13 +15,11 @@ export const getCostsPerService = async (tenantId, startDate, endDate) => {
   const dateMap = groupBy(result, 'date')
 
   const dataPoints = chain(dateMap)
-    .map((serviceCosts, date) => {
-      return ({
-        date,
-        total: sumBy(serviceCosts, 'blendedCost'),
-        serviceCosts,
-      })
-    })
+    .map((serviceCosts, date) => ({
+      date,
+      total: sumBy(serviceCosts, 'blendedCost'),
+      serviceCosts,
+    }))
     .orderBy(['date'], ['asc'])
     .value()
 
@@ -43,13 +41,11 @@ export const getCostsPerStack = async (tenantId, startDate, endDate) => {
   const dateMap = groupBy(result, 'date')
 
   const dataPoints = chain(dateMap)
-    .map((stackCosts, date) => {
-      return ({
-        date,
-        total: sumBy(stackCosts, 'blendedCost'),
-        stackCosts,
-      })
-    })
+    .map((stackCosts, date) => ({
+      date,
+      total: sumBy(stackCosts, 'blendedCost'),
+      stackCosts,
+    }))
     .orderBy(['date'], ['asc'])
     .value()
 
