@@ -13,7 +13,7 @@ describe('list tables', () => {
     const response = await lambdaClient.invoke({
       FunctionName: 'cloudkeeper-metrics-service-dev-list-dynamo-tables',
       Payload: JSON.stringify({
-        tenantId: '839c5d7e-5c15-49ae-b4d6-6bbdf161d9e2',
+        tenantId: '7ec85367-20e1-40f2-8725-52b245354045',
         startDate,
         endDate,
       }),
