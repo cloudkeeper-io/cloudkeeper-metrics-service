@@ -7,7 +7,7 @@ process.env.dbUser = 'cloudkeeper'
 process.env.dbPassword = 'ExH58GwqZBnCV49MqWcV'
 
 import { getConnection } from '../../db/db'
-import {getCostsPerService, getCostsPerStack} from './costs-data-collectors'
+import { getCostsPerService, getCostsPerStack } from './costs-data-collectors'
 
 describe('costs collectors', () => {
   jest.setTimeout(30000)
