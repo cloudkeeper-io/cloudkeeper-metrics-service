@@ -1,5 +1,5 @@
 /* eslint-disable import/no-extraneous-dependencies */
-import { listTables } from './dynamodb.util'
+import { listTables } from './dynamodb-metrics.util'
 
 describe('dynamo data', () => {
   jest.setTimeout(30000)
