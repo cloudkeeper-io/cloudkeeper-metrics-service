@@ -18,16 +18,25 @@ export const getCostsPerService = async (tenantId, startDate, endDate) => {
 
   const dataPoints = chain(dateMap)
     .map((serviceCosts, date) => ({
-      date,
+      dateTime: DateTime.fromISO(date, { zone: 'utc' }).toJSDate(),
       total: sumBy(serviceCosts, 'blendedCost'),
       serviceCosts,
     }))
     .orderBy(['date'], ['asc'])
     .value()
 
-  // TODO: fill in empty data points
+  const startDateTime = DateTime.fromISO(startDate, { zone: 'utc' }).minus({ days: 1 }).startOf('hour')
+  const endDateTime = DateTime.fromISO(endDate, { zone: 'utc' }).startOf('hour')
 
-  return dataPoints
+  const filledDataPoints = fillEmptyDataPointsWithDates(dataPoints, true, startDateTime, endDateTime, {
+    total: 0,
+    serviceCosts: [],
+  })
+
+  return filledDataPoints.map(item => ({
+    ...item,
+    date: DateTime.fromJSDate(item.dateTime).startOf('second').toISODate(),
+  }))
 }
 
 export const getCostsForService = async (tenantId, serviceName, startDate, endDate) => {
@@ -65,14 +74,25 @@ export const getCostsPerStack = async (tenantId, startDate, endDate) => {
 
   const dateMap = groupBy(result, 'date')
 
-  // TODO: fill in empty data points
-
-  return chain(dateMap)
+  const dataPoints = chain(dateMap)
     .map((stackCosts, date) => ({
-      date,
+      dateTime: DateTime.fromISO(date, { zone: 'utc' }).toJSDate(),
       total: sumBy(stackCosts, 'blendedCost'),
       stackCosts,
     }))
     .orderBy(['date'], ['asc'])
     .value()
+
+  const startDateTime = DateTime.fromISO(startDate, { zone: 'utc' }).minus({ days: 1 }).startOf('hour')
+  const endDateTime = DateTime.fromISO(endDate, { zone: 'utc' }).startOf('hour')
+
+  const filledDataPoints = fillEmptyDataPointsWithDates(dataPoints, true, startDateTime, endDateTime, {
+    total: 0,
+    stackCosts: [],
+  })
+
+  return filledDataPoints.map(item => ({
+    ...item,
+    date: DateTime.fromJSDate(item.dateTime).startOf('second').toISODate(),
+  }))
 }
