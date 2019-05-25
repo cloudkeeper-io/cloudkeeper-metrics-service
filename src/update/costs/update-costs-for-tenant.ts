@@ -14,7 +14,7 @@ export const handler = async (tenant) => {
   const start = DateTime
     .utc()
     .startOf('second')
-    .minus({ days: 90 })
+    .minus({ days: 91 })
     .toISODate()
 
   const end = DateTime

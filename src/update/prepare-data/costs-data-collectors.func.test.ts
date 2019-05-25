@@ -7,14 +7,14 @@ process.env.dbUser = 'cloudkeeper'
 process.env.dbPassword = 'ExH58GwqZBnCV49MqWcV'
 
 import { getConnection } from '../../db/db'
-import { getCostsPerService, getCostsPerStack } from './costs-data-collectors'
+import { getCostsForService, getCostsPerService, getCostsPerStack } from './costs-data-collectors'
 
 describe('costs collectors', () => {
   jest.setTimeout(30000)
 
-  const endDate = DateTime.utc().startOf('second').toISODate()
+  const endDate = DateTime.utc().minus({ days: 1 }).startOf('second').toISODate()
 
-  const startDate = DateTime.utc().minus({ days: 30 }).startOf('second').toISODate()
+  const startDate = DateTime.utc().minus({ days: 89 }).startOf('second').toISODate()
 
   test('costs per service', async () => {
     const dataPoints = await getCostsPerService('7ec85367-20e1-40f2-8725-52b245354045', startDate, endDate)
@@ -32,6 +32,22 @@ describe('costs collectors', () => {
           blendedCost: expect.any(Number),
         })
       })
+    })
+  })
+
+  test('costs for service', async () => {
+    const dataPoints = await getCostsForService(
+      '7ec85367-20e1-40f2-8725-52b245354045',
+      'Amazon Relational Database Service',
+      startDate,
+      endDate,
+    )
+
+    expect(dataPoints.length).toBe(30)
+
+    dataPoints.forEach((dataPoint) => {
+      expect(dataPoint.dateTime).toEqual(expect.any(Date))
+      expect(dataPoint.cost).toEqual(expect.any(Number))
     })
   })
 
