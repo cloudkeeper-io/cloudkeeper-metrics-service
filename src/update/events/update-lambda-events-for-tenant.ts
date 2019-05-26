@@ -8,8 +8,6 @@ import { generateMessage, writeLatestEventsToS3 } from './common'
 const addLambdaEvents = async (tenantId, newEvents: any[]) => {
   const lambdaTotals = await getTotals(tenantId, 30, false)
 
-  console.log('totals ', lambdaTotals)
-
   const invocationsDataPoints = lambdaTotals.dataPoints.map(item => ({
     timestamp: item.dateTime,
     value: Number(item.invocations),
@@ -21,8 +19,8 @@ const addLambdaEvents = async (tenantId, newEvents: any[]) => {
 
   newEvents.push(...invocationsAnomalies.map(item => ({
     tenantId,
-    serviceName: 'lambda',
-    dimension: 'Lambda Invocations',
+    serviceName: 'AWS Lambda',
+    dimension: 'Invocations',
     // @ts-ignore
     value: item.value,
     // @ts-ignore
@@ -30,7 +28,7 @@ const addLambdaEvents = async (tenantId, newEvents: any[]) => {
     // @ts-ignore
     dateTime: item.timestamp,
     // @ts-ignore
-    message: generateMessage('Lambda Invocations', item.value, item.expectedValue),
+    message: generateMessage('AWS Lambda Invocations', item.value, item.expectedValue),
   })))
 
   const errorsDataPoints = lambdaTotals.dataPoints.map(item => ({
@@ -44,8 +42,8 @@ const addLambdaEvents = async (tenantId, newEvents: any[]) => {
 
   newEvents.push(...errorsAnomalies.map(item => ({
     tenantId,
-    serviceName: 'lambda',
-    dimension: 'Lambda Errors',
+    serviceName: 'AWS Lambda',
+    dimension: 'Errors',
     // @ts-ignore
     value: item.value,
     // @ts-ignore
@@ -53,7 +51,7 @@ const addLambdaEvents = async (tenantId, newEvents: any[]) => {
     // @ts-ignore
     dateTime: item.timestamp,
     // @ts-ignore
-    message: generateMessage('Lambda Errors', item.value, item.expectedValue),
+    message: generateMessage('AWS Lambda Errors', item.value, item.expectedValue),
   })))
 }
 
@@ -75,8 +73,8 @@ export const handler = async (event) => {
         .values(newEvents)
         .orIgnore()
         .execute()
-
-      await writeLatestEventsToS3(connection, tenantId)
     }
+
+    await writeLatestEventsToS3(connection, tenantId)
   }))
 }

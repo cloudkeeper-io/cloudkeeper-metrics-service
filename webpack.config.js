@@ -27,6 +27,7 @@ module.exports = {
       {
         test: /\.ts(x?)$/,
         use: [
+          'cache-loader',
           {
             loader: 'ts-loader',
             options: {

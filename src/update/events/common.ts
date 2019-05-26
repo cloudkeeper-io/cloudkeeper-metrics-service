@@ -8,10 +8,14 @@ export const writeLatestEventsToS3 = async (connection, tenantId) => {
     [tenantId],
   )
 
+  const events = {
+    events: lastEvents,
+  }
+
   await s3.putObject({
     Bucket: process.env.bucket!,
     Key: `dashboard/data/events/${tenantId}.json`,
-    Body: JSON.stringify(lastEvents),
+    Body: JSON.stringify(events),
     ContentType: 'application/json',
   }).promise()
 }

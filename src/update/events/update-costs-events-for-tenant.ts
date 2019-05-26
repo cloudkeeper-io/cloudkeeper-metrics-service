@@ -101,8 +101,8 @@ export const handler = async (event) => {
         .values(newEvents)
         .orIgnore()
         .execute()
-
-      await writeLatestEventsToS3(connection, tenantId)
     }
+
+    await writeLatestEventsToS3(connection, tenantId)
   }))
 }

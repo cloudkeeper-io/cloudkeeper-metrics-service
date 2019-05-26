@@ -10,15 +10,14 @@ export const getAnomalyData = async (series, granularity: Granularity = 'hourly'
       process.env.azureDomain!,
     )
 
-  const client = new AnomalyDetectorClient(credentials, 'https://westus2.api.cognitive.microsoft.com')
+  const client = new AnomalyDetectorClient(credentials, 'https://westeurope.api.cognitive.microsoft.com')
   const body: AnomalyDetectorModels.Request = {
     series,
     granularity,
     customInterval: 1,
     period: 1,
-    maxAnomalyRatio: 0.3,
-    sensitivity: 1,
   }
+
   const options = {
     customHeaders: {
       'Ocp-Apim-Subscription-Key': process.env.azureSubscriptionId!,
