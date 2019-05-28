@@ -1,6 +1,5 @@
 import * as AWS from 'aws-sdk'
 import { DocumentClient } from 'aws-sdk/clients/dynamodb'
-// @ts-ignore
 import * as AWSXRay from 'aws-xray-sdk-core'
 import { memoize, map } from 'lodash'
 
