@@ -1,4 +1,5 @@
 import * as AWS from 'aws-sdk'
+import { round } from 'lodash'
 
 const s3 = new AWS.S3({ apiVersion: '2006-03-01' })
 
@@ -25,28 +26,28 @@ export const generateMessage = (dimensionName, value, expectedValue, unitPrefix 
   let change
   if (value > expectedValue) {
     if (expectedValue) {
-      const percentage = (value - expectedValue) / expectedValue
+      const percentage = round((value - expectedValue) / expectedValue * 100)
 
       if (percentage > 10) {
         digitPart = percentage + '%'
       } else {
-        digitPart = unitPrefix + Math.round(value - expectedValue) + unitPostFix
+        digitPart = unitPrefix + round(value - expectedValue) + unitPostFix
       }
     } else {
-      digitPart = unitPrefix + Math.round(value - expectedValue) + unitPostFix
+      digitPart = unitPrefix + round(value - expectedValue) + unitPostFix
     }
     change = 'higher'
   } else {
     if (expectedValue) {
-      const percentage = (expectedValue - value) / expectedValue
+      const percentage = round((expectedValue - value) / expectedValue * 100)
 
       if (percentage > 10) {
         digitPart = percentage + '%'
       } else {
-        digitPart = unitPrefix + Math.round(expectedValue - value) + unitPostFix
+        digitPart = unitPrefix + round(expectedValue - value) + unitPostFix
       }
     } else {
-      digitPart = unitPrefix + Math.round(expectedValue - value) + unitPostFix
+      digitPart = unitPrefix + round(expectedValue - value) + unitPostFix
     }
     change = 'lower'
   }

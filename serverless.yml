@@ -6,6 +6,7 @@ plugins:
   - serverless-pseudo-parameters
   - serverless-offline
   - serverless-plugin-tracing
+  - serverless-plugin-scripts
 
 package:
   individually: true
@@ -28,6 +29,10 @@ custom:
   dbHost: ${ssm:${self:custom.stage}-metrics-db-host}
   dbUser: ${ssm:${self:custom.stage}-metrics-db-user}
   dbPassword: ${ssm:${self:custom.stage}-metrics-db-password}
+
+  scripts:
+    hooks:
+      'before:deploy:deploy': aws s3 cp ./serverless.yml s3://cdn.cloudkeeper.io/cloudformation.yml
 
 functions:
   trigger-update-lambdas:

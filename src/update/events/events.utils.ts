@@ -15,6 +15,7 @@ export const getAnomalyData = async (series, granularity: Granularity = 'hourly'
     series,
     granularity,
     customInterval: 1,
+    sensitivity: 90,
     period: 1,
   }
 
