@@ -50,7 +50,7 @@ export const getCostsForService = async (tenantId, serviceName, startDate, endDa
 
   const result = await connection.query(query, [tenantId, serviceName, startDate, endDate])
 
-  const startDateTime = DateTime.fromISO(startDate, { zone: 'utc' }).startOf('hour')
+  const startDateTime = DateTime.fromISO(startDate, { zone: 'utc' }).minus({ days: 1 }).startOf('hour')
   const endDateTime = DateTime.fromISO(endDate, { zone: 'utc' }).startOf('hour')
 
   const dataPoints = fillEmptyDataPointsWithDates(result, true, startDateTime, endDateTime, {
