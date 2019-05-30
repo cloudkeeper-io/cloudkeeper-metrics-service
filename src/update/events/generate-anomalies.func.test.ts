@@ -1,4 +1,4 @@
-import {generateMessage} from "./common"
+/* eslint-disable import/first */
 
 process.env.dbName = 'cloudkeeper'
 process.env.dbHost = 'cloudkeeper.cluster-ckbplh6wfiop.eu-central-1.rds.amazonaws.com'
@@ -14,11 +14,12 @@ import { DateTime } from 'luxon'
 import { filter, takeRight } from 'lodash'
 import { getCostsPerService } from '../prepare-data/costs-data-collectors'
 import { getAnomalyData } from './events.utils'
+import { generateMessage } from './common'
 
 describe('Update Lambda Stats', async () => {
   jest.setTimeout(60000)
 
-  //TODO: migrate into proper test
+  // TODO: migrate into proper test
 
   test.skip('happy path', async () => {
     const endDate = DateTime.utc().minus({ days: 1 }).startOf('second').toISODate()
