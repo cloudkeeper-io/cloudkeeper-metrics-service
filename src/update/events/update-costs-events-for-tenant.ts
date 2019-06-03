@@ -24,19 +24,17 @@ const addServiceCostAnomalies = async (tenantId, serviceName, newEvents) => {
 
   const costAnomalyData = await getAnomalyData(series, 'daily')
 
-  const costAnomalies = filter(takeRight(costAnomalyData, 10), { isAnomaly: true })
+  const costAnomalies = filter(takeRight(costAnomalyData, 10), (dataPoint) => {
+    return dataPoint.isAnomaly && (Math.abs(dataPoint.expectedValue - dataPoint.value) > 1)
+  })
 
   newEvents.push(...costAnomalies.map(item => ({
     tenantId,
     serviceName,
     dimension: 'Billed Cost',
-    // @ts-ignore
     value: item.value,
-    // @ts-ignore
     expectedValue: item.expectedValue,
-    // @ts-ignore
     dateTime: item.timestamp,
-    // @ts-ignore
     message: generateMessage(`${serviceName} Billed Cost`, item.value, item.expectedValue, '$'),
   })))
 }
@@ -63,23 +61,21 @@ const getCostsEvents = async (tenantId): Promise<any[]> => {
     tenantId,
     serviceName: 'costs',
     dimension: 'Billed Cost',
-    // @ts-ignore
     value: item.value,
-    // @ts-ignore
     expectedValue: item.expectedValue,
-    // @ts-ignore
     dateTime: item.timestamp,
-    // @ts-ignore
     message: generateMessage('Billed Cost', item.value, item.expectedValue, '$'),
   })))
 
   const serviceCosts = get(last(costsData), 'serviceCosts')
 
-  const topService = get(serviceCosts, '0.serviceName')
-  const top2Service = get(serviceCosts, '1.serviceName')
+  if (!serviceCosts) {
+    return newEvents
+  }
 
-  await addServiceCostAnomalies(tenantId, topService, newEvents)
-  await addServiceCostAnomalies(tenantId, top2Service, newEvents)
+  for (const serviceCost of serviceCosts) {
+    await addServiceCostAnomalies(tenantId, serviceCost.serviceName, newEvents)
+  }
 
   return newEvents
 }
