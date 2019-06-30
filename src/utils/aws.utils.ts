@@ -11,6 +11,11 @@ const getAws = memoize(() => {
   return AWS
 })
 
+export const getLambda = memoize((): AWS.Lambda => {
+  const aws = getAws()
+  return new aws.Lambda()
+})
+
 export const getDynamo = memoize((): DocumentClient => {
   const aws = getAws()
   return new aws.DynamoDB.DocumentClient({ apiVersion: '2012-08-10' })

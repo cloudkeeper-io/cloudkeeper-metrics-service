@@ -1,9 +1,9 @@
 /* eslint-disable import/first */
 
-process.env.dbName = 'cloudkeeper'
-process.env.dbHost = 'cloudkeeper.cluster-ckbplh6wfiop.eu-central-1.rds.amazonaws.com'
+process.env.dbName = 'cloudkeeper_dev'
+process.env.dbHost = 'cloudkeeper-dev.ckbplh6wfiop.eu-central-1.rds.amazonaws.com'
 process.env.dbUser = 'cloudkeeper'
-process.env.dbPassword = 'ExH58GwqZBnCV49MqWcV'
+process.env.dbPassword = '2IS27ARwkqv5PaKEnGeU7taREet5UPxx'
 
 import { sumBy } from 'lodash'
 

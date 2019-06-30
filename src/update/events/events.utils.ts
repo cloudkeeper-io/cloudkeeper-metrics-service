@@ -1,6 +1,13 @@
 import * as msRestNodeAuth from '@azure/ms-rest-nodeauth'
 import { AnomalyDetectorClient, AnomalyDetectorModels } from '@azure/cognitiveservices-anomalydetector'
 import { Granularity, Point } from '@azure/cognitiveservices-anomalydetector/lib/models/index'
+import { getLambda } from '../../utils/aws.utils'
+
+export interface AnomalyDetectionResult {
+  value: number
+  isAnomaly: boolean
+  timestamp: string
+}
 
 export const getAnomalyData = async (series: Point[], granularity: Granularity = 'hourly') => {
   const credentials = await msRestNodeAuth
@@ -33,4 +40,27 @@ export const getAnomalyData = async (series: Point[], granularity: Granularity =
     isAnomaly: result.isAnomaly[index],
     expectedValue: result.expectedValues[index],
   }))
+}
+
+
+export const getAnomalyRrcfData = async (series: Point[]): Promise<AnomalyDetectionResult[]> => {
+  const lambda = getLambda()
+
+  const inputPayload = series.map(point => ({
+    ...point,
+    value: Number(point.value),
+  }))
+
+  const result = await lambda.invoke({
+    FunctionName: `${process.env.stage}-anomaly-detector-rrcf-detect`,
+    Payload: JSON.stringify(inputPayload),
+  }).promise()
+
+  if (result.FunctionError) {
+    throw new Error(result.Payload!.toString())
+  }
+
+  const responsePayload = JSON.parse(result.Payload!.toString())
+
+  return responsePayload
 }

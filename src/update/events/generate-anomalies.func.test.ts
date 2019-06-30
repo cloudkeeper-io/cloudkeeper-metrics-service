@@ -1,9 +1,10 @@
 /* eslint-disable import/first */
 
-process.env.dbName = 'cloudkeeper'
-process.env.dbHost = 'cloudkeeper.cluster-ckbplh6wfiop.eu-central-1.rds.amazonaws.com'
+process.env.stage = 'dev'
+process.env.dbName = 'cloudkeeper_dev'
+process.env.dbHost = 'cloudkeeper-dev.ckbplh6wfiop.eu-central-1.rds.amazonaws.com'
 process.env.dbUser = 'cloudkeeper'
-process.env.dbPassword = 'ExH58GwqZBnCV49MqWcV'
+process.env.dbPassword = '2IS27ARwkqv5PaKEnGeU7taREet5UPxx'
 process.env.AWS_REGION = 'eu-central-1'
 process.env.azureClientId = 'd3c6485f-67f2-4290-9c3e-0cfa5cc8cfd3'
 process.env.azureClientSecret = 'NmJ6eLJBvbRk7ZVwEazlGghPr8..8+q/'
@@ -12,8 +13,10 @@ process.env.azureSubscriptionId = 'f4703b5e552b484ca45f8b6333bee060'
 
 import { DateTime } from 'luxon'
 import { filter, takeRight } from 'lodash'
+import * as fs from 'fs'
+import * as path from 'path'
 import { getCostsPerService } from '../prepare-data/costs-data-collectors'
-import { getAnomalyData } from './events.utils'
+import {getAnomalyData, getAnomalyRrcfData} from './events.utils'
 import { generateMessage } from './common'
 
 describe('Update Lambda Stats', async () => {
@@ -52,5 +55,15 @@ describe('Update Lambda Stats', async () => {
     }))
 
     console.log(events)
+  })
+
+  test('test rrcf events', async () => {
+    const data = JSON.parse(fs.readFileSync(path.resolve(__dirname, 'request.json')).toString('utf-8'))
+
+    const result = await getAnomalyRrcfData(data)
+
+    const anomalies = filter(result, { isAnomaly: true })
+
+    expect(anomalies.length).toBeGreaterThanOrEqual(20)
   })
 })
