@@ -64,6 +64,6 @@ describe('Update Lambda Stats', async () => {
 
     const anomalies = filter(result, { isAnomaly: true })
 
-    expect(anomalies.length).toBeGreaterThanOrEqual(20)
+    expect(anomalies.length).toBeGreaterThanOrEqual(3)
   })
 })
