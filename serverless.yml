@@ -199,7 +199,7 @@ functions:
           arn: "arn:aws:sns:#{AWS::Region}:#{AWS::AccountId}:${self:custom.stage}-finished-updating-dynamo-stats"
 
   update-lambda-events-for-tenant:
-    timeout: 120
+    timeout: 300
     handler: src/update/events/update-lambda-events-for-tenant.handler
     environment:
       bucket: ${self:custom.stage}-cloudkeeper-tenant-data

@@ -1,5 +1,6 @@
 import * as msRestNodeAuth from '@azure/ms-rest-nodeauth'
 import { AnomalyDetectorClient, AnomalyDetectorModels } from '@azure/cognitiveservices-anomalydetector'
+import { map } from 'lodash'
 import { Granularity, Point } from '@azure/cognitiveservices-anomalydetector/lib/models/index'
 import { getLambda } from '../../utils/aws.utils'
 
@@ -44,6 +45,14 @@ export const getAnomalyData = async (series: Point[], granularity: Granularity =
 
 
 export const getAnomalyRrcfData = async (series: Point[]): Promise<AnomalyDetectionResult[]> => {
+  if (series.length <= 1) {
+    return map(series, point => ({
+      isAnomaly: false,
+      value: Number(point.value),
+      timestamp: point.timestamp.toISOString(),
+    }))
+  }
+
   const lambda = getLambda()
 
   const inputPayload = series.map(point => ({
