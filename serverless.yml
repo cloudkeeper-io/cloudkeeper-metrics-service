@@ -198,6 +198,19 @@ functions:
       - sns:
           arn: "arn:aws:sns:#{AWS::Region}:#{AWS::AccountId}:${self:custom.stage}-finished-updating-dynamo-stats"
 
+  update-dynamo-events-for-tenant:
+    timeout: 300
+    handler: src/update/events/update-dynamo-events-for-tenant.handler
+    environment:
+      bucket: ${self:custom.stage}-cloudkeeper-tenant-data
+      dbName: ${self:custom.dbName}
+      dbHost: ${self:custom.dbHost}
+      dbUser: ${self:custom.dbUser}
+      dbPassword: ${self:custom.dbPassword}
+    events:
+      - sns:
+          arn: "arn:aws:sns:#{AWS::Region}:#{AWS::AccountId}:${self:custom.stage}-finished-updating-dynamo-stats"
+
   update-lambda-events-for-tenant:
     timeout: 300
     handler: src/update/events/update-lambda-events-for-tenant.handler
@@ -207,10 +220,6 @@ functions:
       dbHost: ${self:custom.dbHost}
       dbUser: ${self:custom.dbUser}
       dbPassword: ${self:custom.dbPassword}
-      azureClientId: ${ssm:azure-client-id}
-      azureClientSecret: ${ssm:azure-client-secret}
-      azureSubscriptionId: ${ssm:azure-cognitive-subscription-id}
-      azureDomain: ${ssm:azure-domain}
     events:
       - sns:
           arn: "arn:aws:sns:#{AWS::Region}:#{AWS::AccountId}:${self:custom.stage}-finished-updating-lambda-stats"

@@ -12,7 +12,7 @@
     "lint": "eslint '*/**.ts'",
     "lint:fix": "eslint '*/**.ts' --fix",
     "db:migrate": "ts-node scripts/migrate-db.ts",
-    "deploy": "NODE_OPTIONS=--max_old_space_size=2048 sls deploy --force"
+    "deploy": "cross-env NODE_OPTIONS=--max_old_space_size=2048 sls deploy --force"
   },
   "dependencies": {
     "@azure/cognitiveservices-anomalydetector": "^1.0.0",
