@@ -12,7 +12,7 @@ import { handler } from './update-lambda-events-for-tenant'
 describe('Update Lambda Stats', async () => {
   jest.setTimeout(600000)
 
-  test('happy path', async () => {
+  test.skip('happy path', async () => {
     await handler({
       Records: [{
         Sns: {
