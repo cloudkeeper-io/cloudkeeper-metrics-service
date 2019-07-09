@@ -31,7 +31,7 @@ describe('costs collectors', () => {
         expect(row).toEqual({
           date: expect.any(String),
           serviceName: expect.any(String),
-          blendedCost: expect.any(Number),
+          unblendedCost: expect.any(Number),
         })
       })
     })
@@ -50,7 +50,7 @@ describe('costs collectors', () => {
         expect(row).toEqual({
           date: expect.any(String),
           serviceName: expect.any(String),
-          blendedCost: expect.any(Number),
+          unblendedCost: expect.any(Number),
         })
       })
     })
@@ -85,7 +85,7 @@ describe('costs collectors', () => {
         expect(row).toEqual({
           date: expect.any(String),
           stackName: expect.any(String),
-          blendedCost: expect.any(Number),
+          unblendedCost: expect.any(Number),
         })
       })
     })
@@ -105,7 +105,7 @@ describe('costs collectors', () => {
         expect(row).toEqual({
           date: expect.any(String),
           stackName: expect.any(String),
-          blendedCost: expect.any(Number),
+          unblendedCost: expect.any(Number),
         })
       })
     })

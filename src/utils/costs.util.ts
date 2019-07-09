@@ -23,7 +23,7 @@ export const getCostsData = async (tenantId, roleArn, startDate, endDate) => {
         Type: 'TAG',
         Key: 'aws:cloudformation:stack-name',
       }],
-      Metrics: ['BlendedCost', 'UsageQuantity'],
+      Metrics: ['BlendedCost', 'UnblendedCost', 'UsageQuantity'],
       NextPageToken: nextToken,
     }
 
@@ -39,6 +39,7 @@ export const getCostsData = async (tenantId, roleArn, startDate, endDate) => {
         serviceName: group.Keys![0],
         stackName: group.Keys![1].split('$')[1],
         blendedCost: group.Metrics!.BlendedCost.Amount,
+        unblendedCost: group.Metrics!.UnblendedCost.Amount,
         date,
       }))
     })

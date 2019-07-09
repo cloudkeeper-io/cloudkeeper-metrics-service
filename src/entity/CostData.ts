@@ -16,4 +16,7 @@ export class CostData {
 
   @Column('double')
   blendedCost: number
+
+  @Column('double')
+  unblendedCost: number
 }

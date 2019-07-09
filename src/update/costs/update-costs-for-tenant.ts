@@ -38,6 +38,7 @@ export const handler = async (tenant) => {
     item.stackName,
     item.date,
     item.blendedCost,
+    item.unblendedCost,
   ])
 
   await connection.query(query, params)
