@@ -16,7 +16,7 @@ export const handler = async (request) => {
     from DynamoTable dt
     left join DynamoTableStats dts on dts.name = dt.name and dts.region = dt.region 
     and dts.tenantId = dt.tenantId and dts.dateTime > ? and dts.dateTime <= ?
-    where dts.tenantId = ? 
+    where dt.tenantId = ? 
     group by dt.tenantId, dt.name, dt.region, dt.billingMode, dt.sizeBytes, dt.items
 `, [startDate, endDate, tenantId])
 }
