@@ -245,8 +245,11 @@ resources:
   Resources:
     Tenants:
       Type: AWS::DynamoDB::Table
+      DeletionPolicy: Retain
       Properties:
         TableName: ${self:custom.stage}-cloudkeeper-tenants
+        PointInTimeRecoverySpecification:
+          PointInTimeRecoveryEnabled: true
         AttributeDefinitions:
           - AttributeName: id
             AttributeType: S
@@ -257,8 +260,11 @@ resources:
 
     TenantAccess:
       Type: AWS::DynamoDB::Table
+      DeletionPolicy: Retain
       Properties:
         TableName: ${self:custom.stage}-cloudkeeper-tenant-users
+        PointInTimeRecoverySpecification:
+          PointInTimeRecoveryEnabled: true
         AttributeDefinitions:
           - AttributeName: userId
             AttributeType: S
