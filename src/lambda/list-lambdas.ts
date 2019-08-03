@@ -7,15 +7,15 @@ export const handler = async (request) => {
 
   return connection.query(`
         select c.*,
-        COALESCE(sum(ls.invocations), 0) as invocations,
-        COALESCE(sum(ls.errors), 0) as errors,
-        COALESCE(sum(ls.invocations * ls.averageDuration) / sum(ls.invocations), 0) as avgExecutionTime,
-        COALESCE(sum(ls.errors) / sum (ls.invocations), 0) as errorRate,
-        COALESCE(sum(ls.averageDuration * ls.invocations) / 100 * lp.price, 0) as cost
+        COALESCE(SUM(ls.invocations), 0) as invocations,
+        COALESCE(SUM(ls.errors), 0) as errors,
+        COALESCE(SUM(ls.invocations * ls.averageDuration) / SUM(ls.invocations), 0) as avgExecutionTime,
+        COALESCE(SUM(ls.errors) / SUM(ls.invocations), 0) as errorRate,
+        COALESCE(SUM(ls.averageDuration * ls.invocations) / 100 * lp.price, 0) as cost
         from LambdaConfiguration c
         join LambdaPrice lp on lp.size = c.size
         left join LambdaStats ls on c.name = ls.lambdaName and c.region = ls.region 
-        and c.tenantId = ls.tenantId and ls.dateTime > ? and ls.dateTime <= ?
+        and c.tenantId = ls.tenantId and DATE(ls.dateTime) > ? and DATE(ls.dateTime) <= ?
         where c.tenantId = ? 
         group by c.tenantId, c.name, c.region, c.size, c.codeSize, c.runtime, c.timeout
 `, [startDate, endDate, tenantId])
