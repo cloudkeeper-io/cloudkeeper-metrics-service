@@ -15,7 +15,7 @@ export const handler = async (request) => {
         from LambdaConfiguration c
         join LambdaPrice lp on lp.size = c.size
         left join LambdaStats ls on c.name = ls.lambdaName and c.region = ls.region 
-        and c.tenantId = ls.tenantId and DATE(ls.dateTime) > ? and DATE(ls.dateTime) <= ?
+        and c.tenantId = ls.tenantId and DATE(ls.dateTime) >= ? and DATE(ls.dateTime) <= ?
         where c.tenantId = ? 
         group by c.tenantId, c.name, c.region, c.size, c.codeSize, c.runtime, c.timeout
 `, [startDate, endDate, tenantId])
