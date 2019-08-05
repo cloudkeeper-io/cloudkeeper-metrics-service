@@ -32,7 +32,7 @@ custom:
 
   scripts:
     hooks:
-      'before:deploy:deploy': aws s3 cp ./serverless.yml s3://cdn.cloudkeeper.io/cloudformation.yml
+      'before:deploy:deploy': aws s3 cp ./cloudformation.yml s3://cdn.cloudkeeper.io/cloudformation.yml
 
 functions:
   trigger-update-lambdas:
