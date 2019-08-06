@@ -7,10 +7,10 @@ export const handler = async (request) => {
 
   return connection.query(`
     select dt.*,
-    COALESCE(avg(dts.provisionedRead), 0) as avgProvisionedRead,
-    COALESCE(avg(dts.provisionedWrite), 0) as avgProvisionedWrite,
-    COALESCE(avg(dts.consumedRead), 0) as avgConsumedRead,
-    COALESCE(avg(dts.consumedWrite), 0) as avgConsumedWrite,
+    COALESCE(sum(dts.provisionedRead), 0) as provisionedRead,
+    COALESCE(sum(dts.provisionedWrite), 0) as provisionedWrite,
+    COALESCE(sum(dts.consumedRead), 0) as consumedRead,
+    COALESCE(sum(dts.consumedWrite), 0) as consumedWrite,
     COALESCE(sum(dts.throttledReads), 0) as throttledReads,
     COALESCE(sum(dts.throttledWrites), 0) as throttledWrites
     from DynamoTable dt
