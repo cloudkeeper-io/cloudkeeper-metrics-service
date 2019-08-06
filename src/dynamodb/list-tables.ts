@@ -7,8 +7,8 @@ export const handler = async (request) => {
 
   return connection.query(`
     select dt.*,
-    COALESCE(sum(dts.provisionedRead), 0) as provisionedRead,
-    COALESCE(sum(dts.provisionedWrite), 0) as provisionedWrite,
+    COALESCE(avg(dts.provisionedRead), 0) as avgProvisionedRead,
+    COALESCE(avg(dts.provisionedWrite), 0) as avgProvisionedWrite,
     COALESCE(sum(dts.consumedRead), 0) as consumedRead,
     COALESCE(sum(dts.consumedWrite), 0) as consumedWrite,
     COALESCE(sum(dts.throttledReads), 0) as throttledReads,
