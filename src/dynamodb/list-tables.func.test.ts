@@ -8,8 +8,8 @@ describe('list tables', () => {
   jest.setTimeout(30000)
 
   test('happy path', async () => {
-    const startDate = DateTime.utc().minus({ days: 1 }).toFormat('YYYY-MM-DD')
-    const endDate = DateTime.utc().toFormat('YYYY-MM-DD')
+    const startDate = DateTime.utc().minus({ days: 1 }).toISO()
+    const endDate = DateTime.utc().toISO()
     const response = await lambdaClient.invoke({
       FunctionName: 'cloudkeeper-metrics-service-dev-list-dynamo-tables',
       Payload: JSON.stringify({
