@@ -27,7 +27,7 @@ jobs:
       - persist_to_workspace:
           # Must be an absolute path, or relative path from working_directory. This is a directory on the container which is
           # taken to be the root directory of the workspace.
-          root: workspace
+          root: .
           # Must be relative path from root
           paths:
             - node_modules
@@ -40,7 +40,7 @@ jobs:
     steps:
       - checkout
       - attach_workspace:
-          at: /tmp/workspace
+          at: build/distributions
       - run:
           name: create folder
           command: mkdir -p reports/junit
