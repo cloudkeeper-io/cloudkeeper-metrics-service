@@ -31,6 +31,8 @@ jobs:
     docker:
       - image: ayankovsky/node-serverless-aws
     steps:
+      - attach_workspace:
+          at: build/distributions
       - run:
           name: create folder
           command: mkdir -p reports/junit
@@ -57,6 +59,8 @@ jobs:
     docker:
       - image: ayankovsky/node-serverless-aws
     steps:
+      - attach_workspace:
+          at: build/distributions
       - run:
           name: Run db migration
           command: STAGE=dev node node_modules/.bin/ts-node scripts/migrate-db.ts
@@ -85,6 +89,8 @@ jobs:
     docker:
       - image: ayankovsky/node-serverless-aws
     steps:
+      - attach_workspace:
+          at: build/distributions
       - run:
           name: create folder
           command: mkdir -p reports/junit
@@ -105,6 +111,8 @@ jobs:
     docker:
       - image: ayankovsky/node-serverless-aws
     steps:
+      - attach_workspace:
+          at: build/distributions
       - run:
           name: deploy
           command: NODE_OPTIONS=--max_old_space_size=2048 sls deploy
