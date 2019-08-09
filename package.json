@@ -11,7 +11,7 @@
     "tsc": "tsc --noEmit",
     "lint": "eslint \"*/**.ts\"",
     "lint:fix": "eslint \"*/**.ts\" --fix",
-    "db:migrate": "ts-node scripts/migrate-db.ts",
+    "db:migrate": "cross-env STAGE=dev ts-node scripts/migrate-db.ts",
     "deploy": "cross-env NODE_OPTIONS=--max_old_space_size=2048 sls deploy --force"
   },
   "dependencies": {
@@ -22,7 +22,7 @@
     "lodash": "^4.17.11",
     "luxon": "^1.11.3",
     "mysql": "^2.16.0",
-    "typeorm": "^0.2.14",
+    "typeorm": "^0.2.18",
     "uuidv4": "^3.0.1"
   },
   "devDependencies": {

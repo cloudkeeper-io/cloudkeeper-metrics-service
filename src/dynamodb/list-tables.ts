@@ -12,7 +12,8 @@ export const handler = async (request) => {
     COALESCE(sum(dts.consumedRead), 0) as consumedRead,
     COALESCE(sum(dts.consumedWrite), 0) as consumedWrite,
     COALESCE(sum(dts.throttledReads), 0) as throttledReads,
-    COALESCE(sum(dts.throttledWrites), 0) as throttledWrites
+    COALESCE(sum(dts.throttledWrites), 0) as throttledWrites,
+    COALESCE(sum(dts.cost), 0) as cost
     from DynamoTable dt
     left join DynamoTableStats dts on dts.name = dt.name and dts.region = dt.region 
     and dts.tenantId = dt.tenantId and dts.dateTime >= ? and dts.dateTime <= ?

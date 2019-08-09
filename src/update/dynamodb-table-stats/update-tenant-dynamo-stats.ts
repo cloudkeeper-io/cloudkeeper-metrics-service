@@ -1,6 +1,7 @@
 import { chunk, flatten, map, keyBy, uniq, get, groupBy, find } from 'lodash'
 // eslint-disable-next-line import/no-extraneous-dependencies
 import * as AWS from 'aws-sdk'
+import { DateTime } from 'luxon'
 import {
   DynamoPerRequestPrice,
   DynamoProvisionedPrice,
@@ -10,7 +11,6 @@ import {
 } from '../../entity'
 import { getConnection } from '../../db/db'
 import { getTableMetrics } from '../../utils/dynamodb-metrics.util'
-import {DateTime} from "luxon";
 
 const sns = new AWS.SNS({ apiVersion: '2010-03-31' })
 
@@ -134,7 +134,7 @@ export const handler = async (tenant) => {
 
   const tablesMap = groupBy(tables, 'region')
 
-  const chunks = chunk(tables, 10)
+  const chunks = chunk(tables, 5)
 
   for (const region of Object.keys(tablesMap)) {
     for (const tablesChunks of chunks) {
