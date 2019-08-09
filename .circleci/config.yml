@@ -24,6 +24,13 @@ jobs:
             - node_modules
             - .cache/yarn
 
+      - persist_to_workspace:
+          # Must be an absolute path, or relative path from working_directory. This is a directory on the container which is
+          # taken to be the root directory of the workspace.
+          root: workspace
+          # Must be relative path from root
+          paths:
+            - node_modules
   checks:
     environment:
       PROJECT: cloudkeeper-metrics-service
@@ -32,6 +39,8 @@ jobs:
       - image: ayankovsky/node-serverless-aws
     steps:
       - checkout
+      - attach_workspace:
+          at: /tmp/workspace
       - run:
           name: create folder
           command: mkdir -p reports/junit
@@ -58,8 +67,12 @@ jobs:
     docker:
       - image: ayankovsky/node-serverless-aws
     steps:
-      - attach_workspace:
-          at: build/distributions
+      - checkout
+      - restore_cache:
+          keys:
+            - v1-yarn-{{ .Branch }}-{{ checksum "yarn.lock" }}
+            - v1-yarn-{{ .Branch }}-
+            - v1-yarn-
       - run:
           name: Run db migration
           command: STAGE=dev node node_modules/.bin/ts-node scripts/migrate-db.ts
@@ -89,6 +102,11 @@ jobs:
       - image: ayankovsky/node-serverless-aws
     steps:
       - checkout
+      - restore_cache:
+          keys:
+            - v1-yarn-{{ .Branch }}-{{ checksum "yarn.lock" }}
+            - v1-yarn-{{ .Branch }}-
+            - v1-yarn-
       - run:
           name: create folder
           command: mkdir -p reports/junit
@@ -110,9 +128,16 @@ jobs:
       - image: ayankovsky/node-serverless-aws
     steps:
       - checkout
+      - attach_workspace:
+          at: build/distributions
+      - restore_cache:
+          keys:
+            - v1-yarn-{{ .Branch }}-{{ checksum "yarn.lock" }}
+            - v1-yarn-{{ .Branch }}-
+            - v1-yarn-
       - run:
           name: deploy
-          command: NODE_OPTIONS=--max_old_space_size=2048 sls deploy
+          command: sls deploy
 
   prod-deploy:
     environment:
@@ -131,7 +156,7 @@ jobs:
             - v1-yarn-
       - run:
           name: deploy
-          command: NODE_OPTIONS=--max_old_space_size=2048 sls deploy --stage prod
+          command: sls deploy --stage prod
 
 workflows:
   version: 2
