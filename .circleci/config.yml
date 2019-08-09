@@ -40,7 +40,7 @@ jobs:
     steps:
       - checkout
       - attach_workspace:
-          at: build/distributions
+          at: .
       - run:
           name: create folder
           command: mkdir -p reports/junit
