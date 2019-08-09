@@ -1,13 +1,20 @@
-import { chunk, flatten, map, keyBy, uniq, get, groupBy } from 'lodash'
+import { chunk, flatten, map, keyBy, uniq, get, groupBy, find } from 'lodash'
 // eslint-disable-next-line import/no-extraneous-dependencies
 import * as AWS from 'aws-sdk'
-import { DynamoTable, DynamoTableStats } from '../../entity'
+import {
+  DynamoPerRequestPrice,
+  DynamoProvisionedPrice,
+  DynamoStoragePrice,
+  DynamoTable,
+  DynamoTableStats,
+} from '../../entity'
 import { getConnection } from '../../db/db'
 import { getTableMetrics } from '../../utils/dynamodb-metrics.util'
+import {DateTime} from "luxon";
 
 const sns = new AWS.SNS({ apiVersion: '2010-03-31' })
 
-async function updateTablesChunk(tablesChunks, tenant, region, connection) {
+async function updateTablesChunk(tablesChunks, tenant, region, costRateData, connection) {
   const batchData: any[] = flatten(await Promise.all(map(tablesChunks, async (table) => {
     const [
       consumedReadStats,
@@ -56,17 +63,42 @@ async function updateTablesChunk(tablesChunks, tenant, region, connection) {
       // @ts-ignore
       const writeThrottleData = writeThrottleMap[timePoint.getTime()]
 
+      const consumedRead = get(consumedReadData, 'Sum', 0)
+      const consumedWrite = get(consumedWriteData, 'Sum', 0)
+      const provisionedRead = get(provisionedReadData, 'Average', 0)
+      const provisionedWrite = get(provisionedWriteData, 'Average', 0)
+
+      const fractionOfMonth = 1 / (DateTime.fromMillis(timePoint.getTime()).daysInMonth * 24)
+      const storageCost = table.sizeBytes / (1024 * 1024 * 1024) * fractionOfMonth * find<DynamoStoragePrice>(costRateData.storageCostData, { region: table.region })!.gbPerMonthPrice
+
+      let readCost = 0
+      let writeCost = 0
+
+      if (table.billingMode === 'PROVISIONED') {
+        const operationsCostData = find<DynamoProvisionedPrice>(costRateData.provisionedCostData, { region: table.region })!
+        readCost = provisionedRead * operationsCostData.read
+        writeCost = provisionedWrite * operationsCostData.write
+      } else {
+        const operationsCostData = find<DynamoPerRequestPrice>(costRateData.payPerRequestCostData, { region: table.region })!
+        readCost = consumedRead / 1000000 * operationsCostData.read
+        writeCost = consumedWrite / 1000000 * operationsCostData.write
+      }
+
       return ({
         tenantId: tenant.id,
         name: table.name,
         region,
         dateTime: timePoint,
-        consumedRead: get(consumedReadData, 'Sum', 0),
-        consumedWrite: get(consumedWriteData, 'Sum', 0),
-        provisionedRead: get(provisionedReadData, 'Average', 0),
-        provisionedWrite: get(provisionedWriteData, 'Average', 0),
+        consumedRead,
+        consumedWrite,
+        provisionedRead,
+        provisionedWrite,
         throttledReads: get(readThrottleData, 'Sum', 0),
         throttledWrites: get(writeThrottleData, 'Sum', 0),
+        storageCost,
+        readCost,
+        writeCost,
+        cost: storageCost + writeCost + readCost,
       })
     })
   })))
@@ -84,6 +116,16 @@ export const handler = async (tenant) => {
 
   console.log(`Working on tenant ${tenant.id}`)
 
+  const payPerRequestCostData = await connection.getRepository(DynamoPerRequestPrice).find()
+  const provisionedCostData = await connection.getRepository(DynamoProvisionedPrice).find()
+  const storageCostData: DynamoStoragePrice[] = await connection.getRepository(DynamoStoragePrice).find()
+
+  const costRateData = {
+    payPerRequestCostData,
+    provisionedCostData,
+    storageCostData,
+  }
+
   const tables = await connection.getRepository(DynamoTable).find({
     tenantId: tenant.id,
   })
@@ -96,7 +138,7 @@ export const handler = async (tenant) => {
 
   for (const region of Object.keys(tablesMap)) {
     for (const tablesChunks of chunks) {
-      await updateTablesChunk(tablesChunks, tenant, region, connection)
+      await updateTablesChunk(tablesChunks, tenant, region, costRateData, connection)
     }
   }
 

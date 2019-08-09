@@ -239,7 +239,7 @@ export const getMostExpensiveTables = async (tenantId, daysAgo, groupDaily = fal
          sum(consumedWrite) / 1000000 * DynamoPerRequestPrice.\`write\` as writePrice,
          sizeBytes / (1024 * 1024 * 1024 * 30 / ${daysAgo})  * gbPerMonthPrice +
          sum(consumedRead) / 1000000 * DynamoPerRequestPrice.\`read\` +
-         sum(provisionedWrite) / 1000000 * DynamoPerRequestPrice.\`write\` as totalPrice,
+         sum(consumedWrite) / 1000000 * DynamoPerRequestPrice.\`write\` as totalPrice,
          sum(consumedRead) as readStat,
          sum(consumedWrite) as writeStat
   from DynamoTableStats
