@@ -31,4 +31,16 @@ export class DynamoTableStats {
 
   @Column('bigint')
   throttledWrites: number
+
+  @Column('double')
+  storageCost: number
+
+  @Column('double')
+  readCost: number
+
+  @Column('double')
+  writeCost: number
+
+  @Column('double')
+  cost: number
 }
