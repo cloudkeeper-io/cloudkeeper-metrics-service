@@ -37,6 +37,7 @@ describe('list tables', () => {
         avgProvisionedWrite: expect.any(String),
         throttledReads: expect.any(String),
         throttledWrites: expect.any(String),
+        cost: expect.any(Number),
       })
     }
   })
