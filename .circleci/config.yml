@@ -126,7 +126,7 @@ jobs:
           at: .
       - run:
           name: deploy
-          command: sls deploy
+          command: yarn deploy
 
   prod-deploy:
     environment:
@@ -145,7 +145,7 @@ jobs:
             - v1-yarn-
       - run:
           name: deploy
-          command: sls deploy --stage prod
+          command: yarn deploy --stage prod
 
 workflows:
   version: 2
