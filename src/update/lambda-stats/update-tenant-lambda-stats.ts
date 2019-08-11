@@ -1,14 +1,14 @@
-import { chunk, flatten, map, keyBy, groupBy } from 'lodash'
+import { chunk, flatten, map, keyBy, groupBy, find } from 'lodash'
 // eslint-disable-next-line import/no-extraneous-dependencies
 import * as AWS from 'aws-sdk'
-import { LambdaConfiguration, LambdaStats } from '../../entity'
+import { LambdaConfiguration, LambdaPrice, LambdaStats } from '../../entity'
 import { getConnection } from '../../db/db'
 import { getLambdaMetrics } from '../../utils/lambda-metrics.util'
 import { getAwsCredentials } from '../../utils/aws.utils'
 
 const sns = new AWS.SNS({ apiVersion: '2010-03-31' })
 
-const updateLambdasChunk = async (lambdasChunk, credentials, tenant, region, connection) => {
+const updateLambdasChunk = async (lambdasChunk, credentials, tenant, lambdaPrices, region, connection) => {
   const batchData: any[] = flatten((await Promise.all(map(lambdasChunk, async (lambdaConfig) => {
     const [invocationStats, errorStats, durationStats] = await getLambdaMetrics(
       lambdaConfig.name,
@@ -25,6 +25,9 @@ const updateLambdasChunk = async (lambdasChunk, credentials, tenant, region, con
       // @ts-ignore
       const durationEntry = durationDataMap[datapoint.Timestamp.getTime()]
 
+      const priceInfo = find(lambdaPrices, { region: lambdaConfig.region });
+      const cost = datapoint.Sum ? priceInfo.requestPrice * datapoint.Sum! + datapoint.Sum! * durationEntry.Average! / 1000 * priceInfo.pricePerGbSeconds * lambdaConfig.size / 1024 : 0
+
       return ({
         tenantId: tenant.id,
         lambdaName: lambdaConfig.name,
@@ -34,6 +37,7 @@ const updateLambdasChunk = async (lambdasChunk, credentials, tenant, region, con
         errors: errorEntry.Sum,
         maxDuration: durationEntry.Maximum,
         averageDuration: durationEntry.Average,
+        cost,
       })
     })
   }))))
@@ -57,6 +61,8 @@ export const handler = async (tenant) => {
     tenantId: tenant.id,
   })
 
+  const lambdaPrices = await connection.getRepository(LambdaPrice).find()
+
   console.log(`Updating ${lambdas.length} lambdas`)
 
   const lambdasMap = groupBy(lambdas, 'region')
@@ -71,7 +77,7 @@ export const handler = async (tenant) => {
     const credentials = await getAwsCredentials(tenant.id, tenant.roleArn)
 
     for (const lambdasChunk of chunks) {
-      await updateLambdasChunk(lambdasChunk, credentials, tenant, region, connection)
+      await updateLambdasChunk(lambdasChunk, credentials, tenant, lambdaPrices, region, connection)
     }
   }
 

@@ -24,12 +24,13 @@ export const getTotals = async (tenantId, daysAgo, groupDaily = false) => {
   const connection = await getConnection()
 
   const totalsQuery = 'select sum(invocations) as invocations, sum(`errors`) as `errors`, `dateTime`, '
-    + 'sum(averageDuration * invocations / 100 * LambdaPrice.price) as cost '
+    + 'COALESCE(SUM(averageDuration * invocations) * c.size / 1024 / 1000 * lp.pricePerGbSeconds, 0) + '
+    + 'COALESCE(SUM(invocations * lp.requestPrice), 0) as cost '
     + 'from LambdaStats '
-    + 'join LambdaConfiguration '
+    + 'join LambdaConfiguration c '
     + 'on LambdaStats.lambdaName = LambdaConfiguration.name and LambdaStats.region = LambdaConfiguration.region '
     + 'and LambdaConfiguration.tenantId = ? '
-    + 'join LambdaPrice on LambdaPrice.size = LambdaConfiguration.size '
+    + 'join LambdaPrice lp on LambdaPrice.region = LambdaConfiguration.region '
     + 'where LambdaStats.tenantId = ? and  '
     + getDateCondition(false)
     + 'group by dateTime '
@@ -39,12 +40,13 @@ export const getTotals = async (tenantId, daysAgo, groupDaily = false) => {
     + 'sum(invocations) as invocations, '
     + 'sum(`errors`) as `errors`, '
     + 'DATE(`dateTime`) as `dateTime`, '
-    + 'sum(averageDuration * invocations / 100 * LambdaPrice.price) as cost '
+    + 'COALESCE(SUM(averageDuration * invocations) * c.size / 1024 / 1000 * lp.pricePerGbSeconds, 0) + '
+    + 'COALESCE(SUM(invocations * lp.requestPrice), 0) as cost '
     + 'from LambdaStats '
     + 'join LambdaConfiguration '
     + 'on LambdaStats.lambdaName = LambdaConfiguration.name and LambdaStats.region = LambdaConfiguration.region '
     + 'and LambdaConfiguration.tenantId = ? '
-    + 'join LambdaPrice on LambdaPrice.size = LambdaConfiguration.size '
+    + 'join LambdaPrice on LambdaPrice.region = LambdaConfiguration.region '
     + 'where LambdaStats.tenantId = ? and '
     + getDateCondition(true)
     + 'group by DATE(dateTime) '

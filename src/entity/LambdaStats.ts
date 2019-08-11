@@ -25,4 +25,7 @@ export class LambdaStats {
 
   @Column('double')
   averageDuration: number
+
+  @Column('double')
+  cost: number
 }

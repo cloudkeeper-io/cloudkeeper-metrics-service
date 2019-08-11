@@ -3,8 +3,11 @@ import { Column, Entity, PrimaryColumn } from 'typeorm'
 @Entity('LambdaPrice')
 export class LambdaPrice {
   @PrimaryColumn({ type: 'varchar', length: 64 })
-  size: string
+  region: string
 
   @Column('double')
-  price: number
+  pricePerGbSeconds: number
+
+  @Column('double')
+  requestPrice: number
 }

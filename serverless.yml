@@ -241,6 +241,16 @@ functions:
       - sns:
           arn: "arn:aws:sns:#{AWS::Region}:#{AWS::AccountId}:${self:custom.stage}-finished-updating-costs"
 
+  update-pricing:
+    handler: src/update/pricing/update-pricing.handler
+    environment:
+      dbName: ${self:custom.dbName}
+      dbHost: ${self:custom.dbHost}
+      dbUser: ${self:custom.dbUser}
+      dbPassword: ${self:custom.dbPassword}
+    events:
+      - schedule: cron(1 0 ? * * *)
+
 resources:
   Resources:
     Tenants:
