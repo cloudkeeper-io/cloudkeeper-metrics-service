@@ -14,7 +14,6 @@ import {
   getMostInvokedLambdas,
   getSlowestLambdas,
   getTotals,
-  getMostExpensiveLambdas,
 } from './lambda-data-collectors'
 
 describe('lambda collectors', () => {
@@ -144,22 +143,6 @@ describe('lambda collectors', () => {
     expectLambdaFields(lambdas)
 
     expectDataToBeConsistent(lambdas, ['errors'], 30, 'lambdaName')
-  })
-
-  test('most expensive lambdas', async () => {
-    const lambdas = await getMostExpensiveLambdas('7ec85367-20e1-40f2-8725-52b245354045', 1)
-
-    expectLambdaFields(lambdas)
-
-    expectDataToBeConsistent(lambdas, ['cost'], 1, 'lambdaName', Number)
-  })
-
-  test('most expensive lambdas - 30 days', async () => {
-    const lambdas = await getMostExpensiveLambdas('7ec85367-20e1-40f2-8725-52b245354045', 30, true)
-
-    expectLambdaFields(lambdas)
-
-    expectDataToBeConsistent(lambdas, ['cost'], 30, 'lambdaName', Number)
   })
 
   afterAll(async () => {
