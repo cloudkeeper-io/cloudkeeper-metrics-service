@@ -1,9 +1,13 @@
+/* eslint-disable max-len */
 import * as AWS from 'aws-sdk'
-import { filter, findKey } from 'lodash'
+import { filter, find, findKey, includes, keys, flatMap } from 'lodash'
+import { getConnection } from '../../db/db'
+import { DynamoPerRequestPrice, DynamoProvisionedPrice, LambdaPrice } from '../../entity'
 
 /*
-$$('.lb-dropdown-label li').reduce((acc, current) => { acc[current.innerHTML] = current.dataset.region; return acc; }, {})
-here: https://aws.amazon.com/lambda/pricing/
+  $$('.lb-dropdown-label li')
+  .reduce((acc, current) => { acc[current.innerHTML] = current.dataset.region; return acc; }, {})
+  here: https://aws.amazon.com/lambda/pricing/
  */
 
 const regionNames = {
@@ -29,25 +33,30 @@ const regionNames = {
   'AWS GovCloud (US)': 'us-gov-west-1',
 }
 
-export const handler = async () => {
-  const pricing = new AWS.Pricing({ region: 'us-east-1' })
+const getPricingData = async (pricing, serviceCode: string, filterDefinition) => {
+  const mappedFilters: any = keys(filterDefinition).map(key => ({
+    Type: 'TERM_MATCH',
+    Field: key,
+    Value: filterDefinition[key],
+  }))
 
-  const productsResponse = await pricing.getProducts({
-    ServiceCode: 'AWSLambda',
-    Filters: [{
-      Type: 'TERM_MATCH',
-      Field: 'group',
-      Value: 'AWS-Lambda-Duration',
-    }],
+  const durationProductsResponse = await pricing.getProducts({
+    ServiceCode: serviceCode,
+    Filters: mappedFilters,
   }).promise()
 
-  // @ts-ignore
-  const products = filter(productsResponse.PriceList, productData => productData.product.attributes.location !== 'Any')
+  const ignoredLocations = ['Asia Pacific (Osaka-Local)', 'Any']
 
-  const lambdaGbPerSecond = products.map((productData:any) => {
+  // @ts-ignore
+  const products = filter(durationProductsResponse.PriceList, productData => !includes(ignoredLocations, productData.product.attributes.location))
+
+  return products.map((productData: any) => {
     const termsKey = findKey(productData.terms.OnDemand)!
     const priceDimensions = productData.terms.OnDemand[termsKey].priceDimensions
-    const priceDimensionsKey = findKey(priceDimensions)!
+    const priceDimension = find(priceDimensions, (dimension) => {
+      const pricePerUnit = dimension.pricePerUnit.USD
+      return pricePerUnit && pricePerUnit !== '0.0000000000'
+    })
 
     const region = regionNames[productData.product.attributes.location]
 
@@ -57,11 +66,94 @@ export const handler = async () => {
 
     return {
       region,
-      pricePerUnit: priceDimensions[priceDimensionsKey].pricePerUnit.USD
+      pricePerUnit: priceDimension.pricePerUnit.USD,
     }
   })
-
-  console.log(lambdaGbPerSecond)
 }
 
-handler()
+const createReplaceQuery = (connection, entity, data) => connection.createQueryBuilder()
+  .insert()
+  .into(entity)
+  .values(data)
+  .orIgnore()
+  .getQuery()
+  .replace('INSERT INTO', 'REPLACE INTO')
+
+export const handler = async () => {
+  const connection = await getConnection()
+
+  const pricing = new AWS.Pricing({ region: 'us-east-1' })
+
+  const lambdaGbPerSecondData = await getPricingData(pricing, 'AWSLambda', { groupName: 'AWS-Lambda-Duration' })
+  const lambdaRequestsData = await getPricingData(pricing, 'AWSLambda', { groupName: 'AWS-Lambda-Requests' })
+
+  const pricingData = lambdaGbPerSecondData.map(data => ({
+    region: data.region,
+    pricePerGbSeconds: data.pricePerUnit,
+    requestPrice: find(lambdaRequestsData, { region: data.region })!.pricePerUnit,
+  }))
+
+  const replaceLambdasQuery = createReplaceQuery(connection, LambdaPrice, pricingData)
+
+  const lambdaPriceParams = flatMap(pricingData, data => [
+    data.region,
+    data.pricePerGbSeconds,
+    data.requestPrice,
+  ])
+
+  await connection.query(replaceLambdasQuery, lambdaPriceParams)
+
+  const pppWriteData = await getPricingData(pricing, 'AmazonDynamoDB', { groupName: 'DDB-WriteUnits', groupDescription: 'DynamoDB PayPerRequest Write Request Units' })
+  const pppReadData = await getPricingData(pricing, 'AmazonDynamoDB', { groupName: 'DDB-ReadUnits', groupDescription: 'DynamoDB PayPerRequest Read Request Units' })
+
+  const payPerRequestPricingData = pppWriteData.map(data => ({
+    region: data.region,
+    write: data.pricePerUnit,
+    read: find(pppReadData, { region: data.region })!.pricePerUnit,
+  }))
+
+  const replacePayPerRequestQuery = createReplaceQuery(connection, DynamoPerRequestPrice, payPerRequestPricingData)
+
+  const pppPriceParams = flatMap(payPerRequestPricingData, data => [
+    data.region,
+    data.read,
+    data.write,
+  ])
+
+  await connection.query(replacePayPerRequestQuery, pppPriceParams)
+
+  const provisionedWriteData = await getPricingData(pricing, 'AmazonDynamoDB', { groupName: 'DDB-WriteUnits', groupDescription: 'DynamoDB Provisioned Write Units' })
+  const provisionedReadData = await getPricingData(pricing, 'AmazonDynamoDB', { groupName: 'DDB-ReadUnits', groupDescription: 'DynamoDB Provisioned Read Units' })
+
+  const provisionedPricingData = provisionedWriteData.map(data => ({
+    region: data.region,
+    write: data.pricePerUnit,
+    read: find(provisionedReadData, { region: data.region })!.pricePerUnit,
+  }))
+
+  const replaceProvisionedQuery = createReplaceQuery(connection, DynamoProvisionedPrice, provisionedPricingData)
+
+  const provisionedPriceParams = flatMap(provisionedPricingData, data => [
+    data.region,
+    data.read,
+    data.write,
+  ])
+
+  await connection.query(replaceProvisionedQuery, provisionedPriceParams)
+
+  const storageData = await getPricingData(pricing, 'AmazonDynamoDB', { volumeType: 'Amazon DynamoDB - Indexed DataStore' })
+
+  const storagePricingData = storageData.map(data => ({
+    region: data.region,
+    gbPerMonthPrice: data.pricePerUnit,
+  }))
+
+  const replaceStorageQuery = createReplaceQuery(connection, DynamoProvisionedPrice, provisionedPricingData)
+
+  const storagePriceParams = flatMap(storagePricingData, data => [
+    data.region,
+    data.gbPerMonthPrice,
+  ])
+
+  await connection.query(replaceStorageQuery, storagePriceParams)
+}
