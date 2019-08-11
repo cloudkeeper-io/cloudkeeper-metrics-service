@@ -30,7 +30,7 @@ export const getTotals = async (tenantId, daysAgo, groupDaily = false) => {
     + 'join LambdaConfiguration c '
     + 'on LambdaStats.lambdaName = c.name and LambdaStats.region = c.region '
     + 'and c.tenantId = ? '
-    + 'join LambdaPrice lp on LambdaPrice.region = c.region '
+    + 'join LambdaPrice lp on lp.region = c.region '
     + 'where LambdaStats.tenantId = ? and  '
     + getDateCondition(false)
     + 'group by dateTime '
@@ -43,10 +43,10 @@ export const getTotals = async (tenantId, daysAgo, groupDaily = false) => {
     + 'COALESCE(SUM(averageDuration * invocations) * c.size / 1024 / 1000 * lp.pricePerGbSeconds, 0) + '
     + 'COALESCE(SUM(invocations * lp.requestPrice), 0) as cost '
     + 'from LambdaStats '
-    + 'join LambdaConfiguration '
+    + 'join LambdaConfiguration c '
     + 'on LambdaStats.lambdaName = c.name and LambdaStats.region = c.region '
     + 'and c.tenantId = ? '
-    + 'join LambdaPrice on LambdaPrice.region = c.region '
+    + 'join LambdaPrice lp on lp.region = c.region '
     + 'where LambdaStats.tenantId = ? and '
     + getDateCondition(true)
     + 'group by DATE(dateTime) '
