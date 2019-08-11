@@ -57,3 +57,8 @@
   Action:
     - "ec2:DescribeRegions"
   Resource: "*"
+
+- Effect: Allow
+  Action:
+    - "pricing:GetProducts"
+  Resource: "*"
