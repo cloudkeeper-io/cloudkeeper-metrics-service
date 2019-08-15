@@ -12,7 +12,7 @@ export class Event {
   value: string
 
   @Column({ type: 'varchar', length: 256 })
-  expectedValue: string
+  expectedValue?: string
 
   @PrimaryColumn({ type: 'varchar', length: 256 })
   dimension: string
