@@ -1,4 +1,4 @@
-import { filter, get, last, takeRight } from 'lodash'
+import { filter, get, last, takeRight, round } from 'lodash'
 import { DateTime } from 'luxon'
 import { getAnomalyData } from './events.utils'
 import { Event } from '../../entity'
@@ -61,8 +61,8 @@ const getCostsEvents = async (tenantId): Promise<any[]> => {
     tenantId,
     serviceName: 'costs',
     dimension: 'Billed Cost',
-    value: item.value,
-    expectedValue: item.expectedValue,
+    value: round(item.value, 2),
+    expectedValue: round(item.expectedValue, 2),
     dateTime: item.timestamp,
     message: generateMessage('Billed Cost', item.value, item.expectedValue, '$'),
   })))

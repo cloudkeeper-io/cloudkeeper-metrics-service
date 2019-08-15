@@ -1,4 +1,4 @@
-import { filter, takeRight, groupBy, chunk } from 'lodash'
+import { filter, takeRight, groupBy, chunk, round } from 'lodash'
 import { Point } from '@azure/cognitiveservices-anomalydetector/lib/models'
 import { DateTime } from 'luxon'
 import { getAnomalyRrcfData } from './events.utils'
@@ -48,7 +48,7 @@ const analyzeLambda = async (lambdaName, metrics, startDateTime, endDateTime, te
     })
 
     acc.averageDuration.push({
-      value: point.averageDuration,
+      value: round(point.averageDuration, 2),
       timestamp: point.dateTime,
     })
 
