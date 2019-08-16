@@ -6,10 +6,10 @@ import { Event } from '../../entity'
 import { getConnection } from '../../db/db'
 import { writeLatestEventsToS3 } from './common'
 import { fillEmptyDataPointsInTimeseries, getDateCondition } from '../prepare-data/common'
+import { msToDuration } from '../../utils/time.utils'
 
 const analyzeTimeSeries = async (timeSeries: Point[], startDateTime: DateTime, endDateTime: DateTime,
-  lambdaName: string, dimensionName: string, tenantId: string, fillIn = true) => {
-
+  lambdaName: string, dimensionName: string, tenantId: string, fillIn = true, formatValue = value => value) => {
   let dataPoints: Point[]
 
   if (fillIn) {
@@ -22,7 +22,8 @@ const analyzeTimeSeries = async (timeSeries: Point[], startDateTime: DateTime, e
 
   const anomalyDetectionResults = await getAnomalyRrcfData(dataPoints)
 
-  const anomalies = filter(takeRight(anomalyDetectionResults, 10), { isAnomaly: true })
+  const anomalies = filter(takeRight(anomalyDetectionResults, 10),
+    dataPoint => dataPoint.isAnomaly && dataPoint.value !== 0)
 
   return anomalies.map(anomaly => ({
     tenantId,
@@ -31,7 +32,7 @@ const analyzeTimeSeries = async (timeSeries: Point[], startDateTime: DateTime, e
     value: anomaly.value,
     expectedValue: null,
     dateTime: anomaly.timestamp,
-    message: `Anomalous ${dimensionName.toLowerCase()} of ${lambdaName}: ${anomaly.value}`,
+    message: `Anomalous ${dimensionName.toLowerCase()} of ${lambdaName}: ${formatValue(anomaly.value)}`,
   }))
 }
 
@@ -93,6 +94,7 @@ const analyzeLambda = async (lambdaName, metrics, startDateTime, endDateTime, te
     'Average Duration',
     tenantId,
     false,
+    msToDuration,
   )
 
   if (avgDurationAnomalies.length > 0) {
@@ -120,9 +122,7 @@ const addLambdaEvents = async (tenantId, newEvents: any[]) => {
   const chunks = chunk(lambdaNames, 10)
 
   for (const lambdasChunk of chunks) {
-    await Promise.all(lambdasChunk.map((lambdaName) => {
-      return analyzeLambda(lambdaName, metricsMap[lambdaName], startDateTime, endDateTime, tenantId, newEvents)
-    }))
+    await Promise.all(lambdasChunk.map(lambdaName => analyzeLambda(lambdaName, metricsMap[lambdaName], startDateTime, endDateTime, tenantId, newEvents)))
   }
 }
 
