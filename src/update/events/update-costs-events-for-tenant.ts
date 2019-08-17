@@ -24,9 +24,7 @@ const addServiceCostAnomalies = async (tenantId, serviceName, newEvents) => {
 
   const costAnomalyData = await getAnomalyData(series, 'daily')
 
-  const costAnomalies = filter(takeRight(costAnomalyData, 10), (dataPoint) => {
-    return dataPoint.isAnomaly && (Math.abs(dataPoint.expectedValue - dataPoint.value) > 1)
-  })
+  const costAnomalies = filter(takeRight(costAnomalyData, 10), dataPoint => dataPoint.isAnomaly && (Math.abs(dataPoint.expectedValue - dataPoint.value) > 1))
 
   newEvents.push(...costAnomalies.map(item => ({
     tenantId,
@@ -55,7 +53,10 @@ const getCostsEvents = async (tenantId): Promise<any[]> => {
 
   const costAnomalyData = await getAnomalyData(globalCostsData, 'daily')
 
-  const costAnomalies = filter(takeRight(costAnomalyData, 10), { isAnomaly: true })
+  const costAnomalies = filter(
+    takeRight(costAnomalyData, 10),
+    dataPoint => dataPoint.isAnomaly && (Math.abs(dataPoint.expectedValue - dataPoint.value) > 1),
+  )
 
   newEvents.push(...costAnomalies.map(item => ({
     tenantId,
