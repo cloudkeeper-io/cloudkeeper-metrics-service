@@ -27,7 +27,7 @@
   },
   "devDependencies": {
     "@types/aws-lambda": "8.10.15",
-    "@types/jest": "^24.0.9",
+    "@types/jest": "^24.0.18",
     "@types/jsonwebtoken": "^8.3.0",
     "@types/lodash": "^4.14.136",
     "@types/luxon": "^1.11.1",
@@ -41,7 +41,7 @@
     "eslint-plugin-import": "^2.16.0",
     "eslint-plugin-jest": "^22.3.0",
     "eslint-plugin-typescript": "^0.14.0",
-    "jest": "^24.1.0",
+    "jest": "^24.9.0",
     "jest-junit": "^6.3.0",
     "node-fetch": "^2.3.0",
     "serverless-offline": "^3.31.3",
@@ -57,7 +57,7 @@
   },
   "jest": {
     "testMatch": [
-      "<rootDir>/src/**/?(*.)(spec|test).ts"
+      "<rootDir>/src/**/*(*.)@(spec|test).[tj]s?(x)"
     ],
     "moduleFileExtensions": [
       "web.ts",
@@ -73,7 +73,7 @@
       "mjs"
     ],
     "transform": {
-      "^.+\\.tsx?$": "ts-jest"
+      "^.+\\.(tsx?|json)$": "ts-jest"
     }
   }
 }

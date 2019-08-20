@@ -112,6 +112,14 @@ functions:
       dbUser: ${self:custom.dbUser}
       dbPassword: ${self:custom.dbPassword}
 
+  list-most-expensive-lambdas:
+    handler: src/lambda/list-most-expensive-lambdas.handler
+    environment:
+      dbName: ${self:custom.dbName}
+      dbHost: ${self:custom.dbHost}
+      dbUser: ${self:custom.dbUser}
+      dbPassword: ${self:custom.dbPassword}
+
   get-lambda:
     handler: src/lambda/get-lambda.handler
     environment:
@@ -130,6 +138,14 @@ functions:
 
   list-dynamo-tables:
     handler: src/dynamodb/list-tables.handler
+    environment:
+      dbName: ${self:custom.dbName}
+      dbHost: ${self:custom.dbHost}
+      dbUser: ${self:custom.dbUser}
+      dbPassword: ${self:custom.dbPassword}
+
+  list-most-expensive-tables:
+    handler: src/dynamodb/list-most-expensive-tables.handler
     environment:
       dbName: ${self:custom.dbName}
       dbHost: ${self:custom.dbHost}
