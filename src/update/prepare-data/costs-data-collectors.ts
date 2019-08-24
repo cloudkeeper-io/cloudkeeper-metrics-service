@@ -25,8 +25,8 @@ export const getCostsPerService = async (tenantId, startDate, endDate) => {
     .orderBy(['date'], ['asc'])
     .value()
 
-  const startDateTime = DateTime.fromISO(startDate, { zone: 'utc' }).minus({ days: 1 }).startOf('hour')
-  const endDateTime = DateTime.fromISO(endDate, { zone: 'utc' }).startOf('hour')
+  const startDateTime = DateTime.fromISO(startDate, { zone: 'utc' }).startOf('day')
+  const endDateTime = DateTime.fromISO(endDate, { zone: 'utc' }).startOf('day')
 
   const filledDataPoints = fillEmptyDataPointsWithDates(dataPoints, true, startDateTime, endDateTime, {
     total: 0,
@@ -83,8 +83,8 @@ export const getCostsPerStack = async (tenantId, startDate, endDate) => {
     .orderBy(['date'], ['asc'])
     .value()
 
-  const startDateTime = DateTime.fromISO(startDate, { zone: 'utc' }).minus({ days: 1 }).startOf('hour')
-  const endDateTime = DateTime.fromISO(endDate, { zone: 'utc' }).startOf('hour')
+  const startDateTime = DateTime.fromISO(startDate, { zone: 'utc' }).startOf('day')
+  const endDateTime = DateTime.fromISO(endDate, { zone: 'utc' }).startOf('day')
 
   const filledDataPoints = fillEmptyDataPointsWithDates(dataPoints, true, startDateTime, endDateTime, {
     total: 0,

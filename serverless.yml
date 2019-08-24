@@ -64,6 +64,38 @@ functions:
       dbPassword: ${self:custom.dbPassword}
       finishedTopic: "arn:aws:sns:#{AWS::Region}:#{AWS::AccountId}:${self:custom.stage}-finished-updating-costs"
 
+  get-costs-per-service:
+    handler: src/costs/get-costs-per-service.handler
+    environment:
+      dbName: ${self:custom.dbName}
+      dbHost: ${self:custom.dbHost}
+      dbUser: ${self:custom.dbUser}
+      dbPassword: ${self:custom.dbPassword}
+
+  get-costs-per-stack:
+    handler: src/costs/get-costs-per-stack.handler
+    environment:
+      dbName: ${self:custom.dbName}
+      dbHost: ${self:custom.dbHost}
+      dbUser: ${self:custom.dbUser}
+      dbPassword: ${self:custom.dbPassword}
+
+  get-events:
+    handler: src/events/get-events.handler
+    environment:
+      dbName: ${self:custom.dbName}
+      dbHost: ${self:custom.dbHost}
+      dbUser: ${self:custom.dbUser}
+      dbPassword: ${self:custom.dbPassword}
+
+  get-lambda-totals:
+    handler: src/lambda/get-totals.handler
+    environment:
+      dbName: ${self:custom.dbName}
+      dbHost: ${self:custom.dbHost}
+      dbUser: ${self:custom.dbUser}
+      dbPassword: ${self:custom.dbPassword}
+
   prepare-costs-data-for-tenant:
     timeout: 240
     handler: src/update/prepare-data/prepare-costs-data-for-tenant.handler
