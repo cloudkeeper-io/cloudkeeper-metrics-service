@@ -65,6 +65,7 @@ functions:
       finishedTopic: "arn:aws:sns:#{AWS::Region}:#{AWS::AccountId}:${self:custom.stage}-finished-updating-costs"
 
   get-costs-summary:
+    timeout: 15
     handler: src/costs/get-costs-summary.handler
     environment:
       dbName: ${self:custom.dbName}
@@ -73,6 +74,7 @@ functions:
       dbPassword: ${self:custom.dbPassword}
 
   get-events:
+    timeout: 15
     handler: src/events/get-events.handler
     environment:
       dbName: ${self:custom.dbName}
@@ -81,6 +83,7 @@ functions:
       dbPassword: ${self:custom.dbPassword}
 
   get-lambda-totals:
+    timeout: 15
     handler: src/lambda/get-totals.handler
     environment:
       dbName: ${self:custom.dbName}
@@ -124,6 +127,7 @@ functions:
       dbPassword: ${self:custom.dbPassword}
 
   list-most-expensive-lambdas:
+    timeout: 15
     handler: src/lambda/list-most-expensive-lambdas.handler
     environment:
       dbName: ${self:custom.dbName}
@@ -156,6 +160,7 @@ functions:
       dbPassword: ${self:custom.dbPassword}
 
   list-most-expensive-tables:
+    timeout: 15
     handler: src/dynamodb/list-most-expensive-tables.handler
     environment:
       dbName: ${self:custom.dbName}
