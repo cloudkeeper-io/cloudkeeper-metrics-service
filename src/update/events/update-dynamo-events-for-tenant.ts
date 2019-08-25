@@ -155,12 +155,12 @@ export const handler = async (event) => {
   const connection = await getConnection()
 
   await Promise.all(event.Records.map(async (record) => {
-    const tenantId = record.Sns.Message
+    const tenant = JSON.parse(record.Sns.Message)
 
-    console.log(`Working on tenant ${tenantId}`)
+    console.log(`Working on tenant ${tenant.id}`)
     const newEvents: any[] = []
 
-    await addDynamoEvents(tenantId, newEvents)
+    await addDynamoEvents(tenant.id, newEvents)
 
     console.log(JSON.stringify(newEvents))
 
@@ -172,7 +172,5 @@ export const handler = async (event) => {
         .orIgnore()
         .execute()
     }
-
-    await writeLatestEventsToS3(connection, tenantId)
   }))
 }

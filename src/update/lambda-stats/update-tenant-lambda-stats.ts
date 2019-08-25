@@ -83,7 +83,7 @@ export const handler = async (tenant) => {
 
   await sns.publish({
     TopicArn: process.env.finishedTopic,
-    Message: tenant.id,
+    Message: JSON.stringify(tenant),
   }).promise()
 
   return true
