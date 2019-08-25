@@ -14,9 +14,9 @@ describe('costs collectors', () => {
 
   const endDate = DateTime.utc().startOf('second').toISODate()
 
-  const startDate = DateTime.utc().minus({ days: 89 }).startOf('second').toISODate()
+  const startDate = DateTime.utc().minus({ days: 90 }).startOf('second').toISODate()
 
-  const startDate180 = DateTime.utc().minus({ days: 179 }).startOf('second').toISODate()
+  const startDate180 = DateTime.utc().minus({ days: 180 }).startOf('second').toISODate()
 
   test('costs per service', async () => {
     const dataPoints = await getCostsPerService('7ec85367-20e1-40f2-8725-52b245354045', startDate, endDate)
