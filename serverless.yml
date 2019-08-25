@@ -64,16 +64,8 @@ functions:
       dbPassword: ${self:custom.dbPassword}
       finishedTopic: "arn:aws:sns:#{AWS::Region}:#{AWS::AccountId}:${self:custom.stage}-finished-updating-costs"
 
-  get-costs-per-service:
-    handler: src/costs/get-costs-per-service.handler
-    environment:
-      dbName: ${self:custom.dbName}
-      dbHost: ${self:custom.dbHost}
-      dbUser: ${self:custom.dbUser}
-      dbPassword: ${self:custom.dbPassword}
-
-  get-costs-per-stack:
-    handler: src/costs/get-costs-per-stack.handler
+  get-costs-summary:
+    handler: src/costs/get-costs-summary.handler
     environment:
       dbName: ${self:custom.dbName}
       dbHost: ${self:custom.dbHost}

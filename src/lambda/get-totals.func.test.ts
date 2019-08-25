@@ -24,13 +24,15 @@ describe('get lambda totals', () => {
 
     expect(payload.invocations).toEqual(expect.any(Number))
     expect(payload.errors).toEqual(expect.any(Number))
+    expect(payload.cost).toEqual(expect.any(Number))
 
     expect(payload.dataPoints.length).toBe(168)
 
-    for (const event of payload.dataPoints) {
-      expect(event.invocations).toEqual(expect.any(String))
-      expect(event.errors).toEqual(expect.any(String))
-      expect(event.dateTime).toEqual(expect.any(String))
+    for (const dataPoint of payload.dataPoints) {
+      expect(dataPoint.invocations).toEqual(expect.any(Number))
+      expect(dataPoint.errors).toEqual(expect.any(Number))
+      expect(dataPoint.cost).toEqual(expect.any(Number))
+      expect(dataPoint.dateTime).toEqual(expect.any(String))
     }
   })
 })
