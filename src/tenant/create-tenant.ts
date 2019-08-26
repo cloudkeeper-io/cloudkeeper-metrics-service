@@ -23,6 +23,12 @@ export const handler = async (request) => {
     name,
     isSetupCompleted: false,
     createdAt: new Date().getTime(),
+    initialProcessing: {
+      done: false,
+      lambda: false,
+      dynamo: false,
+      costs: false,
+    },
   }
 
   await dynamoDb.put({

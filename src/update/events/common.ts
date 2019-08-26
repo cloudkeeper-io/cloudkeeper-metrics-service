@@ -54,3 +54,23 @@ export const generateMessage = (dimensionName, value, expectedValue, unitPrefix 
 
   return `${dimensionName} is ${change} than expected by ${digitPart}`
 }
+
+export const setProcessingIsDone = async (tenantId, dynamo) => {
+  try {
+    await dynamo.update({
+      TableName: `${process.env.stage}-cloudkeeper-tenants`,
+      Key: {
+        id: tenantId,
+      },
+      UpdateExpression: 'SET initialProcessing.done = :true',
+      ConditionExpression: `initialProcessing.costs = :true and 
+          initialProcessing.lambda = :true and 
+          initialProcessing.dynamo = :true`,
+      ExpressionAttributeValues: {
+        ':true': true,
+      },
+    }).promise()
+  } catch (e) {
+    console.log(e)
+  }
+}

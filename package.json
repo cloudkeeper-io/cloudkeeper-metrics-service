@@ -9,8 +9,8 @@
     "test:unit": "jest unit",
     "test:func": "jest func",
     "tsc": "tsc --noEmit",
-    "lint": "eslint \"*/**.ts\"",
-    "lint:fix": "eslint \"*/**.ts\" --fix",
+    "lint": "eslint \"**/*.ts\"",
+    "lint:fix": "eslint \"**/*.ts\" --fix",
     "db:migrate": "cross-env STAGE=dev ts-node scripts/migrate-db.ts",
     "deploy": "cross-env NODE_OPTIONS=--max_old_space_size=2048 sls deploy --force"
   },

@@ -26,7 +26,10 @@ const updateLambdasChunk = async (lambdasChunk, credentials, tenant, lambdaPrice
       const durationEntry = durationDataMap[datapoint.Timestamp.getTime()]
 
       const priceInfo = find(lambdaPrices, { region: lambdaConfig.region })
-      const cost = datapoint.Sum ? priceInfo.requestPrice * datapoint.Sum! + datapoint.Sum! * durationEntry.Average! / 1000 * priceInfo.pricePerGbSeconds * lambdaConfig.size / 1024 : 0
+      const cost = datapoint.Sum
+        ? priceInfo.requestPrice * datapoint.Sum!
+        + datapoint.Sum! * durationEntry.Average! / 1000 * priceInfo.pricePerGbSeconds * lambdaConfig.size / 1024
+        : 0
 
       return ({
         tenantId: tenant.id,

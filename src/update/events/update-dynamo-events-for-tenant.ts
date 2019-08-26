@@ -1,12 +1,13 @@
 import { DateTime } from 'luxon'
 import { Point } from '@azure/cognitiveservices-anomalydetector/lib/models'
-import { filter, takeRight, groupBy, chunk } from 'lodash'
+import { filter, takeRight, groupBy, chunk, get } from 'lodash'
 
 import { getConnection } from '../../db/db'
 import { Event } from '../../entity'
-import { writeLatestEventsToS3 } from './common'
+import { setProcessingIsDone } from './common'
 import { fillEmptyDataPointsInTimeseries, getDateCondition } from '../prepare-data/common'
 import { getAnomalyRrcfData } from './events.utils'
+import { getDynamo } from '../../utils/aws.utils'
 
 const analyzeTimeSeries = async (timeSeries: Point[], startDateTime: DateTime, endDateTime: DateTime,
   tableName: string, dimensionName: string, tenantId: string, fillIn = true) => {
@@ -151,6 +152,8 @@ const addDynamoEvents = async (tenantId, newEvents: any[]) => {
   }
 }
 
+const dynamo = getDynamo()
+
 export const handler = async (event) => {
   const connection = await getConnection()
 
@@ -171,6 +174,21 @@ export const handler = async (event) => {
         .values(newEvents)
         .orIgnore()
         .execute()
+    }
+
+    if (!get(tenant, 'initialProcessing.dynamo')) {
+      await dynamo.update({
+        TableName: `${process.env.stage}-cloudkeeper-tenants`,
+        Key: {
+          id: tenant.id,
+        },
+        UpdateExpression: 'SET initialProcessing.dynamo = :true',
+        ExpressionAttributeValues: {
+          ':true': true,
+        },
+      }).promise()
+
+      await setProcessingIsDone(tenant.id, dynamo)
     }
   }))
 }

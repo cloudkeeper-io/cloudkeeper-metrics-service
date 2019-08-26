@@ -16,7 +16,7 @@ import { filter, takeRight } from 'lodash'
 import * as fs from 'fs'
 import * as path from 'path'
 import { getCostsPerService } from '../prepare-data/costs-data-collectors'
-import {getAnomalyData, getAnomalyRrcfData} from './events.utils'
+import { getAnomalyData, getAnomalyRrcfData } from './events.utils'
 import { generateMessage } from './common'
 
 describe('Update Lambda Stats', async () => {

@@ -1,4 +1,4 @@
-import { filter, takeRight, groupBy, chunk, round } from 'lodash'
+import { filter, takeRight, groupBy, chunk, round, get } from 'lodash'
 import { Point } from '@azure/cognitiveservices-anomalydetector/lib/models'
 import { DateTime } from 'luxon'
 import { getAnomalyRrcfData } from './events.utils'
@@ -6,6 +6,8 @@ import { Event } from '../../entity'
 import { getConnection } from '../../db/db'
 import { fillEmptyDataPointsInTimeseries, getDateCondition } from '../prepare-data/common'
 import { msToDuration } from '../../utils/time.utils'
+import { setProcessingIsDone } from './common'
+import { getDynamo } from '../../utils/aws.utils'
 
 const analyzeTimeSeries = async (timeSeries: Point[], startDateTime: DateTime, endDateTime: DateTime,
   lambdaName: string, dimensionName: string, tenantId: string, fillIn = true, formatValue = value => value) => {
@@ -121,9 +123,18 @@ const addLambdaEvents = async (tenantId, newEvents: any[]) => {
   const chunks = chunk(lambdaNames, 10)
 
   for (const lambdasChunk of chunks) {
-    await Promise.all(lambdasChunk.map(lambdaName => analyzeLambda(lambdaName, metricsMap[lambdaName], startDateTime, endDateTime, tenantId, newEvents)))
+    await Promise.all(lambdasChunk.map(lambdaName => analyzeLambda(
+      lambdaName,
+      metricsMap[lambdaName],
+      startDateTime,
+      endDateTime,
+      tenantId,
+      newEvents,
+    )))
   }
 }
+
+const dynamo = getDynamo()
 
 export const handler = async (event) => {
   const connection = await getConnection()
@@ -136,8 +147,6 @@ export const handler = async (event) => {
 
     await addLambdaEvents(tenant.id, newEvents)
 
-    console.log(JSON.stringify(newEvents))
-
     if (newEvents.length > 0) {
       await connection.createQueryBuilder()
         .insert()
@@ -145,6 +154,21 @@ export const handler = async (event) => {
         .values(newEvents)
         .orIgnore()
         .execute()
+    }
+
+    if (!get(tenant, 'initialProcessing.lambda')) {
+      await dynamo.update({
+        TableName: `${process.env.stage}-cloudkeeper-tenants`,
+        Key: {
+          id: tenant.id,
+        },
+        UpdateExpression: 'SET initialProcessing.lambda = :true',
+        ExpressionAttributeValues: {
+          ':true': true,
+        },
+      }).promise()
+
+      await setProcessingIsDone(tenant.id, dynamo)
     }
   }))
 }

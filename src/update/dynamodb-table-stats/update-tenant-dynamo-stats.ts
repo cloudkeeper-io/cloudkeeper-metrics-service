@@ -69,17 +69,25 @@ async function updateTablesChunk(tablesChunks, tenant, region, costRateData, con
       const provisionedWrite = get(provisionedWriteData, 'Average', 0)
 
       const fractionOfMonth = 1 / (DateTime.fromMillis(timePoint.getTime()).daysInMonth * 24)
-      const storageCost = table.sizeBytes / (1024 * 1024 * 1024) * fractionOfMonth * find<DynamoStoragePrice>(costRateData.storageCostData, { region: table.region })!.gbPerMonthPrice
+      const storageCost = table.sizeBytes / (1024 * 1024 * 1024)
+        * fractionOfMonth
+        * find<DynamoStoragePrice>(costRateData.storageCostData, { region: table.region })!.gbPerMonthPrice
 
       let readCost = 0
       let writeCost = 0
 
       if (table.billingMode === 'PROVISIONED') {
-        const operationsCostData = find<DynamoProvisionedPrice>(costRateData.provisionedCostData, { region: table.region })!
+        const operationsCostData = find<DynamoProvisionedPrice>(costRateData.provisionedCostData, {
+          region: table.region,
+        })!
+
         readCost = provisionedRead * operationsCostData.read
         writeCost = provisionedWrite * operationsCostData.write
       } else {
-        const operationsCostData = find<DynamoPerRequestPrice>(costRateData.payPerRequestCostData, { region: table.region })!
+        const operationsCostData = find<DynamoPerRequestPrice>(costRateData.payPerRequestCostData, {
+          region: table.region,
+        })!
+
         readCost = consumedRead / 1000000 * operationsCostData.read
         writeCost = consumedWrite / 1000000 * operationsCostData.write
       }

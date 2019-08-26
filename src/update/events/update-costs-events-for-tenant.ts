@@ -4,7 +4,8 @@ import { getAnomalyData } from './events.utils'
 import { Event } from '../../entity'
 import { getConnection } from '../../db/db'
 import { getCostsForService, getCostsPerService } from '../prepare-data/costs-data-collectors'
-import { generateMessage, writeLatestEventsToS3 } from './common'
+import { generateMessage, setProcessingIsDone } from './common'
+import { getDynamo } from '../../utils/aws.utils'
 
 const addServiceCostAnomalies = async (tenantId, serviceName, newEvents) => {
   if (!serviceName) {
@@ -24,7 +25,8 @@ const addServiceCostAnomalies = async (tenantId, serviceName, newEvents) => {
 
   const costAnomalyData = await getAnomalyData(series, 'daily')
 
-  const costAnomalies = filter(takeRight(costAnomalyData, 10), dataPoint => dataPoint.isAnomaly && (Math.abs(dataPoint.expectedValue - dataPoint.value) > 1))
+  const costAnomalies = filter(takeRight(costAnomalyData, 10), dataPoint => dataPoint.isAnomaly
+    && (Math.abs(dataPoint.expectedValue - dataPoint.value) > 1))
 
   newEvents.push(...costAnomalies.map(item => ({
     tenantId,
@@ -81,6 +83,9 @@ const getCostsEvents = async (tenantId): Promise<any[]> => {
   return newEvents
 }
 
+
+const dynamo = getDynamo()
+
 export const handler = async (event) => {
   const connection = await getConnection()
 
@@ -98,6 +103,21 @@ export const handler = async (event) => {
         .values(newEvents)
         .orIgnore()
         .execute()
+    }
+
+    if (!get(tenant, 'initialProcessing.costs')) {
+      await dynamo.update({
+        TableName: `${process.env.stage}-cloudkeeper-tenants`,
+        Key: {
+          id: tenant.id,
+        },
+        UpdateExpression: 'SET initialProcessing.costs = :true',
+        ExpressionAttributeValues: {
+          ':true': true,
+        },
+      }).promise()
+
+      await setProcessingIsDone(tenant.id, dynamo)
     }
   }))
 }
