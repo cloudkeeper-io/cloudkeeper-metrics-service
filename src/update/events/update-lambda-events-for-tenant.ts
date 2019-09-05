@@ -1,4 +1,4 @@
-import { filter, takeRight, groupBy, chunk, round, get } from 'lodash'
+import { filter, takeRight, groupBy, chunk, round, get, chain } from 'lodash'
 import { Point } from '@azure/cognitiveservices-anomalydetector/lib/models'
 import { DateTime } from 'luxon'
 import { getAnomalyRrcfData } from './events.utils'
@@ -6,7 +6,7 @@ import { Event } from '../../entity'
 import { getConnection } from '../../db/db'
 import { fillEmptyDataPointsInTimeseries, getDateCondition } from '../prepare-data/common'
 import { msToDuration } from '../../utils/time.utils'
-import { setProcessingIsDone } from './common'
+import { generateMessageWithAverage, setProcessingIsDone } from './common'
 import { getDynamo } from '../../utils/aws.utils'
 
 const analyzeTimeSeries = async (timeSeries: Point[], startDateTime: DateTime, endDateTime: DateTime,
@@ -26,6 +26,8 @@ const analyzeTimeSeries = async (timeSeries: Point[], startDateTime: DateTime, e
   const anomalies = filter(takeRight(anomalyDetectionResults, 10),
     dataPoint => dataPoint.isAnomaly && dataPoint.value !== 0)
 
+  const average = chain(dataPoints).map(x => Number(x.value)).sum().value() / dataPoints.length
+
   return anomalies.map(anomaly => ({
     tenantId,
     serviceName: 'AWS Lambda',
@@ -33,11 +35,16 @@ const analyzeTimeSeries = async (timeSeries: Point[], startDateTime: DateTime, e
     value: anomaly.value,
     expectedValue: null,
     dateTime: anomaly.timestamp,
-    message: `Anomalous ${dimensionName.toLowerCase()} of ${lambdaName}: ${formatValue(anomaly.value)}`,
+    message: generateMessageWithAverage(
+      `${lambdaName} ${dimensionName.toLowerCase()}`,
+      anomaly.value,
+      average,
+      formatValue,
+    ),
   }))
 }
 
-const analyzeLambda = async (lambdaName, metrics, startDateTime, endDateTime, tenantId, newEvents: any[]) => {
+export const analyzeLambda = async (lambdaName, metrics, startDateTime, endDateTime, tenantId, newEvents: any[]) => {
   const timeSeries = metrics.reduce((acc, point) => {
     acc.invocations.push({
       value: point.invocations,

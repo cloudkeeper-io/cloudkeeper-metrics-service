@@ -1,10 +1,10 @@
 import { DateTime } from 'luxon'
 import { Point } from '@azure/cognitiveservices-anomalydetector/lib/models'
-import { filter, takeRight, groupBy, chunk, get } from 'lodash'
+import { filter, takeRight, groupBy, chunk, get, chain } from 'lodash'
 
 import { getConnection } from '../../db/db'
 import { Event } from '../../entity'
-import { setProcessingIsDone } from './common'
+import {generateMessageWithAverage, setProcessingIsDone} from './common'
 import { fillEmptyDataPointsInTimeseries, getDateCondition } from '../prepare-data/common'
 import { getAnomalyRrcfData } from './events.utils'
 import { getDynamo } from '../../utils/aws.utils'
@@ -23,7 +23,10 @@ const analyzeTimeSeries = async (timeSeries: Point[], startDateTime: DateTime, e
 
   const anomalyDetectionResults = await getAnomalyRrcfData(dataPoints)
 
-  const anomalies = filter(takeRight(anomalyDetectionResults, 10), { isAnomaly: true })
+  const average = chain(dataPoints).map(x => Number(x.value)).sum().value() / dataPoints.length
+
+  const anomalies = filter(takeRight(anomalyDetectionResults, 10),
+    dataPoint => dataPoint.isAnomaly && dataPoint.value !== 0 && Math.abs(dataPoint.value - average) > 1)
 
   return anomalies.map(anomaly => ({
     tenantId,
@@ -32,11 +35,15 @@ const analyzeTimeSeries = async (timeSeries: Point[], startDateTime: DateTime, e
     value: anomaly.value,
     expectedValue: null,
     dateTime: anomaly.timestamp,
-    message: `Anomalous ${dimensionName.toLowerCase()} of ${tableName}: ${anomaly.value}`,
+    message: generateMessageWithAverage(
+      `${tableName} ${dimensionName.toLowerCase()}`,
+      anomaly.value,
+      average,
+    ),
   }))
 }
 
-const analyzeTable = async (tableName, metrics, startDateTime, endDateTime, tenantId, newEvents: any[]) => {
+export const analyzeTable = async (tableName, metrics, startDateTime, endDateTime, tenantId, newEvents: any[]) => {
   const timeSeries = metrics.reduce((acc, point) => {
     acc.consumedRead.push({
       value: point.consumedRead,
