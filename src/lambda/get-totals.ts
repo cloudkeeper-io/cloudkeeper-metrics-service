@@ -16,7 +16,8 @@ export const handler = async ({ tenantId, startDate, endDate }) => {
   const dataPoints = await connection.query(`
     select sum(invocations) as invocations, sum(errors) as errors, sum(cost) as cost, 
     ${groupDaily
-    ? `CONVERT_TZ(TIMESTAMP(DATE(CONVERT_TZ(dateTime, 'UTC','${offsetName}')), '00:00:00'), '${offsetName}', 'UTC') as dateTime`
+    ? `CONVERT_TZ(TIMESTAMP(DATE(CONVERT_TZ(dateTime, 'UTC','${offsetName}')), '00:00:00'), 
+    '${offsetName}', 'UTC') as dateTime`
     : 'dateTime'
 }
     from LambdaStats
@@ -34,7 +35,9 @@ export const handler = async ({ tenantId, startDate, endDate }) => {
   const fullDataPoints = fillEmptyDataPointsWithDates(
     convertedDataPoints,
     groupDaily,
-    groupDaily ? DateTime.fromISO(startDate).startOf('day') : DateTime.fromISO(startDate).plus({ hours: 1 }).startOf('hour'),
+    groupDaily
+      ? DateTime.fromISO(startDate).startOf('day')
+      : DateTime.fromISO(startDate).plus({ hours: 1 }).startOf('hour'),
     DateTime.fromISO(endDate).startOf('hour'),
     {
       invocations: 0,
