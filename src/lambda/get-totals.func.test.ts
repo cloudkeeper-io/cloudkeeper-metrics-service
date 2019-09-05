@@ -8,7 +8,7 @@ describe('get lambda totals', () => {
   jest.setTimeout(30000)
 
   test('happy path', async () => {
-    const startDate = DateTime.local().minus({ days: 7 }).toUTC().toISO()
+    const startDate = DateTime.local().minus({ days: 6 }).toUTC().toISO()
     const endDate = DateTime.local().toUTC().toISO()
 
     const response = await lambdaClient.invoke({
