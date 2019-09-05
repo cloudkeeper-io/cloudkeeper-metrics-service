@@ -26,7 +26,7 @@ describe('get lambda totals', () => {
     expect(payload.errors).toEqual(expect.any(Number))
     expect(payload.cost).toEqual(expect.any(Number))
 
-    expect(payload.dataPoints.length).toBe(167)
+    expect(payload.dataPoints.length).toBe(7)
 
     for (const dataPoint of payload.dataPoints) {
       expect(dataPoint.invocations).toEqual(expect.any(Number))

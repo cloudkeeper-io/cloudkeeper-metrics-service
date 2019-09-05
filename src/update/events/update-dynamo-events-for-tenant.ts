@@ -4,7 +4,7 @@ import { filter, takeRight, groupBy, chunk, get, chain } from 'lodash'
 
 import { getConnection } from '../../db/db'
 import { Event } from '../../entity'
-import {generateMessageWithAverage, setProcessingIsDone} from './common'
+import { generateMessageWithAverage, setProcessingIsDone } from './common'
 import { fillEmptyDataPointsInTimeseries, getDateCondition } from '../prepare-data/common'
 import { getAnomalyRrcfData } from './events.utils'
 import { getDynamo } from '../../utils/aws.utils'
