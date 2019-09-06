@@ -17,7 +17,7 @@ import * as fs from 'fs'
 import * as path from 'path'
 import { getCostsPerService } from '../prepare-data/costs-data-collectors'
 import { getAnomalyData, getAnomalyRrcfData } from './events.utils'
-import { generateMessage } from './common'
+import { generateMessageWithExpected } from './common'
 
 describe('Update Lambda Stats', async () => {
   jest.setTimeout(60000)
@@ -51,7 +51,7 @@ describe('Update Lambda Stats', async () => {
       // @ts-ignore
       dateTime: item.timestamp,
       // @ts-ignore
-      message: generateMessage('Billed Cost', item.value, item.expectedValue, '$'),
+      message: generateMessageWithExpected('Billed Cost', item.value, item.expectedValue, '$'),
     }))
 
     console.log(events)

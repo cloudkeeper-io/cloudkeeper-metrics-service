@@ -6,11 +6,12 @@ import { Event } from '../../entity'
 import { getConnection } from '../../db/db'
 import { fillEmptyDataPointsInTimeseries, getDateCondition } from '../prepare-data/common'
 import { msToDuration } from '../../utils/time.utils'
-import { generateMessageWithAverage, setProcessingIsDone } from './common'
+import { generateMessage, setProcessingIsDone } from './common'
 import { getDynamo } from '../../utils/aws.utils'
 
 const analyzeTimeSeries = async (timeSeries: Point[], startDateTime: DateTime, endDateTime: DateTime,
-  lambdaName: string, dimensionName: string, tenantId: string, fillIn = true, formatValue = value => value) => {
+  lambdaName: string, dimensionName: string, tenantId: string, fillIn = true, formatValue = value => value,
+  minimalDifference = 0, useAverageInMessage = false) => {
   let dataPoints: Point[]
 
   if (fillIn) {
@@ -23,10 +24,12 @@ const analyzeTimeSeries = async (timeSeries: Point[], startDateTime: DateTime, e
 
   const anomalyDetectionResults = await getAnomalyRrcfData(dataPoints)
 
-  const anomalies = filter(takeRight(anomalyDetectionResults, 10),
-    dataPoint => dataPoint.isAnomaly && dataPoint.value !== 0)
-
   const average = chain(dataPoints).map(x => Number(x.value)).sum().value() / dataPoints.length
+
+  const anomalies = filter(takeRight(anomalyDetectionResults, 10),
+    dataPoint => dataPoint.isAnomaly
+      && dataPoint.value !== 0
+      && Math.abs(dataPoint.value - average) > minimalDifference)
 
   return anomalies.map(anomaly => ({
     tenantId,
@@ -35,10 +38,10 @@ const analyzeTimeSeries = async (timeSeries: Point[], startDateTime: DateTime, e
     value: anomaly.value,
     expectedValue: null,
     dateTime: anomaly.timestamp,
-    message: generateMessageWithAverage(
+    message: generateMessage(
       `${lambdaName} ${dimensionName.toLowerCase()}`,
       anomaly.value,
-      average,
+      useAverageInMessage ? average : 0,
       formatValue,
     ),
   }))
@@ -75,6 +78,10 @@ export const analyzeLambda = async (lambdaName, metrics, startDateTime, endDateT
     lambdaName,
     'Invocations',
     tenantId,
+    true,
+    x => x,
+    10,
+    true,
   )
 
   if (invocationAnomalies.length > 0) {
@@ -88,6 +95,10 @@ export const analyzeLambda = async (lambdaName, metrics, startDateTime, endDateT
     lambdaName,
     'Errors',
     tenantId,
+    true,
+    x => x,
+    1,
+    true,
   )
 
   if (errorsAnomalies.length > 0) {
@@ -103,6 +114,8 @@ export const analyzeLambda = async (lambdaName, metrics, startDateTime, endDateT
     tenantId,
     false,
     msToDuration,
+    100,
+    true,
   )
 
   if (avgDurationAnomalies.length > 0) {

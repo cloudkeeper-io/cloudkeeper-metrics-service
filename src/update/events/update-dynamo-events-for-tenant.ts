@@ -4,13 +4,14 @@ import { filter, takeRight, groupBy, chunk, get, chain } from 'lodash'
 
 import { getConnection } from '../../db/db'
 import { Event } from '../../entity'
-import { generateMessageWithAverage, setProcessingIsDone } from './common'
+import { generateMessage, setProcessingIsDone } from './common'
 import { fillEmptyDataPointsInTimeseries, getDateCondition } from '../prepare-data/common'
 import { getAnomalyRrcfData } from './events.utils'
 import { getDynamo } from '../../utils/aws.utils'
 
 const analyzeTimeSeries = async (timeSeries: Point[], startDateTime: DateTime, endDateTime: DateTime,
-  tableName: string, dimensionName: string, tenantId: string, fillIn = true) => {
+  tableName: string, dimensionName: string, tenantId: string, fillIn = true, minimalDifference = 0,
+  useAverageInMessage = false) => {
   let dataPoints: Point[]
 
   if (fillIn) {
@@ -26,7 +27,9 @@ const analyzeTimeSeries = async (timeSeries: Point[], startDateTime: DateTime, e
   const average = chain(dataPoints).map(x => Number(x.value)).sum().value() / dataPoints.length
 
   const anomalies = filter(takeRight(anomalyDetectionResults, 10),
-    dataPoint => dataPoint.isAnomaly && dataPoint.value !== 0 && Math.abs(dataPoint.value - average) > 1)
+    dataPoint => dataPoint.isAnomaly
+      && dataPoint.value !== 0
+      && Math.abs(dataPoint.value - average) > minimalDifference)
 
   return anomalies.map(anomaly => ({
     tenantId,
@@ -35,10 +38,10 @@ const analyzeTimeSeries = async (timeSeries: Point[], startDateTime: DateTime, e
     value: anomaly.value,
     expectedValue: null,
     dateTime: anomaly.timestamp,
-    message: generateMessageWithAverage(
+    message: generateMessage(
       `${tableName} ${dimensionName.toLowerCase()}`,
       anomaly.value,
-      average,
+      useAverageInMessage ? average : null,
     ),
   }))
 }
@@ -80,6 +83,9 @@ export const analyzeTable = async (tableName, metrics, startDateTime, endDateTim
     tableName,
     'Consumed Read Capacity',
     tenantId,
+    true,
+    10,
+    true,
   )
 
   if (consumedReadAnomalies.length > 0) {
@@ -93,6 +99,9 @@ export const analyzeTable = async (tableName, metrics, startDateTime, endDateTim
     tableName,
     'Consumed Write Capacity',
     tenantId,
+    true,
+    10,
+    true,
   )
 
   if (consumedWriteAnomalies.length > 0) {
@@ -107,6 +116,8 @@ export const analyzeTable = async (tableName, metrics, startDateTime, endDateTim
     'Throttled Reads',
     tenantId,
     false,
+    0,
+    false,
   )
 
   if (throttledReadsAnomalies.length > 0) {
@@ -120,6 +131,8 @@ export const analyzeTable = async (tableName, metrics, startDateTime, endDateTim
     tableName,
     'Throttled Writes',
     tenantId,
+    false,
+    0,
     false,
   )
 

@@ -4,7 +4,7 @@ import { getAnomalyData } from './events.utils'
 import { Event } from '../../entity'
 import { getConnection } from '../../db/db'
 import { getCostsForService, getCostsPerService } from '../prepare-data/costs-data-collectors'
-import { generateMessage, setProcessingIsDone } from './common'
+import { generateMessageWithExpected, setProcessingIsDone } from './common'
 import { getDynamo } from '../../utils/aws.utils'
 
 const addServiceCostAnomalies = async (tenantId, serviceName, newEvents) => {
@@ -35,7 +35,7 @@ const addServiceCostAnomalies = async (tenantId, serviceName, newEvents) => {
     value: item.value,
     expectedValue: item.expectedValue,
     dateTime: item.timestamp,
-    message: generateMessage(`${serviceName} Billed Cost`, item.value, item.expectedValue, '$'),
+    message: generateMessageWithExpected(`${serviceName} Billed Cost`, item.value, item.expectedValue, '$'),
   })))
 }
 
@@ -67,7 +67,7 @@ const getCostsEvents = async (tenantId): Promise<any[]> => {
     value: round(item.value, 2),
     expectedValue: round(item.expectedValue, 2),
     dateTime: item.timestamp,
-    message: generateMessage('Billed Cost', item.value, item.expectedValue, '$'),
+    message: generateMessageWithExpected('Billed Cost', item.value, item.expectedValue, '$'),
   })))
 
   const serviceCosts = get(last(costsData), 'serviceCosts')

@@ -1,6 +1,6 @@
 import { round } from 'lodash'
 
-export const generateMessage = (dimensionName, value, expectedValue, unitPrefix = '', unitPostFix = '') => {
+export const generateMessageWithExpected = (dimensionName, value, expectedValue, unitPrefix = '', unitPostFix = '') => {
   let digitPart
   let change
   if (value > expectedValue) {
@@ -34,10 +34,19 @@ export const generateMessage = (dimensionName, value, expectedValue, unitPrefix 
   return `${dimensionName} is ${change} than expected by ${digitPart}`
 }
 
-export const generateMessageWithAverage = (dimensionName, value, average, formatValue = x => x) => {
+export const generateMessage = (dimensionName, value, average: number | null, formatValue = x => x) => {
   let digitPart
   let change
-  if (value > average) {
+
+  let averagePart
+
+  if (average !== null) {
+    if (value > average) {
+      change = 'higher'
+    } else {
+      change = 'lower'
+    }
+
     if (average) {
       const percentage = round((value - average) / average * 100)
 
@@ -49,23 +58,11 @@ export const generateMessageWithAverage = (dimensionName, value, average, format
     } else {
       digitPart = formatValue(round(value - average, 2))
     }
-    change = 'higher'
-  } else {
-    if (average) {
-      const percentage = round((average - value) / average * 100)
 
-      if (percentage > 10) {
-        digitPart = percentage + '%'
-      } else {
-        digitPart = formatValue(round(average - value, 2))
-      }
-    } else {
-      digitPart = formatValue(round(average - value, 2))
-    }
-    change = 'lower'
+    averagePart = `, which is ${change} than average by ${digitPart}`
   }
 
-  return `${dimensionName} is ${change} than average by ${digitPart} (${formatValue(round(value))})`
+  return `${dimensionName} is ${formatValue(round(value))}${averagePart || ''}`
 }
 
 export const setProcessingIsDone = async (tenantId, dynamo) => {

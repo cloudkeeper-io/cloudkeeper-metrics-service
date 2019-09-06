@@ -8,7 +8,7 @@ import { getAwsCredentials } from '../../utils/aws.utils'
 
 const sns = new AWS.SNS({ apiVersion: '2010-03-31' })
 
-const updateLambdasChunk = async (lambdasChunk, credentials, tenant, lambdaPrices, region, connection) => {
+const updateLambdasChunk = async (lambdasChunk, credentials, tenant, lambdaPrices: LambdaPrice[], region, connection) => {
   const batchData: any[] = flatten((await Promise.all(map(lambdasChunk, async (lambdaConfig) => {
     const [invocationStats, errorStats, durationStats] = await getLambdaMetrics(
       lambdaConfig.name,
@@ -25,7 +25,7 @@ const updateLambdasChunk = async (lambdasChunk, credentials, tenant, lambdaPrice
       // @ts-ignore
       const durationEntry = durationDataMap[datapoint.Timestamp.getTime()]
 
-      const priceInfo = find(lambdaPrices, { region: lambdaConfig.region })
+      const priceInfo = find<LambdaPrice>(lambdaPrices, { region: lambdaConfig.region })!
       const cost = datapoint.Sum
         ? priceInfo.requestPrice * datapoint.Sum!
         + datapoint.Sum! * durationEntry.Average! / 1000 * priceInfo.pricePerGbSeconds * lambdaConfig.size / 1024
@@ -64,7 +64,7 @@ export const handler = async (tenant) => {
     tenantId: tenant.id,
   })
 
-  const lambdaPrices = await connection.getRepository(LambdaPrice).find()
+  const lambdaPrices: LambdaPrice[] = await connection.getRepository(LambdaPrice).find()
 
   console.log(`Updating ${lambdas.length} lambdas`)
 
