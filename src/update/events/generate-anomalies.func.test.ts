@@ -19,7 +19,7 @@ import { getCostsPerService } from '../prepare-data/costs-data-collectors'
 import { getAnomalyData, getAnomalyRrcfData } from './events.utils'
 import { generateMessageWithExpected } from './common'
 
-describe('Update Lambda Stats', async () => {
+describe('generate anomalies', () => {
   jest.setTimeout(60000)
 
   // TODO: migrate into proper test

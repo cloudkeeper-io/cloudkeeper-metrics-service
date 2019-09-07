@@ -1,4 +1,6 @@
-import { round } from 'lodash'
+import { filter, round, takeRight } from 'lodash'
+import { Point } from '@azure/cognitiveservices-anomalydetector/lib/models/index'
+import { AnomalyDetectionResult, getAnomalyRrcfData } from './events.utils'
 
 export const generateMessageWithExpected = (dimensionName, value, expectedValue, unitPrefix = '', unitPostFix = '') => {
   let digitPart
@@ -34,13 +36,13 @@ export const generateMessageWithExpected = (dimensionName, value, expectedValue,
   return `${dimensionName} is ${change} than expected by ${digitPart}`
 }
 
-export const generateMessage = (dimensionName, value, average: number | null, formatValue = x => x) => {
+export const generateMessage = (dimensionName, value, average: number | undefined, formatValue = x => x) => {
   let digitPart
   let change
 
   let averagePart
 
-  if (average !== null) {
+  if (average !== undefined) {
     if (value > average) {
       change = 'higher'
     } else {
@@ -83,4 +85,15 @@ export const setProcessingIsDone = async (tenantId, dynamo) => {
   } catch (e) {
     console.log(e)
   }
+}
+
+type AnomalyFilterFunction = (dataPoint: AnomalyDetectionResult) => boolean
+
+export const findAnomaliesInTimeSeries = async (timeSeries: Point[], additionalFilter: AnomalyFilterFunction = () => true) => {
+  const anomalyDetectionResults = await getAnomalyRrcfData(timeSeries)
+
+  return filter(takeRight(anomalyDetectionResults, 10),
+    dataPoint => dataPoint.isAnomaly
+      && dataPoint.value !== 0
+      && additionalFilter(dataPoint))
 }

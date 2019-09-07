@@ -1,49 +1,86 @@
 import { DateTime } from 'luxon'
-import { Point } from '@azure/cognitiveservices-anomalydetector/lib/models'
-import { filter, takeRight, groupBy, chunk, get, chain } from 'lodash'
+import { groupBy, chunk, get, chain, map } from 'lodash'
 
 import { getConnection } from '../../db/db'
 import { Event } from '../../entity'
-import { generateMessage, setProcessingIsDone } from './common'
+import { findAnomaliesInTimeSeries, generateMessage, setProcessingIsDone } from './common'
 import { fillEmptyDataPointsInTimeseries, getDateCondition } from '../prepare-data/common'
-import { getAnomalyRrcfData } from './events.utils'
 import { getDynamo } from '../../utils/aws.utils'
 
-const analyzeTimeSeries = async (timeSeries: Point[], startDateTime: DateTime, endDateTime: DateTime,
-  tableName: string, dimensionName: string, tenantId: string, fillIn = true, minimalDifference = 0,
-  useAverageInMessage = false) => {
-  let dataPoints: Point[]
+const mapAnomalyToEvent = (tenantId, tableName, dimensionName, average: number | undefined = undefined) => anomaly => ({
+  tenantId,
+  serviceName: 'DynamoDB',
+  dimension: dimensionName,
+  value: anomaly.value,
+  expectedValue: null,
+  dateTime: anomaly.timestamp,
+  message: generateMessage(
+    `${tableName} ${dimensionName.toLowerCase()}`,
+    anomaly.value,
+    average,
+  ),
+})
 
-  if (fillIn) {
-    dataPoints = fillEmptyDataPointsInTimeseries(timeSeries, false, startDateTime, endDateTime, {
-      value: 0,
-    })
-  } else {
-    dataPoints = timeSeries
+const calculateAverage = fullDataPoints => chain(fullDataPoints).map(x => Number(x.value)).sum().value() / fullDataPoints.length
+
+const addConsumedReadEvents = async (dataPoints, startDateTime, endDateTime, tableName, tenantId, newEvents: any[]) => {
+  const fullDataPoints = fillEmptyDataPointsInTimeseries(dataPoints, false, startDateTime, endDateTime, {
+    value: 0,
+  })
+
+  const average = calculateAverage(fullDataPoints)
+
+  const anomalies = await findAnomaliesInTimeSeries(fullDataPoints, (dataPoint => Math.abs(dataPoint.value - average) > 10))
+
+  const events = map(anomalies, mapAnomalyToEvent(tenantId, tableName, 'Consumed Read Capacity', average))
+
+  if (events.length > 0) {
+    newEvents.push(...events)
   }
+}
 
-  const anomalyDetectionResults = await getAnomalyRrcfData(dataPoints)
+const addConsumedWriteEvents = async (dataPoints, startDateTime, endDateTime, tableName, tenantId, newEvents: any[]) => {
+  const fullDataPoints = fillEmptyDataPointsInTimeseries(dataPoints, false, startDateTime, endDateTime, {
+    value: 0,
+  })
 
-  const average = chain(dataPoints).map(x => Number(x.value)).sum().value() / dataPoints.length
+  const average = calculateAverage(fullDataPoints)
 
-  const anomalies = filter(takeRight(anomalyDetectionResults, 10),
-    dataPoint => dataPoint.isAnomaly
-      && dataPoint.value !== 0
-      && Math.abs(dataPoint.value - average) > minimalDifference)
+  const anomalies = await findAnomaliesInTimeSeries(fullDataPoints, (dataPoint => Math.abs(dataPoint.value - average) > 10))
 
-  return anomalies.map(anomaly => ({
-    tenantId,
-    serviceName: 'DynamoDB',
-    dimension: dimensionName,
-    value: anomaly.value,
-    expectedValue: null,
-    dateTime: anomaly.timestamp,
-    message: generateMessage(
-      `${tableName} ${dimensionName.toLowerCase()}`,
-      anomaly.value,
-      useAverageInMessage ? average : null,
-    ),
-  }))
+  const events = map(anomalies, mapAnomalyToEvent(tenantId, tableName, 'Consumed Write Capacity', average))
+
+  if (events.length > 0) {
+    newEvents.push(...events)
+  }
+}
+
+const addThrottledReadEvents = async (dataPoints, startDateTime, endDateTime, tableName, tenantId, newEvents: any[]) => {
+  const fullDataPoints = fillEmptyDataPointsInTimeseries(dataPoints, false, startDateTime, endDateTime, {
+    value: 0,
+  })
+
+  const anomalies = await findAnomaliesInTimeSeries(fullDataPoints)
+
+  const events = map(anomalies, mapAnomalyToEvent(tenantId, tableName, 'Throttled Reads'))
+
+  if (events.length > 0) {
+    newEvents.push(...events)
+  }
+}
+
+const addThrottledWriteEvents = async (dataPoints, startDateTime, endDateTime, tableName, tenantId, newEvents: any[]) => {
+  const fullDataPoints = fillEmptyDataPointsInTimeseries(dataPoints, false, startDateTime, endDateTime, {
+    value: 0,
+  })
+
+  const anomalies = await findAnomaliesInTimeSeries(fullDataPoints)
+
+  const events = map(anomalies, mapAnomalyToEvent(tenantId, tableName, 'Throttled Writes'))
+
+  if (events.length > 0) {
+    newEvents.push(...events)
+  }
 }
 
 export const analyzeTable = async (tableName, metrics, startDateTime, endDateTime, tenantId, newEvents: any[]) => {
@@ -59,12 +96,12 @@ export const analyzeTable = async (tableName, metrics, startDateTime, endDateTim
     })
 
     acc.throttledRead.push({
-      value: point.throttledRead,
+      value: point.throttledReads,
       timestamp: point.dateTime,
     })
 
     acc.throttledWrite.push({
-      value: point.throttledWrite,
+      value: point.throttledWrites,
       timestamp: point.dateTime,
     })
 
@@ -76,69 +113,13 @@ export const analyzeTable = async (tableName, metrics, startDateTime, endDateTim
     throttledWrite: [],
   })
 
-  const consumedReadAnomalies = await analyzeTimeSeries(
-    timeSeries.consumedRead,
-    startDateTime,
-    endDateTime,
-    tableName,
-    'Consumed Read Capacity',
-    tenantId,
-    true,
-    10,
-    true,
-  )
+  await addConsumedReadEvents(timeSeries.consumedRead, startDateTime, endDateTime, tableName, tenantId, newEvents)
 
-  if (consumedReadAnomalies.length > 0) {
-    newEvents.push(...consumedReadAnomalies)
-  }
+  await addConsumedWriteEvents(timeSeries.consumedWrite, startDateTime, endDateTime, tableName, tenantId, newEvents)
 
-  const consumedWriteAnomalies = await analyzeTimeSeries(
-    timeSeries.consumedWrite,
-    startDateTime,
-    endDateTime,
-    tableName,
-    'Consumed Write Capacity',
-    tenantId,
-    true,
-    10,
-    true,
-  )
+  await addThrottledReadEvents(timeSeries.throttledRead, startDateTime, endDateTime, tableName, tenantId, newEvents)
 
-  if (consumedWriteAnomalies.length > 0) {
-    newEvents.push(...consumedWriteAnomalies)
-  }
-
-  const throttledReadsAnomalies = await analyzeTimeSeries(
-    timeSeries.throttledRead,
-    startDateTime,
-    endDateTime,
-    tableName,
-    'Throttled Reads',
-    tenantId,
-    false,
-    0,
-    false,
-  )
-
-  if (throttledReadsAnomalies.length > 0) {
-    newEvents.push(...throttledReadsAnomalies)
-  }
-
-  const throttledWritesAnomalies = await analyzeTimeSeries(
-    timeSeries.throttledWrite,
-    startDateTime,
-    endDateTime,
-    tableName,
-    'Throttled Writes',
-    tenantId,
-    false,
-    0,
-    false,
-  )
-
-  if (throttledWritesAnomalies.length > 0) {
-    newEvents.push(...throttledWritesAnomalies)
-  }
+  await addThrottledWriteEvents(timeSeries.throttledWrite, startDateTime, endDateTime, tableName, tenantId, newEvents)
 }
 
 const addDynamoEvents = async (tenantId, newEvents: any[]) => {

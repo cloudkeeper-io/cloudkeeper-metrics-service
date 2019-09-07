@@ -1,50 +1,71 @@
-import { filter, takeRight, groupBy, chunk, round, get, chain } from 'lodash'
-import { Point } from '@azure/cognitiveservices-anomalydetector/lib/models'
+import { groupBy, chunk, round, get, chain, map } from 'lodash'
 import { DateTime } from 'luxon'
-import { getAnomalyRrcfData } from './events.utils'
 import { Event } from '../../entity'
 import { getConnection } from '../../db/db'
 import { fillEmptyDataPointsInTimeseries, getDateCondition } from '../prepare-data/common'
 import { msToDuration } from '../../utils/time.utils'
-import { generateMessage, setProcessingIsDone } from './common'
+import { findAnomaliesInTimeSeries, generateMessage, setProcessingIsDone } from './common'
 import { getDynamo } from '../../utils/aws.utils'
 
-const analyzeTimeSeries = async (timeSeries: Point[], startDateTime: DateTime, endDateTime: DateTime,
-  lambdaName: string, dimensionName: string, tenantId: string, fillIn = true, formatValue = value => value,
-  minimalDifference = 0, useAverageInMessage = false) => {
-  let dataPoints: Point[]
+const mapAnomalyToEvent = (tenantId, lambdaName, dimensionName, average: number | undefined = undefined, formatValue = x => x) => anomaly => ({
+  tenantId,
+  serviceName: 'AWS Lambda',
+  dimension: dimensionName,
+  value: anomaly.value,
+  expectedValue: null,
+  dateTime: anomaly.timestamp,
+  message: generateMessage(
+    `${lambdaName} ${dimensionName.toLowerCase()}`,
+    anomaly.value,
+    average,
+    formatValue,
+  ),
+})
 
-  if (fillIn) {
-    dataPoints = fillEmptyDataPointsInTimeseries(timeSeries, false, startDateTime, endDateTime, {
-      value: 0,
-    })
-  } else {
-    dataPoints = timeSeries
+const calculateAverage = fullDataPoints => chain(fullDataPoints).map(x => Number(x.value)).sum().value() / fullDataPoints.length
+
+const addInvocationEvents = async (timeSeries, startDateTime, endDateTime, lambdaName, tenantId, newEvents: any[]) => {
+  const fullDataPoints = fillEmptyDataPointsInTimeseries(timeSeries, false, startDateTime, endDateTime, {
+    value: 0,
+  })
+
+  const average = calculateAverage(fullDataPoints)
+
+  const anomalies = await findAnomaliesInTimeSeries(fullDataPoints, (dataPoint => Math.abs(dataPoint.value - average) > 10))
+
+  const events = map(anomalies, mapAnomalyToEvent(tenantId, lambdaName, 'Invocations', average))
+
+  if (events.length > 0) {
+    newEvents.push(...events)
   }
+}
 
-  const anomalyDetectionResults = await getAnomalyRrcfData(dataPoints)
+const addErrorEvents = async (timeSeries, startDateTime, endDateTime, lambdaName, tenantId, newEvents: any[]) => {
+  const fullDataPoints = fillEmptyDataPointsInTimeseries(timeSeries, false, startDateTime, endDateTime, {
+    value: 0,
+  })
 
-  const average = chain(dataPoints).map(x => Number(x.value)).sum().value() / dataPoints.length
+  const average = calculateAverage(fullDataPoints)
 
-  const anomalies = filter(takeRight(anomalyDetectionResults, 10),
-    dataPoint => dataPoint.isAnomaly
-      && dataPoint.value !== 0
-      && Math.abs(dataPoint.value - average) > minimalDifference)
+  const anomalies = await findAnomaliesInTimeSeries(fullDataPoints, (dataPoint => Math.abs(dataPoint.value - average) > 1))
 
-  return anomalies.map(anomaly => ({
-    tenantId,
-    serviceName: 'AWS Lambda',
-    dimension: dimensionName,
-    value: anomaly.value,
-    expectedValue: null,
-    dateTime: anomaly.timestamp,
-    message: generateMessage(
-      `${lambdaName} ${dimensionName.toLowerCase()}`,
-      anomaly.value,
-      useAverageInMessage ? average : 0,
-      formatValue,
-    ),
-  }))
+  const events = map(anomalies, mapAnomalyToEvent(tenantId, lambdaName, 'Errors', average))
+
+  if (events.length > 0) {
+    newEvents.push(...events)
+  }
+}
+
+const addDurationEvents = async (timeSeries, startDateTime, endDateTime, lambdaName, tenantId, newEvents: any[]) => {
+  const average = calculateAverage(timeSeries)
+
+  const anomalies = await findAnomaliesInTimeSeries(timeSeries, (dataPoint => Math.abs(dataPoint.value - average) > 100))
+
+  const events = map(anomalies, mapAnomalyToEvent(tenantId, lambdaName, 'Average Duration', average, msToDuration))
+
+  if (events.length > 0) {
+    newEvents.push(...events)
+  }
 }
 
 export const analyzeLambda = async (lambdaName, metrics, startDateTime, endDateTime, tenantId, newEvents: any[]) => {
@@ -71,56 +92,11 @@ export const analyzeLambda = async (lambdaName, metrics, startDateTime, endDateT
     averageDuration: [],
   })
 
-  const invocationAnomalies = await analyzeTimeSeries(
-    timeSeries.invocations,
-    startDateTime,
-    endDateTime,
-    lambdaName,
-    'Invocations',
-    tenantId,
-    true,
-    x => x,
-    10,
-    true,
-  )
+  await addInvocationEvents(timeSeries.invocations, startDateTime, endDateTime, lambdaName, tenantId, newEvents)
 
-  if (invocationAnomalies.length > 0) {
-    newEvents.push(...invocationAnomalies)
-  }
+  await addErrorEvents(timeSeries.errors, startDateTime, endDateTime, lambdaName, tenantId, newEvents)
 
-  const errorsAnomalies = await analyzeTimeSeries(
-    timeSeries.errors,
-    startDateTime,
-    endDateTime,
-    lambdaName,
-    'Errors',
-    tenantId,
-    true,
-    x => x,
-    1,
-    true,
-  )
-
-  if (errorsAnomalies.length > 0) {
-    newEvents.push(...errorsAnomalies)
-  }
-
-  const avgDurationAnomalies = await analyzeTimeSeries(
-    timeSeries.averageDuration,
-    startDateTime,
-    endDateTime,
-    lambdaName,
-    'Average Duration',
-    tenantId,
-    false,
-    msToDuration,
-    100,
-    true,
-  )
-
-  if (avgDurationAnomalies.length > 0) {
-    newEvents.push(...avgDurationAnomalies)
-  }
+  await addDurationEvents(timeSeries.averageDuration, startDateTime, endDateTime, lambdaName, tenantId, newEvents)
 }
 
 const addLambdaEvents = async (tenantId, newEvents: any[]) => {
