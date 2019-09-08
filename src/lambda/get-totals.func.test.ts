@@ -8,8 +8,8 @@ describe('get lambda totals', () => {
   jest.setTimeout(30000)
 
   test('happy path', async () => {
-    const startDate = DateTime.local().minus({ days: 6 }).toUTC().toISO()
-    const endDate = DateTime.local().toUTC().toISO()
+    const startDate = DateTime.local().minus({ days: 6 }).startOf('day').toISO({ includeOffset: true })
+    const endDate = DateTime.local().toISO({ includeOffset: true })
 
     const response = await lambdaClient.invoke({
       FunctionName: 'cloudkeeper-metrics-service-dev-get-lambda-totals',

@@ -35,9 +35,7 @@ export const handler = async ({ tenantId, startDate, endDate }) => {
   const fullDataPoints = fillEmptyDataPointsWithDates(
     convertedDataPoints,
     groupDaily,
-    groupDaily
-      ? DateTime.fromISO(startDate).startOf('day')
-      : DateTime.fromISO(startDate).plus({ hours: 1 }).startOf('hour'),
+    groupDaily ? DateTime.fromISO(startDate, { setZone: true }).startOf('hour') : DateTime.fromISO(startDate).plus({ hours: 1 }).startOf('hour'),
     DateTime.fromISO(endDate).startOf('hour'),
     {
       invocations: 0,

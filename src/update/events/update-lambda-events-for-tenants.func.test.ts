@@ -43,6 +43,6 @@ describe('Update Lambda Events', () => {
       newEvents,
     )
 
-    expect(newEvents.length).toBeGreaterThanOrEqual(2)
+    expect(newEvents.length).toBeGreaterThanOrEqual(1)
   })
 })

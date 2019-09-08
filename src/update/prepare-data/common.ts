@@ -28,11 +28,14 @@ export const fillEmptyDataPointsInTimeseries = (dataPoints, groupDaily, startDat
 }
 
 
-export const fillEmptyDataPointsWithDates = (dataPoints, groupDaily, startDate, endDate, emptyDataPoint) => {
+export const fillEmptyDataPointsWithDates = (dataPoints, groupDaily, startDate: DateTime, endDate: DateTime, emptyDataPoint) => {
+  const firstIntervalStart = startDate.plus(groupDaily ? { days: 1 } : { hours: 1 }).startOf(groupDaily ? 'day' : 'hour')
+
   const expectedDates = [
+    startDate.toJSDate(),
     ...map(
       Interval
-        .fromDateTimes(startDate, endDate)
+        .fromDateTimes(firstIntervalStart, endDate)
         .splitBy(Duration.fromMillis(groupDaily ? 24 * 3600 * 1000 : 3600 * 1000)),
       interval => interval.start.toJSDate(),
     ),
