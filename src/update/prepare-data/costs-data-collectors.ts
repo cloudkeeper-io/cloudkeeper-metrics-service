@@ -25,8 +25,8 @@ export const getCostsPerService = async (tenantId, startDate, endDate) => {
     .orderBy(['date'], ['asc'])
     .value()
 
-  const startDateTime = DateTime.fromISO(startDate, { zone: 'utc' }).startOf('day')
-  const endDateTime = DateTime.fromISO(endDate, { zone: 'utc' }).startOf('day')
+  const startDateTime = DateTime.fromISO(startDate, { setZone: true }).setZone('utc', { keepLocalTime: true }).startOf('day')
+  const endDateTime = DateTime.fromISO(endDate, { setZone: true }).setZone('utc', { keepLocalTime: true }).startOf('day')
 
   const filledDataPoints = fillEmptyDataPointsWithDates(dataPoints, true, startDateTime, endDateTime, {
     total: 0,
@@ -50,8 +50,8 @@ export const getCostsForService = async (tenantId, serviceName, startDate, endDa
 
   const result = await connection.query(query, [tenantId, serviceName, startDate, endDate])
 
-  const startDateTime = DateTime.fromISO(startDate, { zone: 'utc' }).startOf('day')
-  const endDateTime = DateTime.fromISO(endDate, { zone: 'utc' }).startOf('day')
+  const startDateTime = DateTime.fromISO(startDate, { setZone: true }).setZone('utc', { keepLocalTime: true }).startOf('day')
+  const endDateTime = DateTime.fromISO(endDate, { setZone: true }).setZone('utc', { keepLocalTime: true }).startOf('day')
 
   const dataPoints = fillEmptyDataPointsWithDates(result, true, startDateTime, endDateTime, {
     cost: 0,
@@ -83,8 +83,8 @@ export const getCostsPerStack = async (tenantId, startDate, endDate) => {
     .orderBy(['date'], ['asc'])
     .value()
 
-  const startDateTime = DateTime.fromISO(startDate, { zone: 'utc' }).startOf('day')
-  const endDateTime = DateTime.fromISO(endDate, { zone: 'utc' }).startOf('day')
+  const startDateTime = DateTime.fromISO(startDate, { setZone: true }).setZone('utc', { keepLocalTime: true }).startOf('day')
+  const endDateTime = DateTime.fromISO(endDate, { setZone: true }).setZone('utc', { keepLocalTime: true }).startOf('day')
 
   const filledDataPoints = fillEmptyDataPointsWithDates(dataPoints, true, startDateTime, endDateTime, {
     total: 0,
