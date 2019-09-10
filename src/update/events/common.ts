@@ -49,16 +49,14 @@ export const generateMessage = (dimensionName, value, average: number | undefine
       change = 'lower'
     }
 
+    digitPart = formatValue(Math.abs(round(value - average, 2)))
+
     if (average) {
       const percentage = Math.abs(round((value - average) / average * 100))
 
       if (percentage > 10) {
         digitPart = percentage + '%'
-      } else {
-        digitPart = formatValue(Math.abs(round(value - average, 2)))
       }
-    } else {
-      digitPart = formatValue(Math.abs(round(value - average, 2)))
     }
 
     averagePart = `, which is ${change} than average by ${digitPart}`
