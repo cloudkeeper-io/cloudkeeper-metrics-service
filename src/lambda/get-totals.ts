@@ -23,7 +23,7 @@ export const handler = async ({ tenantId, startDate, endDate }) => {
     from LambdaStats
     where tenantId = ? and dateTime >= ? and dateTime <=?
     group by ${groupDaily ? `DATE(CONVERT_TZ(dateTime, 'UTC', '${offsetName}'))` : 'dateTime'} order by dateTime asc
-  `, [tenantId, startDate, endDate])
+  `, [tenantId, DateTime.fromISO(startDate).toISO(), DateTime.fromISO(endDate).toISO()])
 
   const convertedDataPoints = map(dataPoints, dataPoint => ({
     invocations: Number(dataPoint.invocations),
@@ -35,8 +35,8 @@ export const handler = async ({ tenantId, startDate, endDate }) => {
   const fullDataPoints = fillEmptyDataPointsWithDates(
     convertedDataPoints,
     groupDaily,
-    groupDaily ? DateTime.fromISO(startDate, { setZone: true }).startOf('hour') : DateTime.fromISO(startDate).plus({ hours: 1 }).startOf('hour'),
-    DateTime.fromISO(endDate).startOf('hour'),
+    DateTime.fromISO(startDate, { setZone: true }).startOf('hour'),
+    DateTime.fromISO(endDate, { setZone: true }).startOf('hour'),
     {
       invocations: 0,
       errors: 0,
