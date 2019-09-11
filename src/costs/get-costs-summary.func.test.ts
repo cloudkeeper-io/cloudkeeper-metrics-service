@@ -63,8 +63,8 @@ describe('get costs summary', () => {
 
     const { costsPerStack, costsPerService } = JSON.parse(response.Payload!.toString())
 
-    expect(costsPerStack.length).toBe(6)
-    expect(costsPerService.length).toBe(6)
+    expect(costsPerStack.length).toBe(7)
+    expect(costsPerService.length).toBe(7)
 
     for (const dataPoint of costsPerStack) {
       expect(dataPoint.dateTime).toEqual(expect.any(String))
