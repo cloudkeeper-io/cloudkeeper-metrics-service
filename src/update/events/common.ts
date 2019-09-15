@@ -33,7 +33,7 @@ export const generateMessageWithExpected = (dimensionName, value, expectedValue,
     change = 'lower'
   }
 
-  return `${dimensionName} is ${change} than expected by ${digitPart}`
+  return `${dimensionName} is ${unitPrefix + round(value, 2) + unitPostFix}, ${change} than expected by ${digitPart}`
 }
 
 export const generateMessage = (dimensionName, value, average: number | undefined, formatValue = x => x) => {
@@ -51,7 +51,7 @@ export const generateMessage = (dimensionName, value, average: number | undefine
 
     digitPart = formatValue(Math.abs(round(value - average, 2)))
 
-    averagePart = `, which is ${change} than average by ${digitPart}`
+    averagePart = `, ${change} than average by ${digitPart}`
   }
 
   return `${dimensionName} is ${formatValue(round(value))}${averagePart || ''}`
