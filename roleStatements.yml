@@ -60,5 +60,15 @@
 
 - Effect: Allow
   Action:
+    - "rds-data:ExecuteStatement"
+  Resource: "*"
+
+- Effect: Allow
+  Action:
+    - "secretsmanager:GetSecretValue"
+  Resource: "*"
+
+- Effect: Allow
+  Action:
     - "pricing:GetProducts"
   Resource: "*"

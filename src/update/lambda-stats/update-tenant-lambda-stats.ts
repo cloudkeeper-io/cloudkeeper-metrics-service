@@ -45,14 +45,17 @@ const updateLambdasChunk = async (lambdasChunk, credentials, tenant, lambdaPrice
     })
   }))))
 
-  console.log(batchData)
 
-  await connection.createQueryBuilder()
-    .insert()
-    .into(LambdaStats)
-    .values(batchData)
-    .orIgnore()
-    .execute()
+  const parts: any[] = chunk(batchData, 100)
+
+  for (const part of parts) {
+    await connection.createQueryBuilder()
+      .insert()
+      .into(LambdaStats)
+      .values(part)
+      .orIgnore()
+      .execute()
+  }
 }
 
 export const handler = async (tenant) => {

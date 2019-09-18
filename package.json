@@ -12,17 +12,18 @@
     "lint": "eslint \"**/*.ts\"",
     "lint:fix": "eslint \"**/*.ts\" --fix",
     "db:migrate": "cross-env STAGE=dev ts-node scripts/migrate-db.ts",
-    "deploy": "cross-env NODE_OPTIONS=--max_old_space_size=2048 sls deploy --force"
+    "deploy": "cross-env NODE_OPTIONS=--max_old_space_size=2096 sls deploy --force"
   },
   "dependencies": {
     "@azure/cognitiveservices-anomalydetector": "^1.0.0",
     "@azure/ms-rest-nodeauth": "^1.1.1",
-    "aws-sdk": "^2.430.0",
+    "aws-sdk": "^2.529.0",
     "aws-xray-sdk-core": "^2.2.0",
     "lodash": "^4.17.11",
     "luxon": "^1.11.3",
     "mysql": "^2.16.0",
-    "typeorm": "^0.2.18",
+    "typeorm": "^0.2.19",
+    "typeorm-aurora-data-api-driver": "^1.1.7",
     "uuidv4": "^3.0.1"
   },
   "devDependencies": {
@@ -53,7 +54,8 @@
     "ts-loader": "^5.3.3",
     "ts-node": "^8.0.3",
     "typescript": "^3.3.3333",
-    "webpack": "^4.26.1"
+    "webpack": "^4.26.1",
+    "webpack-node-externals": "^1.7.2"
   },
   "jest": {
     "testMatch": [

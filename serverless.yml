@@ -9,7 +9,7 @@ plugins:
   - serverless-plugin-scripts
 
 package:
-  individually: true
+  individually: false
 
 provider:
   name: aws
@@ -20,6 +20,10 @@ provider:
   tracing: true
   environment:
     stage: ${self:custom.stage}
+    dbSecretArn: ${self:custom.${self:custom.stage}.dbSecretArn}
+    dbName: ${self:custom.${self:custom.stage}.dbName}
+    dbResourceArn: ${self:custom.${self:custom.stage}.dbResourceArn}
+    dbRegion: ${self:custom.${self:custom.stage}.dbRegion}
   iamRoleStatements:
     ${file(roleStatements.yml)}
 
@@ -29,11 +33,21 @@ custom:
   dbHost: ${ssm:${self:custom.stage}-metrics-db-host}
   dbUser: ${ssm:${self:custom.stage}-metrics-db-user}
   dbPassword: ${ssm:${self:custom.stage}-metrics-db-password}
+  dev:
+    dbSecretArn: arn:aws:secretsmanager:eu-west-1:537011205135:secret:rds-db-credentials/cluster-U5UKWBPGQNC75IJ37RWEEA4EDI/admin-OHlbOa
+    dbName: dev_cloudkeeper
+    dbResourceArn: arn:aws:rds:eu-west-1:537011205135:cluster:cloudkeeper
+    dbRegion: eu-west-1
+
+  prod:
+
 
   scripts:
     hooks:
       'before:deploy:deploy': aws s3 cp ./cloudformation.yml s3://cdn.cloudkeeper.io/cloudformation.yml
-
+  webpack:
+    includeModules: true
+    packager: 'yarn'
 functions:
   trigger-update-lambdas:
     handler: src/update/lambda-configuration/trigger-lambda-config-update.handler
@@ -43,11 +57,7 @@ functions:
   update-tenant-lambdas:
     timeout: 120
     handler: src/update/lambda-configuration/update-lambda-configurations-for-tenant.handler
-    environment:
-      dbName: ${self:custom.dbName}
-      dbHost: ${self:custom.dbHost}
-      dbUser: ${self:custom.dbUser}
-      dbPassword: ${self:custom.dbPassword}
+
 
   trigger-costs-data-update:
     handler: src/update/costs/trigger-costs-update.handler
@@ -58,38 +68,19 @@ functions:
     timeout: 240
     handler: src/update/costs/update-costs-for-tenant.handler
     environment:
-      dbName: ${self:custom.dbName}
-      dbHost: ${self:custom.dbHost}
-      dbUser: ${self:custom.dbUser}
-      dbPassword: ${self:custom.dbPassword}
       finishedTopic: "arn:aws:sns:#{AWS::Region}:#{AWS::AccountId}:${self:custom.stage}-finished-updating-costs"
 
   get-costs-summary:
     timeout: 15
     handler: src/costs/get-costs-summary.handler
-    environment:
-      dbName: ${self:custom.dbName}
-      dbHost: ${self:custom.dbHost}
-      dbUser: ${self:custom.dbUser}
-      dbPassword: ${self:custom.dbPassword}
 
   get-events:
     timeout: 15
     handler: src/events/get-events.handler
-    environment:
-      dbName: ${self:custom.dbName}
-      dbHost: ${self:custom.dbHost}
-      dbUser: ${self:custom.dbUser}
-      dbPassword: ${self:custom.dbPassword}
 
   get-lambda-totals:
     timeout: 15
     handler: src/lambda/get-totals.handler
-    environment:
-      dbName: ${self:custom.dbName}
-      dbHost: ${self:custom.dbHost}
-      dbUser: ${self:custom.dbUser}
-      dbPassword: ${self:custom.dbPassword}
 
   trigger-dynamo-tables-update:
     handler: src/update/dynamodb-tables/trigger-dynamo-tables-update.handler
@@ -100,10 +91,6 @@ functions:
     timeout: 120
     handler: src/update/dynamodb-tables/update-tenant-dynamo-tables.handler
     environment:
-      dbName: ${self:custom.dbName}
-      dbHost: ${self:custom.dbHost}
-      dbUser: ${self:custom.dbUser}
-      dbPassword: ${self:custom.dbPassword}
       finishedTopic: !Ref FinishedUpdatingDynamoStats
 
   setup-tenant:
@@ -120,88 +107,40 @@ functions:
 
   list-lambdas:
     handler: src/lambda/list-lambdas.handler
-    environment:
-      dbName: ${self:custom.dbName}
-      dbHost: ${self:custom.dbHost}
-      dbUser: ${self:custom.dbUser}
-      dbPassword: ${self:custom.dbPassword}
 
   list-most-expensive-lambdas:
     timeout: 15
     handler: src/lambda/list-most-expensive-lambdas.handler
-    environment:
-      dbName: ${self:custom.dbName}
-      dbHost: ${self:custom.dbHost}
-      dbUser: ${self:custom.dbUser}
-      dbPassword: ${self:custom.dbPassword}
 
   get-lambda:
     handler: src/lambda/get-lambda.handler
-    environment:
-      dbName: ${self:custom.dbName}
-      dbHost: ${self:custom.dbHost}
-      dbUser: ${self:custom.dbUser}
-      dbPassword: ${self:custom.dbPassword}
 
   get-lambda-stats:
     handler: src/lambda/get-lambda-stats.handler
-    environment:
-      dbName: ${self:custom.dbName}
-      dbHost: ${self:custom.dbHost}
-      dbUser: ${self:custom.dbUser}
-      dbPassword: ${self:custom.dbPassword}
 
   list-dynamo-tables:
     handler: src/dynamodb/list-tables.handler
-    environment:
-      dbName: ${self:custom.dbName}
-      dbHost: ${self:custom.dbHost}
-      dbUser: ${self:custom.dbUser}
-      dbPassword: ${self:custom.dbPassword}
 
   list-most-expensive-tables:
     timeout: 15
     handler: src/dynamodb/list-most-expensive-tables.handler
-    environment:
-      dbName: ${self:custom.dbName}
-      dbHost: ${self:custom.dbHost}
-      dbUser: ${self:custom.dbUser}
-      dbPassword: ${self:custom.dbPassword}
 
   get-dynamo-table:
     handler: src/dynamodb/get-table.handler
-    environment:
-      dbName: ${self:custom.dbName}
-      dbHost: ${self:custom.dbHost}
-      dbUser: ${self:custom.dbUser}
-      dbPassword: ${self:custom.dbPassword}
 
   get-dynamo-table-stats:
     handler: src/dynamodb/get-table-stats.handler
-    environment:
-      dbName: ${self:custom.dbName}
-      dbHost: ${self:custom.dbHost}
-      dbUser: ${self:custom.dbUser}
-      dbPassword: ${self:custom.dbPassword}
 
   update-tenant-lambda-stats:
     timeout: 300
     handler: src/update/lambda-stats/update-tenant-lambda-stats.handler
     environment:
-      dbName: ${self:custom.dbName}
-      dbHost: ${self:custom.dbHost}
-      dbUser: ${self:custom.dbUser}
-      dbPassword: ${self:custom.dbPassword}
       finishedTopic: "arn:aws:sns:#{AWS::Region}:#{AWS::AccountId}:${self:custom.stage}-finished-updating-lambda-stats"
 
   update-tenant-dynamo-stats:
     timeout: 300
     handler: src/update/dynamodb-table-stats/update-tenant-dynamo-stats.handler
     environment:
-      dbName: ${self:custom.dbName}
-      dbHost: ${self:custom.dbHost}
-      dbUser: ${self:custom.dbUser}
-      dbPassword: ${self:custom.dbPassword}
       finishedTopic: "arn:aws:sns:#{AWS::Region}:#{AWS::AccountId}:${self:custom.stage}-finished-updating-dynamo-stats"
 
   update-dynamo-events-for-tenant:
@@ -209,10 +148,6 @@ functions:
     handler: src/update/events/update-dynamo-events-for-tenant.handler
     environment:
       bucket: ${self:custom.stage}-cloudkeeper-tenant-data
-      dbName: ${self:custom.dbName}
-      dbHost: ${self:custom.dbHost}
-      dbUser: ${self:custom.dbUser}
-      dbPassword: ${self:custom.dbPassword}
     events:
       - sns:
           arn: "arn:aws:sns:#{AWS::Region}:#{AWS::AccountId}:${self:custom.stage}-finished-updating-dynamo-stats"
@@ -222,10 +157,6 @@ functions:
     handler: src/update/events/update-lambda-events-for-tenant.handler
     environment:
       bucket: ${self:custom.stage}-cloudkeeper-tenant-data
-      dbName: ${self:custom.dbName}
-      dbHost: ${self:custom.dbHost}
-      dbUser: ${self:custom.dbUser}
-      dbPassword: ${self:custom.dbPassword}
     events:
       - sns:
           arn: "arn:aws:sns:#{AWS::Region}:#{AWS::AccountId}:${self:custom.stage}-finished-updating-lambda-stats"
@@ -235,10 +166,6 @@ functions:
     handler: src/update/events/update-costs-events-for-tenant.handler
     environment:
       bucket: ${self:custom.stage}-cloudkeeper-tenant-data
-      dbName: ${self:custom.dbName}
-      dbHost: ${self:custom.dbHost}
-      dbUser: ${self:custom.dbUser}
-      dbPassword: ${self:custom.dbPassword}
       azureClientId: ${ssm:azure-client-id}
       azureClientSecret: ${ssm:azure-client-secret}
       azureSubscriptionId: ${ssm:azure-cognitive-subscription-id}
@@ -249,11 +176,6 @@ functions:
 
   update-pricing:
     handler: src/update/pricing/update-pricing.handler
-    environment:
-      dbName: ${self:custom.dbName}
-      dbHost: ${self:custom.dbHost}
-      dbUser: ${self:custom.dbUser}
-      dbPassword: ${self:custom.dbPassword}
     events:
       - schedule: cron(1 0 ? * * *)
 

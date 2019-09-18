@@ -853,9 +853,10 @@ aws-sdk@^2.304.0:
     uuid "3.3.2"
     xml2js "0.4.19"
 
-aws-sdk@^2.430.0:
-  version "2.430.0"
-  resolved "https://registry.yarnpkg.com/aws-sdk/-/aws-sdk-2.430.0.tgz#40ff492c6315084b91c85ddf618f961bca0f3862"
+aws-sdk@^2.529.0:
+  version "2.530.0"
+  resolved "https://registry.yarnpkg.com/aws-sdk/-/aws-sdk-2.530.0.tgz#c1c6603a6fa6aa73462c42f8e94483cd18416adc"
+  integrity sha512-Q5CxrnvqsyK05FPaCV/46XU5nxEx0mhyO+AS4Jjr0bL4N7eAUecGToLxiiQlzUWraFKf5C9NceGM7LfLkjZtcQ==
   dependencies:
     buffer "4.9.1"
     events "1.1.1"
@@ -937,8 +938,9 @@ balanced-match@^1.0.0:
   resolved "https://registry.yarnpkg.com/balanced-match/-/balanced-match-1.0.0.tgz#89b4d199ab2bee49de164ea02b89ce462d71b767"
 
 base64-js@^1.0.2:
-  version "1.3.0"
-  resolved "https://registry.yarnpkg.com/base64-js/-/base64-js-1.3.0.tgz#cab1e6118f051095e58b5281aea8c1cd22bfc0e3"
+  version "1.3.1"
+  resolved "https://registry.yarnpkg.com/base64-js/-/base64-js-1.3.1.tgz#58ece8cb75dd07e71ed08c736abc5fac4dbf8df1"
+  integrity sha512-mLQ4i2QO1ytvGWFWmcngKO//JXAQueZvwEKtjgQFM4jIK0kU+ytMfplL8j+n5mspOfjHwoAg+9yhb7BwAHm36g==
 
 base@^0.11.1:
   version "0.11.2"
@@ -1140,6 +1142,7 @@ buffer-xor@^1.0.3:
 buffer@4.9.1, buffer@^4.3.0:
   version "4.9.1"
   resolved "https://registry.yarnpkg.com/buffer/-/buffer-4.9.1.tgz#6d1bb601b07a4efced97094132093027c95bc298"
+  integrity sha1-bRu2AbB6TvztlwlBMgkwJ8lbwpg=
   dependencies:
     base64-js "^1.0.2"
     ieee754 "^1.1.4"
@@ -1588,6 +1591,12 @@ dashdash@^1.12.0:
   dependencies:
     assert-plus "^1.0.0"
 
+"data-api-client@github:ArsenyYankovsky/data-api-client#support-date":
+  version "1.0.0-beta"
+  resolved "https://codeload.github.com/ArsenyYankovsky/data-api-client/tar.gz/9aa86789c88d24e34f6b83b4ab63096b22fe52e8"
+  dependencies:
+    sqlstring "^2.3.1"
+
 data-urls@^1.0.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/data-urls/-/data-urls-1.1.0.tgz#15ee0582baa5e22bb59c77140da8f9c76963bbfe"
@@ -1987,6 +1996,7 @@ esutils@^2.0.2:
 events@1.1.1:
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/events/-/events-1.1.1.tgz#9ebdb7635ad099c70dcc4c2a1f5004288e8bd924"
+  integrity sha1-nr23Y1rQmccNzEwqH1AEKI6L2SQ=
 
 events@^3.0.0:
   version "3.0.0"
@@ -2530,10 +2540,12 @@ iconv-lite@0.4.24, iconv-lite@^0.4.24, iconv-lite@^0.4.4:
 ieee754@1.1.8:
   version "1.1.8"
   resolved "https://registry.yarnpkg.com/ieee754/-/ieee754-1.1.8.tgz#be33d40ac10ef1926701f6f08a2d86fbfd1ad3e4"
+  integrity sha1-vjPUCsEO8ZJnAfbwii2G+/0a0+Q=
 
 ieee754@^1.1.4:
-  version "1.1.12"
-  resolved "https://registry.yarnpkg.com/ieee754/-/ieee754-1.1.12.tgz#50bf24e5b9c8bb98af4964c941cdb0918da7b60b"
+  version "1.1.13"
+  resolved "https://registry.yarnpkg.com/ieee754/-/ieee754-1.1.13.tgz#ec168558e95aa181fd87d37f55c32bbcb6708b84"
+  integrity sha512-4vf7I2LYV/HaWerSo3XmlMkp5eZ83i+/CDluXi/IGTs/O1sejBNhTtnxzmRZfvOUqj7lZjqHkeTvpgSFDlWZTg==
 
 iferr@^0.1.5:
   version "0.1.5"
@@ -2783,6 +2795,7 @@ is-wsl@^1.1.0:
 isarray@1.0.0, isarray@^1.0.0, isarray@~1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/isarray/-/isarray-1.0.0.tgz#bb935d48582cba168c06834957a54a3e07124f11"
+  integrity sha1-u5NdSFgsuhaMBoNJV6VKPgcSTxE=
 
 isemail@2.x.x:
   version "2.2.1"
@@ -3208,6 +3221,7 @@ jest@^24.9.0:
 jmespath@0.15.0:
   version "0.15.0"
   resolved "https://registry.yarnpkg.com/jmespath/-/jmespath-0.15.0.tgz#a3f222a9aae9f966f5d27c796510e28091764217"
+  integrity sha1-o/Iiqarp+Wb10nx5ZRDigJF2Qhc=
 
 joi@10.x.x:
   version "10.6.0"
@@ -4336,6 +4350,7 @@ pumpify@^1.3.3:
 punycode@1.3.2:
   version "1.3.2"
   resolved "https://registry.yarnpkg.com/punycode/-/punycode-1.3.2.tgz#9653a036fb7c1ee42342f2325cceefea3926c48d"
+  integrity sha1-llOgNvt8HuQjQvIyXM7v6jkmxI0=
 
 punycode@2.x.x, punycode@^2.1.0, punycode@^2.1.1:
   version "2.1.1"
@@ -4356,6 +4371,7 @@ querystring-es3@^0.2.0:
 querystring@0.2.0:
   version "0.2.0"
   resolved "https://registry.yarnpkg.com/querystring/-/querystring-0.2.0.tgz#b209849203bb25df820da756e747005878521620"
+  integrity sha1-sgmEkgO7Jd+CDadW50cAWHhSFiA=
 
 randombytes@^2.0.0, randombytes@^2.0.1, randombytes@^2.0.5:
   version "2.1.0"
@@ -4636,10 +4652,12 @@ sane@^4.0.3:
 sax@1.2.1:
   version "1.2.1"
   resolved "https://registry.yarnpkg.com/sax/-/sax-1.2.1.tgz#7b8e656190b228e81a66aea748480d828cd2d37a"
+  integrity sha1-e45lYZCyKOgaZq6nSEgNgozS03o=
 
 sax@>=0.6.0, sax@^1.2.4:
   version "1.2.4"
   resolved "https://registry.yarnpkg.com/sax/-/sax-1.2.4.tgz#2816234e2378bddc4e5354fab5caa895df7100d9"
+  integrity sha512-NqVDv9TpANUjFm0N8uM5GxL36UgKi9/atZw+x7YFnQ8ckwFGKrl4xX4yWtrey3UJm5nP1kUbnYgLopqWNSRhWw==
 
 schema-utils@^1.0.0:
   version "1.0.0"
@@ -4893,7 +4911,7 @@ sprintf-js@~1.0.2:
   version "1.0.3"
   resolved "https://registry.yarnpkg.com/sprintf-js/-/sprintf-js-1.0.3.tgz#04e6926f662895354f3dd015203633b857297e2c"
 
-sqlstring@2.3.1:
+sqlstring@2.3.1, sqlstring@^2.3.1:
   version "2.3.1"
   resolved "https://registry.yarnpkg.com/sqlstring/-/sqlstring-2.3.1.tgz#475393ff9e91479aea62dcaf0ca3d14983a7fb40"
 
@@ -5365,9 +5383,16 @@ typedarray@^0.0.6:
   version "0.0.6"
   resolved "https://registry.yarnpkg.com/typedarray/-/typedarray-0.0.6.tgz#867ac74e3864187b1d3d47d996a78ec5c8830777"
 
-typeorm@^0.2.18:
-  version "0.2.18"
-  resolved "https://registry.yarnpkg.com/typeorm/-/typeorm-0.2.18.tgz#8ae1d21104117724af41ddc11035c40a705e1de8"
+typeorm-aurora-data-api-driver@^1.1.7:
+  version "1.1.7"
+  resolved "https://registry.yarnpkg.com/typeorm-aurora-data-api-driver/-/typeorm-aurora-data-api-driver-1.1.7.tgz#ca17eaac83051b905770b7323b0e9b42d9f6bf62"
+  integrity sha512-W3zH8nCO5kLihDLGLIc963C3ztsTqKocFHYObxAzF/MY+UZx0OGUnzaHW/ivoSYLXdYspJ4UfhFtOzapx6S/hw==
+  dependencies:
+    data-api-client ArsenyYankovsky/data-api-client#support-date
+
+typeorm@^0.2.19:
+  version "0.2.19"
+  resolved "https://registry.yarnpkg.com/typeorm/-/typeorm-0.2.19.tgz#a0cff0714180e5720df157df02c5759a1a646dc3"
   dependencies:
     app-root-path "^2.0.1"
     buffer "^5.1.0"
@@ -5448,6 +5473,7 @@ urix@^0.1.0:
 url@0.10.3:
   version "0.10.3"
   resolved "https://registry.yarnpkg.com/url/-/url-0.10.3.tgz#021e4d9c7705f21bbf37d03ceb58767402774c64"
+  integrity sha1-Ah5NnHcF8hu/N9A861h2dAJ3TGQ=
   dependencies:
     punycode "1.3.2"
     querystring "0.2.0"
@@ -5556,6 +5582,10 @@ watchpack@^1.5.0:
 webidl-conversions@^4.0.2:
   version "4.0.2"
   resolved "https://registry.yarnpkg.com/webidl-conversions/-/webidl-conversions-4.0.2.tgz#a855980b1f0b6b359ba1d5d9fb39ae941faa63ad"
+
+webpack-node-externals@^1.7.2:
+  version "1.7.2"
+  resolved "https://registry.yarnpkg.com/webpack-node-externals/-/webpack-node-externals-1.7.2.tgz#6e1ee79ac67c070402ba700ef033a9b8d52ac4e3"
 
 webpack-sources@^1.1.0, webpack-sources@^1.3.0:
   version "1.3.0"
@@ -5717,6 +5747,7 @@ xml@^1.0.1:
 xmlbuilder@~9.0.1:
   version "9.0.7"
   resolved "https://registry.yarnpkg.com/xmlbuilder/-/xmlbuilder-9.0.7.tgz#132ee63d2ec5565c557e20f4c22df9aca686b10d"
+  integrity sha1-Ey7mPS7FVlxVfiD0wi35rKaGsQ0=
 
 "xmldom@>= 0.1.x":
   version "0.1.27"

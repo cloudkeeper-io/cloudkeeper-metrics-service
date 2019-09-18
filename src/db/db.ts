@@ -1,26 +1,28 @@
+const driver = require('typeorm-aurora-data-api-driver')
+
+console.log(driver)
+
 import { createConnection } from 'typeorm'
 import { memoize, map } from 'lodash'
-import { MysqlConnectionOptions } from 'typeorm/driver/mysql/MysqlConnectionOptions'
+import { AuroraDataApiConnectionOptions } from 'typeorm/driver/aurora-data-api/AuroraDataApiConnectionOptions'
 
 import * as entities from '../entity'
 
-export const config: MysqlConnectionOptions = {
-  type: 'mysql',
+export const config: AuroraDataApiConnectionOptions = {
+  type: 'aurora-data-api',
   host: process.env.dbHost,
   port: 3306,
-  username: process.env.dbUser,
-  password: process.env.dbPassword,
-  database: process.env.dbName,
+  database: process.env.dbName!,
+  secretArn: process.env.dbSecretArn!,
+  resourceArn: process.env.dbResourceArn!,
+  region: process.env.dbRegion!,
   // @ts-ignore
   entities: [
     ...map(entities),
   ],
-  logging: false,
+  logging: true,
   synchronize: false,
-  timezone: 'Z',
-  extra: {
-    connectionLimit: 1,
-  },
+  logger: 'simple-console',
 }
 
 export const getConnection = memoize(async () => createConnection(config))

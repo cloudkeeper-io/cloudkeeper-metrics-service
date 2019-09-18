@@ -111,12 +111,16 @@ async function updateTablesChunk(tablesChunks, tenant, region, costRateData, con
     })
   })))
 
-  await connection.createQueryBuilder()
-    .insert()
-    .into(DynamoTableStats)
-    .values(batchData)
-    .orIgnore()
-    .execute()
+  const parts: any[] = chunk(batchData, 100)
+
+  for (const part of parts) {
+    await connection.createQueryBuilder()
+      .insert()
+      .into(DynamoTableStats)
+      .values(part)
+      .orIgnore()
+      .execute()
+  }
 }
 
 export const handler = async (tenant) => {

@@ -1,5 +1,6 @@
 const path = require('path')
 const slsw = require('serverless-webpack')
+const nodeExternals = require('webpack-node-externals')
 
 module.exports = {
   entry: slsw.lib.entries,
@@ -18,6 +19,7 @@ module.exports = {
   },
   target: 'node',
   devtool: 'source-map',
+  externals: [nodeExternals()],
   optimization: {
     minimize: false,
     mangleWasmImports: false,

@@ -29,7 +29,7 @@ export const handler = async ({ tenantId, startDate, endDate }) => {
     invocations: Number(dataPoint.invocations),
     errors: Number(dataPoint.errors),
     cost: Number(dataPoint.cost),
-    dateTime: dataPoint.dateTime,
+    dateTime: DateTime.fromSQL(dataPoint.dateTime).toJSDate(),
   }))
 
   const fullDataPoints = fillEmptyDataPointsWithDates(
