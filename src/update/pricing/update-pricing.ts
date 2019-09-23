@@ -48,6 +48,9 @@ const getPricingData = async (pricing, serviceCode: string, filterDefinition) =>
   const ignoredLocations = ['Asia Pacific (Osaka-Local)', 'Any']
 
   // @ts-ignore
+
+  console.log(JSON.stringify(durationProductsResponse.PriceList))
+
   const products = filter(durationProductsResponse.PriceList, productData => !includes(ignoredLocations, productData.product.attributes.location))
 
   return products.map((productData: any) => {
@@ -84,8 +87,8 @@ export const handler = async () => {
 
   const pricing = new AWS.Pricing({ region: 'us-east-1' })
 
-  const lambdaGbPerSecondData = await getPricingData(pricing, 'AWSLambda', { groupName: 'AWS-Lambda-Duration' })
-  const lambdaRequestsData = await getPricingData(pricing, 'AWSLambda', { groupName: 'AWS-Lambda-Requests' })
+  const lambdaGbPerSecondData = await getPricingData(pricing, 'AWSLambda', { group: 'AWS-Lambda-Duration' })
+  const lambdaRequestsData = await getPricingData(pricing, 'AWSLambda', { group: 'AWS-Lambda-Requests' })
 
   const pricingData = lambdaGbPerSecondData.map(data => ({
     region: data.region,
