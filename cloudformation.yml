@@ -40,6 +40,12 @@ Resources:
               - Effect: Allow
                 Action: 'ce:getCostAndUsage'
                 Resource: '*'
+              - Effect: "Allow"
+                Action:
+                  - "xray:GetTraceSummaries"
+                  - "xray:BatchGetTraces"
+                Resource: '*'
+
 Parameters:
   ExternalId:
     Description: 'The external ID for the cloudkeeper delegation role'
