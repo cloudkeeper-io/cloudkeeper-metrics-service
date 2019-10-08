@@ -29,7 +29,7 @@ describe('generate anomalies', () => {
 
     const startDate = DateTime.utc().minus({ days: 90 }).startOf('second').toISODate()
 
-    const costsData = await getCostsPerService('7ec85367-20e1-40f2-8725-52b245354045', startDate, endDate)
+    const costsData = await getCostsPerService('f2771702-164d-4d90-bb79-b849f59918e5', startDate, endDate)
 
     const globalCostsData = costsData.map(item => ({
       timestamp: item.date,
@@ -41,7 +41,7 @@ describe('generate anomalies', () => {
     const costAnomalies = filter(takeRight(costAnomalyData, 10), { isAnomaly: true })
 
     const events = costAnomalies.map(item => ({
-      tenantId: '7ec85367-20e1-40f2-8725-52b245354045',
+      tenantId: 'f2771702-164d-4d90-bb79-b849f59918e5',
       serviceName: 'costs',
       dimension: 'Billed Cost',
       // @ts-ignore

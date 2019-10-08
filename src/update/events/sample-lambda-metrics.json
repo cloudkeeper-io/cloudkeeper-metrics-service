@@ -1,6 +1,6 @@
 [
   {
-    "tenantId": "7ec85367-20e1-40f2-8725-52b245354045",
+    "tenantId": "f2771702-164d-4d90-bb79-b849f59918e5",
     "lambdaName": "company-service-dev-get-leads-feed",
     "region": "eu-west-1",
     "dateTime": "2019-08-29T15:00:00.000Z",
@@ -11,7 +11,7 @@
     "cost": 0.0000091439297545
   },
   {
-    "tenantId": "7ec85367-20e1-40f2-8725-52b245354045",
+    "tenantId": "f2771702-164d-4d90-bb79-b849f59918e5",
     "lambdaName": "company-service-dev-get-leads-feed",
     "region": "eu-west-1",
     "dateTime": "2019-08-29T16:00:00.000Z",
@@ -22,7 +22,7 @@
     "cost": 0.0000030241470816249998
   },
   {
-    "tenantId": "7ec85367-20e1-40f2-8725-52b245354045",
+    "tenantId": "f2771702-164d-4d90-bb79-b849f59918e5",
     "lambdaName": "company-service-dev-get-leads-feed",
     "region": "eu-west-1",
     "dateTime": "2019-08-29T17:00:00.000Z",
@@ -33,7 +33,7 @@
     "cost": 0.0000025565003129999998
   },
   {
-    "tenantId": "7ec85367-20e1-40f2-8725-52b245354045",
+    "tenantId": "f2771702-164d-4d90-bb79-b849f59918e5",
     "lambdaName": "company-service-dev-get-leads-feed",
     "region": "eu-west-1",
     "dateTime": "2019-08-29T18:00:00.000Z",
@@ -44,7 +44,7 @@
     "cost": 0.000002531333596
   },
   {
-    "tenantId": "7ec85367-20e1-40f2-8725-52b245354045",
+    "tenantId": "f2771702-164d-4d90-bb79-b849f59918e5",
     "lambdaName": "company-service-dev-get-leads-feed",
     "region": "eu-west-1",
     "dateTime": "2019-08-29T19:00:00.000Z",
@@ -55,7 +55,7 @@
     "cost": 0.000002646812993625
   },
   {
-    "tenantId": "7ec85367-20e1-40f2-8725-52b245354045",
+    "tenantId": "f2771702-164d-4d90-bb79-b849f59918e5",
     "lambdaName": "company-service-dev-get-leads-feed",
     "region": "eu-west-1",
     "dateTime": "2019-08-29T20:00:00.000Z",
@@ -66,7 +66,7 @@
     "cost": 0.000002774188248375
   },
   {
-    "tenantId": "7ec85367-20e1-40f2-8725-52b245354045",
+    "tenantId": "f2771702-164d-4d90-bb79-b849f59918e5",
     "lambdaName": "company-service-dev-get-leads-feed",
     "region": "eu-west-1",
     "dateTime": "2019-08-29T21:00:00.000Z",
@@ -77,7 +77,7 @@
     "cost": 0.000002655313010625
   },
   {
-    "tenantId": "7ec85367-20e1-40f2-8725-52b245354045",
+    "tenantId": "f2771702-164d-4d90-bb79-b849f59918e5",
     "lambdaName": "company-service-dev-get-leads-feed",
     "region": "eu-west-1",
     "dateTime": "2019-08-29T22:00:00.000Z",
@@ -88,7 +88,7 @@
     "cost": 0.000002733563167125
   },
   {
-    "tenantId": "7ec85367-20e1-40f2-8725-52b245354045",
+    "tenantId": "f2771702-164d-4d90-bb79-b849f59918e5",
     "lambdaName": "company-service-dev-get-leads-feed",
     "region": "eu-west-1",
     "dateTime": "2019-08-29T23:00:00.000Z",
@@ -99,7 +99,7 @@
     "cost": 0.000002541771116875
   },
   {
-    "tenantId": "7ec85367-20e1-40f2-8725-52b245354045",
+    "tenantId": "f2771702-164d-4d90-bb79-b849f59918e5",
     "lambdaName": "company-service-dev-get-leads-feed",
     "region": "eu-west-1",
     "dateTime": "2019-08-30T00:00:00.000Z",
@@ -110,7 +110,7 @@
     "cost": 0.000002704938109875
   },
   {
-    "tenantId": "7ec85367-20e1-40f2-8725-52b245354045",
+    "tenantId": "f2771702-164d-4d90-bb79-b849f59918e5",
     "lambdaName": "company-service-dev-get-leads-feed",
     "region": "eu-west-1",
     "dateTime": "2019-08-30T01:00:00.000Z",
@@ -121,7 +121,7 @@
     "cost": 0.0000026602505205
   },
   {
-    "tenantId": "7ec85367-20e1-40f2-8725-52b245354045",
+    "tenantId": "f2771702-164d-4d90-bb79-b849f59918e5",
     "lambdaName": "company-service-dev-get-leads-feed",
     "region": "eu-west-1",
     "dateTime": "2019-08-30T02:00:00.000Z",
@@ -132,7 +132,7 @@
     "cost": 0.000002710354787375
   },
   {
-    "tenantId": "7ec85367-20e1-40f2-8725-52b245354045",
+    "tenantId": "f2771702-164d-4d90-bb79-b849f59918e5",
     "lambdaName": "company-service-dev-get-leads-feed",
     "region": "eu-west-1",
     "dateTime": "2019-08-30T03:00:00.000Z",
@@ -143,7 +143,7 @@
     "cost": 0.00000272795898925
   },
   {
-    "tenantId": "7ec85367-20e1-40f2-8725-52b245354045",
+    "tenantId": "f2771702-164d-4d90-bb79-b849f59918e5",
     "lambdaName": "company-service-dev-get-leads-feed",
     "region": "eu-west-1",
     "dateTime": "2019-08-30T04:00:00.000Z",
@@ -154,7 +154,7 @@
     "cost": 0.0000026818130636249997
   },
   {
-    "tenantId": "7ec85367-20e1-40f2-8725-52b245354045",
+    "tenantId": "f2771702-164d-4d90-bb79-b849f59918e5",
     "lambdaName": "company-service-dev-get-leads-feed",
     "region": "eu-west-1",
     "dateTime": "2019-08-30T05:00:00.000Z",
@@ -165,7 +165,7 @@
     "cost": 0.0000024306042278749997
   },
   {
-    "tenantId": "7ec85367-20e1-40f2-8725-52b245354045",
+    "tenantId": "f2771702-164d-4d90-bb79-b849f59918e5",
     "lambdaName": "company-service-dev-get-leads-feed",
     "region": "eu-west-1",
     "dateTime": "2019-08-30T06:00:00.000Z",
@@ -176,7 +176,7 @@
     "cost": 0.00000244437508875
   },
   {
-    "tenantId": "7ec85367-20e1-40f2-8725-52b245354045",
+    "tenantId": "f2771702-164d-4d90-bb79-b849f59918e5",
     "lambdaName": "company-service-dev-get-leads-feed",
     "region": "eu-west-1",
     "dateTime": "2019-08-30T07:00:00.000Z",
@@ -187,7 +187,7 @@
     "cost": 0.000008859178785
   },
   {
-    "tenantId": "7ec85367-20e1-40f2-8725-52b245354045",
+    "tenantId": "f2771702-164d-4d90-bb79-b849f59918e5",
     "lambdaName": "company-service-dev-get-leads-feed",
     "region": "eu-west-1",
     "dateTime": "2019-08-30T08:00:00.000Z",
@@ -198,7 +198,7 @@
     "cost": 0.0000025415627831249998
   },
   {
-    "tenantId": "7ec85367-20e1-40f2-8725-52b245354045",
+    "tenantId": "f2771702-164d-4d90-bb79-b849f59918e5",
     "lambdaName": "company-service-dev-get-leads-feed",
     "region": "eu-west-1",
     "dateTime": "2019-08-30T09:00:00.000Z",
@@ -209,7 +209,7 @@
     "cost": 0.000127142102450375
   },
   {
-    "tenantId": "7ec85367-20e1-40f2-8725-52b245354045",
+    "tenantId": "f2771702-164d-4d90-bb79-b849f59918e5",
     "lambdaName": "company-service-dev-get-leads-feed",
     "region": "eu-west-1",
     "dateTime": "2019-08-30T10:00:00.000Z",
@@ -220,7 +220,7 @@
     "cost": 0.00000295795944925
   },
   {
-    "tenantId": "7ec85367-20e1-40f2-8725-52b245354045",
+    "tenantId": "f2771702-164d-4d90-bb79-b849f59918e5",
     "lambdaName": "company-service-dev-get-leads-feed",
     "region": "eu-west-1",
     "dateTime": "2019-08-30T11:00:00.000Z",
@@ -231,7 +231,7 @@
     "cost": 0.000007949739866125002
   },
   {
-    "tenantId": "7ec85367-20e1-40f2-8725-52b245354045",
+    "tenantId": "f2771702-164d-4d90-bb79-b849f59918e5",
     "lambdaName": "company-service-dev-get-leads-feed",
     "region": "eu-west-1",
     "dateTime": "2019-08-30T12:00:00.000Z",
@@ -242,7 +242,7 @@
     "cost": 0.0000030102512204999996
   },
   {
-    "tenantId": "7ec85367-20e1-40f2-8725-52b245354045",
+    "tenantId": "f2771702-164d-4d90-bb79-b849f59918e5",
     "lambdaName": "company-service-dev-get-leads-feed",
     "region": "eu-west-1",
     "dateTime": "2019-08-30T13:00:00.000Z",
@@ -253,7 +253,7 @@
     "cost": 0.000002867230101125
   },
   {
-    "tenantId": "7ec85367-20e1-40f2-8725-52b245354045",
+    "tenantId": "f2771702-164d-4d90-bb79-b849f59918e5",
     "lambdaName": "company-service-dev-get-leads-feed",
     "region": "eu-west-1",
     "dateTime": "2019-08-30T14:00:00.000Z",
@@ -264,7 +264,7 @@
     "cost": 0.000002793167453
   },
   {
-    "tenantId": "7ec85367-20e1-40f2-8725-52b245354045",
+    "tenantId": "f2771702-164d-4d90-bb79-b849f59918e5",
     "lambdaName": "company-service-dev-get-leads-feed",
     "region": "eu-west-1",
     "dateTime": "2019-08-30T15:00:00.000Z",
@@ -275,7 +275,7 @@
     "cost": 0.0000029605844545
   },
   {
-    "tenantId": "7ec85367-20e1-40f2-8725-52b245354045",
+    "tenantId": "f2771702-164d-4d90-bb79-b849f59918e5",
     "lambdaName": "company-service-dev-get-leads-feed",
     "region": "eu-west-1",
     "dateTime": "2019-08-30T16:00:00.000Z",
@@ -286,7 +286,7 @@
     "cost": 0.000002939771912875
   },
   {
-    "tenantId": "7ec85367-20e1-40f2-8725-52b245354045",
+    "tenantId": "f2771702-164d-4d90-bb79-b849f59918e5",
     "lambdaName": "company-service-dev-get-leads-feed",
     "region": "eu-west-1",
     "dateTime": "2019-08-30T17:00:00.000Z",
@@ -297,7 +297,7 @@
     "cost": 0.0000025090002179999998
   },
   {
-    "tenantId": "7ec85367-20e1-40f2-8725-52b245354045",
+    "tenantId": "f2771702-164d-4d90-bb79-b849f59918e5",
     "lambdaName": "company-service-dev-get-leads-feed",
     "region": "eu-west-1",
     "dateTime": "2019-08-30T18:00:00.000Z",
@@ -308,7 +308,7 @@
     "cost": 0.00000249079184825
   },
   {
-    "tenantId": "7ec85367-20e1-40f2-8725-52b245354045",
+    "tenantId": "f2771702-164d-4d90-bb79-b849f59918e5",
     "lambdaName": "company-service-dev-get-leads-feed",
     "region": "eu-west-1",
     "dateTime": "2019-08-30T19:00:00.000Z",
@@ -319,7 +319,7 @@
     "cost": 0.0000024584167834999998
   },
   {
-    "tenantId": "7ec85367-20e1-40f2-8725-52b245354045",
+    "tenantId": "f2771702-164d-4d90-bb79-b849f59918e5",
     "lambdaName": "company-service-dev-get-leads-feed",
     "region": "eu-west-1",
     "dateTime": "2019-08-30T20:00:00.000Z",
@@ -330,7 +330,7 @@
     "cost": 0.0000024561251122499998
   },
   {
-    "tenantId": "7ec85367-20e1-40f2-8725-52b245354045",
+    "tenantId": "f2771702-164d-4d90-bb79-b849f59918e5",
     "lambdaName": "company-service-dev-get-leads-feed",
     "region": "eu-west-1",
     "dateTime": "2019-08-30T21:00:00.000Z",
@@ -341,7 +341,7 @@
     "cost": 0.0000025304585942499998
   },
   {
-    "tenantId": "7ec85367-20e1-40f2-8725-52b245354045",
+    "tenantId": "f2771702-164d-4d90-bb79-b849f59918e5",
     "lambdaName": "company-service-dev-get-leads-feed",
     "region": "eu-west-1",
     "dateTime": "2019-08-30T22:00:00.000Z",
@@ -352,7 +352,7 @@
     "cost": 0.00000253079192825
   },
   {
-    "tenantId": "7ec85367-20e1-40f2-8725-52b245354045",
+    "tenantId": "f2771702-164d-4d90-bb79-b849f59918e5",
     "lambdaName": "company-service-dev-get-leads-feed",
     "region": "eu-west-1",
     "dateTime": "2019-08-30T23:00:00.000Z",
@@ -363,7 +363,7 @@
     "cost": 0.0000025060002119999997
   },
   {
-    "tenantId": "7ec85367-20e1-40f2-8725-52b245354045",
+    "tenantId": "f2771702-164d-4d90-bb79-b849f59918e5",
     "lambdaName": "company-service-dev-get-leads-feed",
     "region": "eu-west-1",
     "dateTime": "2019-08-31T00:00:00.000Z",
@@ -374,7 +374,7 @@
     "cost": 0.00000276154238975
   },
   {
-    "tenantId": "7ec85367-20e1-40f2-8725-52b245354045",
+    "tenantId": "f2771702-164d-4d90-bb79-b849f59918e5",
     "lambdaName": "company-service-dev-get-leads-feed",
     "region": "eu-west-1",
     "dateTime": "2019-08-31T01:00:00.000Z",
@@ -385,7 +385,7 @@
     "cost": 0.000002614146261625
   },
   {
-    "tenantId": "7ec85367-20e1-40f2-8725-52b245354045",
+    "tenantId": "f2771702-164d-4d90-bb79-b849f59918e5",
     "lambdaName": "company-service-dev-get-leads-feed",
     "region": "eu-west-1",
     "dateTime": "2019-08-31T02:00:00.000Z",
@@ -396,7 +396,7 @@
     "cost": 0.000002556062812125
   },
   {
-    "tenantId": "7ec85367-20e1-40f2-8725-52b245354045",
+    "tenantId": "f2771702-164d-4d90-bb79-b849f59918e5",
     "lambdaName": "company-service-dev-get-leads-feed",
     "region": "eu-west-1",
     "dateTime": "2019-08-31T03:00:00.000Z",
@@ -407,7 +407,7 @@
     "cost": 0.000002594812889625
   },
   {
-    "tenantId": "7ec85367-20e1-40f2-8725-52b245354045",
+    "tenantId": "f2771702-164d-4d90-bb79-b849f59918e5",
     "lambdaName": "company-service-dev-get-leads-feed",
     "region": "eu-west-1",
     "dateTime": "2019-08-31T04:00:00.000Z",
@@ -418,7 +418,7 @@
     "cost": 0.000002617729602125
   },
   {
-    "tenantId": "7ec85367-20e1-40f2-8725-52b245354045",
+    "tenantId": "f2771702-164d-4d90-bb79-b849f59918e5",
     "lambdaName": "company-service-dev-get-leads-feed",
     "region": "eu-west-1",
     "dateTime": "2019-08-31T05:00:00.000Z",
@@ -429,7 +429,7 @@
     "cost": 0.0000024580209493749998
   },
   {
-    "tenantId": "7ec85367-20e1-40f2-8725-52b245354045",
+    "tenantId": "f2771702-164d-4d90-bb79-b849f59918e5",
     "lambdaName": "company-service-dev-get-leads-feed",
     "region": "eu-west-1",
     "dateTime": "2019-08-31T06:00:00.000Z",
@@ -440,7 +440,7 @@
     "cost": 0.000002566312832625
   },
   {
-    "tenantId": "7ec85367-20e1-40f2-8725-52b245354045",
+    "tenantId": "f2771702-164d-4d90-bb79-b849f59918e5",
     "lambdaName": "company-service-dev-get-leads-feed",
     "region": "eu-west-1",
     "dateTime": "2019-08-31T07:00:00.000Z",
@@ -451,7 +451,7 @@
     "cost": 0.000002563521160375
   },
   {
-    "tenantId": "7ec85367-20e1-40f2-8725-52b245354045",
+    "tenantId": "f2771702-164d-4d90-bb79-b849f59918e5",
     "lambdaName": "company-service-dev-get-leads-feed",
     "region": "eu-west-1",
     "dateTime": "2019-08-31T08:00:00.000Z",
@@ -462,7 +462,7 @@
     "cost": 0.000002636937973875
   },
   {
-    "tenantId": "7ec85367-20e1-40f2-8725-52b245354045",
+    "tenantId": "f2771702-164d-4d90-bb79-b849f59918e5",
     "lambdaName": "company-service-dev-get-leads-feed",
     "region": "eu-west-1",
     "dateTime": "2019-08-31T09:00:00.000Z",
@@ -473,7 +473,7 @@
     "cost": 0.0000026042504085
   },
   {
-    "tenantId": "7ec85367-20e1-40f2-8725-52b245354045",
+    "tenantId": "f2771702-164d-4d90-bb79-b849f59918e5",
     "lambdaName": "company-service-dev-get-leads-feed",
     "region": "eu-west-1",
     "dateTime": "2019-08-31T10:00:00.000Z",
@@ -484,7 +484,7 @@
     "cost": 0.000002539604445875
   },
   {
-    "tenantId": "7ec85367-20e1-40f2-8725-52b245354045",
+    "tenantId": "f2771702-164d-4d90-bb79-b849f59918e5",
     "lambdaName": "company-service-dev-get-leads-feed",
     "region": "eu-west-1",
     "dateTime": "2019-08-31T11:00:00.000Z",
@@ -495,7 +495,7 @@
     "cost": 0.000002418104202875
   },
   {
-    "tenantId": "7ec85367-20e1-40f2-8725-52b245354045",
+    "tenantId": "f2771702-164d-4d90-bb79-b849f59918e5",
     "lambdaName": "company-service-dev-get-leads-feed",
     "region": "eu-west-1",
     "dateTime": "2019-08-31T12:00:00.000Z",
@@ -506,7 +506,7 @@
     "cost": 0.00000242970839275
   },
   {
-    "tenantId": "7ec85367-20e1-40f2-8725-52b245354045",
+    "tenantId": "f2771702-164d-4d90-bb79-b849f59918e5",
     "lambdaName": "company-service-dev-get-leads-feed",
     "region": "eu-west-1",
     "dateTime": "2019-08-31T13:00:00.000Z",
@@ -517,7 +517,7 @@
     "cost": 0.000002418500037
   },
   {
-    "tenantId": "7ec85367-20e1-40f2-8725-52b245354045",
+    "tenantId": "f2771702-164d-4d90-bb79-b849f59918e5",
     "lambdaName": "company-service-dev-get-leads-feed",
     "region": "eu-west-1",
     "dateTime": "2019-08-31T14:00:00.000Z",
@@ -528,7 +528,7 @@
     "cost": 0.000002426229219125
   },
   {
-    "tenantId": "7ec85367-20e1-40f2-8725-52b245354045",
+    "tenantId": "f2771702-164d-4d90-bb79-b849f59918e5",
     "lambdaName": "company-service-dev-get-leads-feed",
     "region": "eu-west-1",
     "dateTime": "2019-08-31T15:00:00.000Z",
@@ -539,7 +539,7 @@
     "cost": 0.000002442187584375
   },
   {
-    "tenantId": "7ec85367-20e1-40f2-8725-52b245354045",
+    "tenantId": "f2771702-164d-4d90-bb79-b849f59918e5",
     "lambdaName": "company-service-dev-get-leads-feed",
     "region": "eu-west-1",
     "dateTime": "2019-08-31T16:00:00.000Z",
@@ -550,7 +550,7 @@
     "cost": 0.000002489896013125
   },
   {
-    "tenantId": "7ec85367-20e1-40f2-8725-52b245354045",
+    "tenantId": "f2771702-164d-4d90-bb79-b849f59918e5",
     "lambdaName": "company-service-dev-get-leads-feed",
     "region": "eu-west-1",
     "dateTime": "2019-08-31T17:00:00.000Z",
@@ -561,7 +561,7 @@
     "cost": 0.00000269545892425
   },
   {
-    "tenantId": "7ec85367-20e1-40f2-8725-52b245354045",
+    "tenantId": "f2771702-164d-4d90-bb79-b849f59918e5",
     "lambdaName": "company-service-dev-get-leads-feed",
     "region": "eu-west-1",
     "dateTime": "2019-08-31T18:00:00.000Z",
@@ -572,7 +572,7 @@
     "cost": 0.0000025907295481249997
   },
   {
-    "tenantId": "7ec85367-20e1-40f2-8725-52b245354045",
+    "tenantId": "f2771702-164d-4d90-bb79-b849f59918e5",
     "lambdaName": "company-service-dev-get-leads-feed",
     "region": "eu-west-1",
     "dateTime": "2019-08-31T19:00:00.000Z",
@@ -583,7 +583,7 @@
     "cost": 0.000002716104798875
   },
   {
-    "tenantId": "7ec85367-20e1-40f2-8725-52b245354045",
+    "tenantId": "f2771702-164d-4d90-bb79-b849f59918e5",
     "lambdaName": "company-service-dev-get-leads-feed",
     "region": "eu-west-1",
     "dateTime": "2019-08-31T20:00:00.000Z",
@@ -594,7 +594,7 @@
     "cost": 0.000002532833599
   },
   {
-    "tenantId": "7ec85367-20e1-40f2-8725-52b245354045",
+    "tenantId": "f2771702-164d-4d90-bb79-b849f59918e5",
     "lambdaName": "company-service-dev-get-leads-feed",
     "region": "eu-west-1",
     "dateTime": "2019-08-31T21:00:00.000Z",
@@ -605,7 +605,7 @@
     "cost": 0.0000024992501985
   },
   {
-    "tenantId": "7ec85367-20e1-40f2-8725-52b245354045",
+    "tenantId": "f2771702-164d-4d90-bb79-b849f59918e5",
     "lambdaName": "company-service-dev-get-leads-feed",
     "region": "eu-west-1",
     "dateTime": "2019-08-31T22:00:00.000Z",
@@ -616,7 +616,7 @@
     "cost": 0.00000257470868275
   },
   {
-    "tenantId": "7ec85367-20e1-40f2-8725-52b245354045",
+    "tenantId": "f2771702-164d-4d90-bb79-b849f59918e5",
     "lambdaName": "company-service-dev-get-leads-feed",
     "region": "eu-west-1",
     "dateTime": "2019-08-31T23:00:00.000Z",
@@ -627,7 +627,7 @@
     "cost": 0.000002599604565875
   },
   {
-    "tenantId": "7ec85367-20e1-40f2-8725-52b245354045",
+    "tenantId": "f2771702-164d-4d90-bb79-b849f59918e5",
     "lambdaName": "company-service-dev-get-leads-feed",
     "region": "eu-west-1",
     "dateTime": "2019-09-01T00:00:00.000Z",
@@ -638,7 +638,7 @@
     "cost": 0.000012268456436875
   },
   {
-    "tenantId": "7ec85367-20e1-40f2-8725-52b245354045",
+    "tenantId": "f2771702-164d-4d90-bb79-b849f59918e5",
     "lambdaName": "company-service-dev-get-leads-feed",
     "region": "eu-west-1",
     "dateTime": "2019-09-01T01:00:00.000Z",
@@ -649,7 +649,7 @@
     "cost": 0.000003030938761875
   },
   {
-    "tenantId": "7ec85367-20e1-40f2-8725-52b245354045",
+    "tenantId": "f2771702-164d-4d90-bb79-b849f59918e5",
     "lambdaName": "company-service-dev-get-leads-feed",
     "region": "eu-west-1",
     "dateTime": "2019-09-01T02:00:00.000Z",
@@ -660,7 +660,7 @@
     "cost": 0.000003154668176
   },
   {
-    "tenantId": "7ec85367-20e1-40f2-8725-52b245354045",
+    "tenantId": "f2771702-164d-4d90-bb79-b849f59918e5",
     "lambdaName": "company-service-dev-get-leads-feed",
     "region": "eu-west-1",
     "dateTime": "2019-09-01T03:00:00.000Z",
@@ -671,7 +671,7 @@
     "cost": 0.00000305337630675
   },
   {
-    "tenantId": "7ec85367-20e1-40f2-8725-52b245354045",
+    "tenantId": "f2771702-164d-4d90-bb79-b849f59918e5",
     "lambdaName": "company-service-dev-get-leads-feed",
     "region": "eu-west-1",
     "dateTime": "2019-09-01T04:00:00.000Z",
@@ -682,7 +682,7 @@
     "cost": 0.000002885396804125
   },
   {
-    "tenantId": "7ec85367-20e1-40f2-8725-52b245354045",
+    "tenantId": "f2771702-164d-4d90-bb79-b849f59918e5",
     "lambdaName": "company-service-dev-get-leads-feed",
     "region": "eu-west-1",
     "dateTime": "2019-09-01T05:00:00.000Z",
@@ -693,7 +693,7 @@
     "cost": 0.0000029572511145
   },
   {
-    "tenantId": "7ec85367-20e1-40f2-8725-52b245354045",
+    "tenantId": "f2771702-164d-4d90-bb79-b849f59918e5",
     "lambdaName": "company-service-dev-get-leads-feed",
     "region": "eu-west-1",
     "dateTime": "2019-09-01T06:00:00.000Z",
@@ -704,7 +704,7 @@
     "cost": 0.000003010855388375
   },
   {
-    "tenantId": "7ec85367-20e1-40f2-8725-52b245354045",
+    "tenantId": "f2771702-164d-4d90-bb79-b849f59918e5",
     "lambdaName": "company-service-dev-get-leads-feed",
     "region": "eu-west-1",
     "dateTime": "2019-09-01T07:00:00.000Z",
@@ -715,7 +715,7 @@
     "cost": 0.000002897896829125
   },
   {
-    "tenantId": "7ec85367-20e1-40f2-8725-52b245354045",
+    "tenantId": "f2771702-164d-4d90-bb79-b849f59918e5",
     "lambdaName": "company-service-dev-get-leads-feed",
     "region": "eu-west-1",
     "dateTime": "2019-09-01T08:00:00.000Z",
@@ -726,7 +726,7 @@
     "cost": 0.000002573562847125
   },
   {
-    "tenantId": "7ec85367-20e1-40f2-8725-52b245354045",
+    "tenantId": "f2771702-164d-4d90-bb79-b849f59918e5",
     "lambdaName": "company-service-dev-get-leads-feed",
     "region": "eu-west-1",
     "dateTime": "2019-09-01T09:00:00.000Z",
@@ -737,7 +737,7 @@
     "cost": 0.000002558271149875
   },
   {
-    "tenantId": "7ec85367-20e1-40f2-8725-52b245354045",
+    "tenantId": "f2771702-164d-4d90-bb79-b849f59918e5",
     "lambdaName": "company-service-dev-get-leads-feed",
     "region": "eu-west-1",
     "dateTime": "2019-09-01T10:00:00.000Z",
@@ -748,7 +748,7 @@
     "cost": 0.0000025427086187499998
   },
   {
-    "tenantId": "7ec85367-20e1-40f2-8725-52b245354045",
+    "tenantId": "f2771702-164d-4d90-bb79-b849f59918e5",
     "lambdaName": "company-service-dev-get-leads-feed",
     "region": "eu-west-1",
     "dateTime": "2019-09-01T11:00:00.000Z",
@@ -759,7 +759,7 @@
     "cost": 0.000002582229531125
   },
   {
-    "tenantId": "7ec85367-20e1-40f2-8725-52b245354045",
+    "tenantId": "f2771702-164d-4d90-bb79-b849f59918e5",
     "lambdaName": "company-service-dev-get-leads-feed",
     "region": "eu-west-1",
     "dateTime": "2019-09-01T12:00:00.000Z",
@@ -770,7 +770,7 @@
     "cost": 0.000002513437726875
   },
   {
-    "tenantId": "7ec85367-20e1-40f2-8725-52b245354045",
+    "tenantId": "f2771702-164d-4d90-bb79-b849f59918e5",
     "lambdaName": "company-service-dev-get-leads-feed",
     "region": "eu-west-1",
     "dateTime": "2019-09-01T13:00:00.000Z",
@@ -781,7 +781,7 @@
     "cost": 0.000002497333528
   },
   {
-    "tenantId": "7ec85367-20e1-40f2-8725-52b245354045",
+    "tenantId": "f2771702-164d-4d90-bb79-b849f59918e5",
     "lambdaName": "company-service-dev-get-leads-feed",
     "region": "eu-west-1",
     "dateTime": "2019-09-01T14:00:00.000Z",
@@ -792,7 +792,7 @@
     "cost": 0.00000263429213525
   },
   {
-    "tenantId": "7ec85367-20e1-40f2-8725-52b245354045",
+    "tenantId": "f2771702-164d-4d90-bb79-b849f59918e5",
     "lambdaName": "company-service-dev-get-leads-feed",
     "region": "eu-west-1",
     "dateTime": "2019-09-01T15:00:00.000Z",
@@ -803,7 +803,7 @@
     "cost": 0.000002592604551875
   },
   {
-    "tenantId": "7ec85367-20e1-40f2-8725-52b245354045",
+    "tenantId": "f2771702-164d-4d90-bb79-b849f59918e5",
     "lambdaName": "company-service-dev-get-leads-feed",
     "region": "eu-west-1",
     "dateTime": "2019-09-01T16:00:00.000Z",
@@ -814,7 +814,7 @@
     "cost": 0.0000026625838585
   },
   {
-    "tenantId": "7ec85367-20e1-40f2-8725-52b245354045",
+    "tenantId": "f2771702-164d-4d90-bb79-b849f59918e5",
     "lambdaName": "company-service-dev-get-leads-feed",
     "region": "eu-west-1",
     "dateTime": "2019-09-01T17:00:00.000Z",
@@ -825,7 +825,7 @@
     "cost": 0.0000025837295341249997
   },
   {
-    "tenantId": "7ec85367-20e1-40f2-8725-52b245354045",
+    "tenantId": "f2771702-164d-4d90-bb79-b849f59918e5",
     "lambdaName": "company-service-dev-get-leads-feed",
     "region": "eu-west-1",
     "dateTime": "2019-09-01T18:00:00.000Z",
@@ -836,7 +836,7 @@
     "cost": 0.00000252379191425
   },
   {
-    "tenantId": "7ec85367-20e1-40f2-8725-52b245354045",
+    "tenantId": "f2771702-164d-4d90-bb79-b849f59918e5",
     "lambdaName": "company-service-dev-get-leads-feed",
     "region": "eu-west-1",
     "dateTime": "2019-09-01T19:00:00.000Z",
@@ -847,7 +847,7 @@
     "cost": 0.000002551646136625
   },
   {
-    "tenantId": "7ec85367-20e1-40f2-8725-52b245354045",
+    "tenantId": "f2771702-164d-4d90-bb79-b849f59918e5",
     "lambdaName": "company-service-dev-get-leads-feed",
     "region": "eu-west-1",
     "dateTime": "2019-09-01T20:00:00.000Z",
@@ -858,7 +858,7 @@
     "cost": 0.0000025676461686249997
   },
   {
-    "tenantId": "7ec85367-20e1-40f2-8725-52b245354045",
+    "tenantId": "f2771702-164d-4d90-bb79-b849f59918e5",
     "lambdaName": "company-service-dev-get-leads-feed",
     "region": "eu-west-1",
     "dateTime": "2019-09-01T21:00:00.000Z",
@@ -869,7 +869,7 @@
     "cost": 0.00000261962543925
   },
   {
-    "tenantId": "7ec85367-20e1-40f2-8725-52b245354045",
+    "tenantId": "f2771702-164d-4d90-bb79-b849f59918e5",
     "lambdaName": "company-service-dev-get-leads-feed",
     "region": "eu-west-1",
     "dateTime": "2019-09-01T22:00:00.000Z",
@@ -880,7 +880,7 @@
     "cost": 0.0000026355004709999997
   },
   {
-    "tenantId": "7ec85367-20e1-40f2-8725-52b245354045",
+    "tenantId": "f2771702-164d-4d90-bb79-b849f59918e5",
     "lambdaName": "company-service-dev-get-leads-feed",
     "region": "eu-west-1",
     "dateTime": "2019-09-01T23:00:00.000Z",
@@ -891,7 +891,7 @@
     "cost": 0.000002693396420125
   },
   {
-    "tenantId": "7ec85367-20e1-40f2-8725-52b245354045",
+    "tenantId": "f2771702-164d-4d90-bb79-b849f59918e5",
     "lambdaName": "company-service-dev-get-leads-feed",
     "region": "eu-west-1",
     "dateTime": "2019-09-02T00:00:00.000Z",
@@ -902,7 +902,7 @@
     "cost": 0.0000025872087077499997
   },
   {
-    "tenantId": "7ec85367-20e1-40f2-8725-52b245354045",
+    "tenantId": "f2771702-164d-4d90-bb79-b849f59918e5",
     "lambdaName": "company-service-dev-get-leads-feed",
     "region": "eu-west-1",
     "dateTime": "2019-09-02T01:00:00.000Z",
@@ -913,7 +913,7 @@
     "cost": 0.000002546333626
   },
   {
-    "tenantId": "7ec85367-20e1-40f2-8725-52b245354045",
+    "tenantId": "f2771702-164d-4d90-bb79-b849f59918e5",
     "lambdaName": "company-service-dev-get-leads-feed",
     "region": "eu-west-1",
     "dateTime": "2019-09-02T02:00:00.000Z",
@@ -924,7 +924,7 @@
     "cost": 0.00000264129214925
   },
   {
-    "tenantId": "7ec85367-20e1-40f2-8725-52b245354045",
+    "tenantId": "f2771702-164d-4d90-bb79-b849f59918e5",
     "lambdaName": "company-service-dev-get-leads-feed",
     "region": "eu-west-1",
     "dateTime": "2019-09-02T03:00:00.000Z",
@@ -935,7 +935,7 @@
     "cost": 0.000002732229831125
   },
   {
-    "tenantId": "7ec85367-20e1-40f2-8725-52b245354045",
+    "tenantId": "f2771702-164d-4d90-bb79-b849f59918e5",
     "lambdaName": "company-service-dev-get-leads-feed",
     "region": "eu-west-1",
     "dateTime": "2019-09-02T04:00:00.000Z",
@@ -946,7 +946,7 @@
     "cost": 0.00000259495872325
   },
   {
-    "tenantId": "7ec85367-20e1-40f2-8725-52b245354045",
+    "tenantId": "f2771702-164d-4d90-bb79-b849f59918e5",
     "lambdaName": "company-service-dev-get-leads-feed",
     "region": "eu-west-1",
     "dateTime": "2019-09-02T05:00:00.000Z",
@@ -957,7 +957,7 @@
     "cost": 0.00000241833337
   },
   {
-    "tenantId": "7ec85367-20e1-40f2-8725-52b245354045",
+    "tenantId": "f2771702-164d-4d90-bb79-b849f59918e5",
     "lambdaName": "company-service-dev-get-leads-feed",
     "region": "eu-west-1",
     "dateTime": "2019-09-02T06:00:00.000Z",
@@ -968,7 +968,7 @@
     "cost": 0.000002618771270875
   },
   {
-    "tenantId": "7ec85367-20e1-40f2-8725-52b245354045",
+    "tenantId": "f2771702-164d-4d90-bb79-b849f59918e5",
     "lambdaName": "company-service-dev-get-leads-feed",
     "region": "eu-west-1",
     "dateTime": "2019-09-02T07:00:00.000Z",
@@ -979,7 +979,7 @@
     "cost": 0.0000028541884083749997
   },
   {
-    "tenantId": "7ec85367-20e1-40f2-8725-52b245354045",
+    "tenantId": "f2771702-164d-4d90-bb79-b849f59918e5",
     "lambdaName": "company-service-dev-get-leads-feed",
     "region": "eu-west-1",
     "dateTime": "2019-09-02T08:00:00.000Z",
@@ -990,7 +990,7 @@
     "cost": 0.000016886424006125
   },
   {
-    "tenantId": "7ec85367-20e1-40f2-8725-52b245354045",
+    "tenantId": "f2771702-164d-4d90-bb79-b849f59918e5",
     "lambdaName": "company-service-dev-get-leads-feed",
     "region": "eu-west-1",
     "dateTime": "2019-09-02T09:00:00.000Z",
@@ -1001,7 +1001,7 @@
     "cost": 0.000007474509749
   },
   {
-    "tenantId": "7ec85367-20e1-40f2-8725-52b245354045",
+    "tenantId": "f2771702-164d-4d90-bb79-b849f59918e5",
     "lambdaName": "company-service-dev-get-leads-feed",
     "region": "eu-west-1",
     "dateTime": "2019-09-02T10:00:00.000Z",
@@ -1012,7 +1012,7 @@
     "cost": 0.000021062264891124998
   },
   {
-    "tenantId": "7ec85367-20e1-40f2-8725-52b245354045",
+    "tenantId": "f2771702-164d-4d90-bb79-b849f59918e5",
     "lambdaName": "company-service-dev-get-leads-feed",
     "region": "eu-west-1",
     "dateTime": "2019-09-02T11:00:00.000Z",
@@ -1023,7 +1023,7 @@
     "cost": 0.0000035338564343749996
   },
   {
-    "tenantId": "7ec85367-20e1-40f2-8725-52b245354045",
+    "tenantId": "f2771702-164d-4d90-bb79-b849f59918e5",
     "lambdaName": "company-service-dev-get-leads-feed",
     "region": "eu-west-1",
     "dateTime": "2019-09-02T12:00:00.000Z",
@@ -1034,7 +1034,7 @@
     "cost": 0.0000035134188935
   },
   {
-    "tenantId": "7ec85367-20e1-40f2-8725-52b245354045",
+    "tenantId": "f2771702-164d-4d90-bb79-b849f59918e5",
     "lambdaName": "company-service-dev-get-leads-feed",
     "region": "eu-west-1",
     "dateTime": "2019-09-02T13:00:00.000Z",
@@ -1045,7 +1045,7 @@
     "cost": 0.0000034744396488750003
   },
   {
-    "tenantId": "7ec85367-20e1-40f2-8725-52b245354045",
+    "tenantId": "f2771702-164d-4d90-bb79-b849f59918e5",
     "lambdaName": "company-service-dev-get-leads-feed",
     "region": "eu-west-1",
     "dateTime": "2019-09-02T14:00:00.000Z",
@@ -1056,7 +1056,7 @@
     "cost": 0.000013958084816125
   },
   {
-    "tenantId": "7ec85367-20e1-40f2-8725-52b245354045",
+    "tenantId": "f2771702-164d-4d90-bb79-b849f59918e5",
     "lambdaName": "company-service-dev-get-leads-feed",
     "region": "eu-west-1",
     "dateTime": "2019-09-02T15:00:00.000Z",
@@ -1067,7 +1067,7 @@
     "cost": 0.000003521023075375
   },
   {
-    "tenantId": "7ec85367-20e1-40f2-8725-52b245354045",
+    "tenantId": "f2771702-164d-4d90-bb79-b849f59918e5",
     "lambdaName": "company-service-dev-get-leads-feed",
     "region": "eu-west-1",
     "dateTime": "2019-09-02T16:00:00.000Z",
@@ -1078,7 +1078,7 @@
     "cost": 0.0000033527727388749998
   },
   {
-    "tenantId": "7ec85367-20e1-40f2-8725-52b245354045",
+    "tenantId": "f2771702-164d-4d90-bb79-b849f59918e5",
     "lambdaName": "company-service-dev-get-leads-feed",
     "region": "eu-west-1",
     "dateTime": "2019-09-02T17:00:00.000Z",
@@ -1089,7 +1089,7 @@
     "cost": 0.00000317279321225
   },
   {
-    "tenantId": "7ec85367-20e1-40f2-8725-52b245354045",
+    "tenantId": "f2771702-164d-4d90-bb79-b849f59918e5",
     "lambdaName": "company-service-dev-get-leads-feed",
     "region": "eu-west-1",
     "dateTime": "2019-09-02T18:00:00.000Z",
@@ -1100,7 +1100,7 @@
     "cost": 0.000003066834667
   },
   {
-    "tenantId": "7ec85367-20e1-40f2-8725-52b245354045",
+    "tenantId": "f2771702-164d-4d90-bb79-b849f59918e5",
     "lambdaName": "company-service-dev-get-leads-feed",
     "region": "eu-west-1",
     "dateTime": "2019-09-02T19:00:00.000Z",
@@ -1111,7 +1111,7 @@
     "cost": 0.000002942313584625
   },
   {
-    "tenantId": "7ec85367-20e1-40f2-8725-52b245354045",
+    "tenantId": "f2771702-164d-4d90-bb79-b849f59918e5",
     "lambdaName": "company-service-dev-get-leads-feed",
     "region": "eu-west-1",
     "dateTime": "2019-09-02T20:00:00.000Z",
@@ -1122,7 +1122,7 @@
     "cost": 0.0000029422927512500003
   },
   {
-    "tenantId": "7ec85367-20e1-40f2-8725-52b245354045",
+    "tenantId": "f2771702-164d-4d90-bb79-b849f59918e5",
     "lambdaName": "company-service-dev-get-leads-feed",
     "region": "eu-west-1",
     "dateTime": "2019-09-02T21:00:00.000Z",
@@ -1133,7 +1133,7 @@
     "cost": 0.0000029615844565
   },
   {
-    "tenantId": "7ec85367-20e1-40f2-8725-52b245354045",
+    "tenantId": "f2771702-164d-4d90-bb79-b849f59918e5",
     "lambdaName": "company-service-dev-get-leads-feed",
     "region": "eu-west-1",
     "dateTime": "2019-09-02T22:00:00.000Z",
@@ -1144,7 +1144,7 @@
     "cost": 0.000003029834593
   },
   {
-    "tenantId": "7ec85367-20e1-40f2-8725-52b245354045",
+    "tenantId": "f2771702-164d-4d90-bb79-b849f59918e5",
     "lambdaName": "company-service-dev-get-leads-feed",
     "region": "eu-west-1",
     "dateTime": "2019-09-02T23:00:00.000Z",
@@ -1155,7 +1155,7 @@
     "cost": 0.000002873063446125
   },
   {
-    "tenantId": "7ec85367-20e1-40f2-8725-52b245354045",
+    "tenantId": "f2771702-164d-4d90-bb79-b849f59918e5",
     "lambdaName": "company-service-dev-get-leads-feed",
     "region": "eu-west-1",
     "dateTime": "2019-09-03T00:00:00.000Z",
@@ -1166,7 +1166,7 @@
     "cost": 0.000002759646552625
   },
   {
-    "tenantId": "7ec85367-20e1-40f2-8725-52b245354045",
+    "tenantId": "f2771702-164d-4d90-bb79-b849f59918e5",
     "lambdaName": "company-service-dev-get-leads-feed",
     "region": "eu-west-1",
     "dateTime": "2019-09-03T01:00:00.000Z",
@@ -1177,7 +1177,7 @@
     "cost": 0.0000028603967541249997
   },
   {
-    "tenantId": "7ec85367-20e1-40f2-8725-52b245354045",
+    "tenantId": "f2771702-164d-4d90-bb79-b849f59918e5",
     "lambdaName": "company-service-dev-get-leads-feed",
     "region": "eu-west-1",
     "dateTime": "2019-09-03T02:00:00.000Z",
@@ -1188,7 +1188,7 @@
     "cost": 0.00000261054208775
   },
   {
-    "tenantId": "7ec85367-20e1-40f2-8725-52b245354045",
+    "tenantId": "f2771702-164d-4d90-bb79-b849f59918e5",
     "lambdaName": "company-service-dev-get-leads-feed",
     "region": "eu-west-1",
     "dateTime": "2019-09-03T03:00:00.000Z",
@@ -1199,7 +1199,7 @@
     "cost": 0.000002622062944125
   },
   {
-    "tenantId": "7ec85367-20e1-40f2-8725-52b245354045",
+    "tenantId": "f2771702-164d-4d90-bb79-b849f59918e5",
     "lambdaName": "company-service-dev-get-leads-feed",
     "region": "eu-west-1",
     "dateTime": "2019-09-03T04:00:00.000Z",
@@ -1210,7 +1210,7 @@
     "cost": 0.00000286737593475
   },
   {
-    "tenantId": "7ec85367-20e1-40f2-8725-52b245354045",
+    "tenantId": "f2771702-164d-4d90-bb79-b849f59918e5",
     "lambdaName": "company-service-dev-get-leads-feed",
     "region": "eu-west-1",
     "dateTime": "2019-09-03T05:00:00.000Z",
@@ -1221,7 +1221,7 @@
     "cost": 0.00000278670910675
   },
   {
-    "tenantId": "7ec85367-20e1-40f2-8725-52b245354045",
+    "tenantId": "f2771702-164d-4d90-bb79-b849f59918e5",
     "lambdaName": "company-service-dev-get-leads-feed",
     "region": "eu-west-1",
     "dateTime": "2019-09-03T06:00:00.000Z",
@@ -1232,7 +1232,7 @@
     "cost": 0.0000029743553153749998
   },
   {
-    "tenantId": "7ec85367-20e1-40f2-8725-52b245354045",
+    "tenantId": "f2771702-164d-4d90-bb79-b849f59918e5",
     "lambdaName": "company-service-dev-get-leads-feed",
     "region": "eu-west-1",
     "dateTime": "2019-09-03T07:00:00.000Z",
@@ -1243,7 +1243,7 @@
     "cost": 0.000003104897243125
   },
   {
-    "tenantId": "7ec85367-20e1-40f2-8725-52b245354045",
+    "tenantId": "f2771702-164d-4d90-bb79-b849f59918e5",
     "lambdaName": "company-service-dev-get-leads-feed",
     "region": "eu-west-1",
     "dateTime": "2019-09-03T08:00:00.000Z",
@@ -1254,7 +1254,7 @@
     "cost": 0.00002230080783487501
   },
   {
-    "tenantId": "7ec85367-20e1-40f2-8725-52b245354045",
+    "tenantId": "f2771702-164d-4d90-bb79-b849f59918e5",
     "lambdaName": "company-service-dev-get-leads-feed",
     "region": "eu-west-1",
     "dateTime": "2019-09-03T09:00:00.000Z",
@@ -1265,7 +1265,7 @@
     "cost": 0.0000032426891853749996
   },
   {
-    "tenantId": "7ec85367-20e1-40f2-8725-52b245354045",
+    "tenantId": "f2771702-164d-4d90-bb79-b849f59918e5",
     "lambdaName": "company-service-dev-get-leads-feed",
     "region": "eu-west-1",
     "dateTime": "2019-09-03T10:00:00.000Z",
@@ -1276,7 +1276,7 @@
     "cost": 0.000008109823519625
   },
   {
-    "tenantId": "7ec85367-20e1-40f2-8725-52b245354045",
+    "tenantId": "f2771702-164d-4d90-bb79-b849f59918e5",
     "lambdaName": "company-service-dev-get-leads-feed",
     "region": "eu-west-1",
     "dateTime": "2019-09-03T11:00:00.000Z",
@@ -1287,7 +1287,7 @@
     "cost": 0.000003222855812375
   },
   {
-    "tenantId": "7ec85367-20e1-40f2-8725-52b245354045",
+    "tenantId": "f2771702-164d-4d90-bb79-b849f59918e5",
     "lambdaName": "company-service-dev-get-leads-feed",
     "region": "eu-west-1",
     "dateTime": "2019-09-03T12:00:00.000Z",
@@ -1298,7 +1298,7 @@
     "cost": 0.000009750951801875
   },
   {
-    "tenantId": "7ec85367-20e1-40f2-8725-52b245354045",
+    "tenantId": "f2771702-164d-4d90-bb79-b849f59918e5",
     "lambdaName": "company-service-dev-get-leads-feed",
     "region": "eu-west-1",
     "dateTime": "2019-09-03T13:00:00.000Z",
@@ -1309,7 +1309,7 @@
     "cost": 0.000012869416372124999
   },
   {
-    "tenantId": "7ec85367-20e1-40f2-8725-52b245354045",
+    "tenantId": "f2771702-164d-4d90-bb79-b849f59918e5",
     "lambdaName": "company-service-dev-get-leads-feed",
     "region": "eu-west-1",
     "dateTime": "2019-09-03T14:00:00.000Z",
@@ -1320,7 +1320,7 @@
     "cost": 0.0000032779184225
   },
   {
-    "tenantId": "7ec85367-20e1-40f2-8725-52b245354045",
+    "tenantId": "f2771702-164d-4d90-bb79-b849f59918e5",
     "lambdaName": "company-service-dev-get-leads-feed",
     "region": "eu-west-1",
     "dateTime": "2019-09-03T15:00:00.000Z",
@@ -1331,7 +1331,7 @@
     "cost": 0.0000033315851965
   },
   {
-    "tenantId": "7ec85367-20e1-40f2-8725-52b245354045",
+    "tenantId": "f2771702-164d-4d90-bb79-b849f59918e5",
     "lambdaName": "company-service-dev-get-leads-feed",
     "region": "eu-west-1",
     "dateTime": "2019-09-03T16:00:00.000Z",
@@ -1342,7 +1342,7 @@
     "cost": 0.0000031472098277499997
   },
   {
-    "tenantId": "7ec85367-20e1-40f2-8725-52b245354045",
+    "tenantId": "f2771702-164d-4d90-bb79-b849f59918e5",
     "lambdaName": "company-service-dev-get-leads-feed",
     "region": "eu-west-1",
     "dateTime": "2019-09-03T17:00:00.000Z",
@@ -1353,7 +1353,7 @@
     "cost": 0.000003134272301875
   },
   {
-    "tenantId": "7ec85367-20e1-40f2-8725-52b245354045",
+    "tenantId": "f2771702-164d-4d90-bb79-b849f59918e5",
     "lambdaName": "company-service-dev-get-leads-feed",
     "region": "eu-west-1",
     "dateTime": "2019-09-03T18:00:00.000Z",
@@ -1364,7 +1364,7 @@
     "cost": 0.000003162105690875
   },
   {
-    "tenantId": "7ec85367-20e1-40f2-8725-52b245354045",
+    "tenantId": "f2771702-164d-4d90-bb79-b849f59918e5",
     "lambdaName": "company-service-dev-get-leads-feed",
     "region": "eu-west-1",
     "dateTime": "2019-09-03T19:00:00.000Z",
@@ -1375,7 +1375,7 @@
     "cost": 0.0000033829186325
   },
   {
-    "tenantId": "7ec85367-20e1-40f2-8725-52b245354045",
+    "tenantId": "f2771702-164d-4d90-bb79-b849f59918e5",
     "lambdaName": "company-service-dev-get-leads-feed",
     "region": "eu-west-1",
     "dateTime": "2019-09-03T20:00:00.000Z",
@@ -1386,7 +1386,7 @@
     "cost": 0.000002984563669125
   },
   {
-    "tenantId": "7ec85367-20e1-40f2-8725-52b245354045",
+    "tenantId": "f2771702-164d-4d90-bb79-b849f59918e5",
     "lambdaName": "company-service-dev-get-leads-feed",
     "region": "eu-west-1",
     "dateTime": "2019-09-03T21:00:00.000Z",
@@ -1397,7 +1397,7 @@
     "cost": 0.0000031215847765
   },
   {
-    "tenantId": "7ec85367-20e1-40f2-8725-52b245354045",
+    "tenantId": "f2771702-164d-4d90-bb79-b849f59918e5",
     "lambdaName": "company-service-dev-get-leads-feed",
     "region": "eu-west-1",
     "dateTime": "2019-09-03T22:00:00.000Z",
@@ -1408,7 +1408,7 @@
     "cost": 0.00000330221013775
   },
   {
-    "tenantId": "7ec85367-20e1-40f2-8725-52b245354045",
+    "tenantId": "f2771702-164d-4d90-bb79-b849f59918e5",
     "lambdaName": "company-service-dev-get-leads-feed",
     "region": "eu-west-1",
     "dateTime": "2019-09-03T23:00:00.000Z",
@@ -1419,7 +1419,7 @@
     "cost": 0.000003226147485625
   },
   {
-    "tenantId": "7ec85367-20e1-40f2-8725-52b245354045",
+    "tenantId": "f2771702-164d-4d90-bb79-b849f59918e5",
     "lambdaName": "company-service-dev-get-leads-feed",
     "region": "eu-west-1",
     "dateTime": "2019-09-04T00:00:00.000Z",
@@ -1430,7 +1430,7 @@
     "cost": 0.0000032904184474999997
   },
   {
-    "tenantId": "7ec85367-20e1-40f2-8725-52b245354045",
+    "tenantId": "f2771702-164d-4d90-bb79-b849f59918e5",
     "lambdaName": "company-service-dev-get-leads-feed",
     "region": "eu-west-1",
     "dateTime": "2019-09-04T01:00:00.000Z",
@@ -1441,7 +1441,7 @@
     "cost": 0.0000031960849255
   },
   {
-    "tenantId": "7ec85367-20e1-40f2-8725-52b245354045",
+    "tenantId": "f2771702-164d-4d90-bb79-b849f59918e5",
     "lambdaName": "company-service-dev-get-leads-feed",
     "region": "eu-west-1",
     "dateTime": "2019-09-04T02:00:00.000Z",
@@ -1452,7 +1452,7 @@
     "cost": 0.000003026855420375
   },
   {
-    "tenantId": "7ec85367-20e1-40f2-8725-52b245354045",
+    "tenantId": "f2771702-164d-4d90-bb79-b849f59918e5",
     "lambdaName": "company-service-dev-get-leads-feed",
     "region": "eu-west-1",
     "dateTime": "2019-09-04T03:00:00.000Z",
@@ -1463,7 +1463,7 @@
     "cost": 0.0000032742517485
   },
   {
-    "tenantId": "7ec85367-20e1-40f2-8725-52b245354045",
+    "tenantId": "f2771702-164d-4d90-bb79-b849f59918e5",
     "lambdaName": "company-service-dev-get-leads-feed",
     "region": "eu-west-1",
     "dateTime": "2019-09-04T04:00:00.000Z",
@@ -1474,7 +1474,7 @@
     "cost": 0.000003138563977125
   },
   {
-    "tenantId": "7ec85367-20e1-40f2-8725-52b245354045",
+    "tenantId": "f2771702-164d-4d90-bb79-b849f59918e5",
     "lambdaName": "company-service-dev-get-leads-feed",
     "region": "eu-west-1",
     "dateTime": "2019-09-04T05:00:00.000Z",
@@ -1485,7 +1485,7 @@
     "cost": 0.0000030078345489999997
   },
   {
-    "tenantId": "7ec85367-20e1-40f2-8725-52b245354045",
+    "tenantId": "f2771702-164d-4d90-bb79-b849f59918e5",
     "lambdaName": "company-service-dev-get-leads-feed",
     "region": "eu-west-1",
     "dateTime": "2019-09-04T06:00:00.000Z",
@@ -1496,7 +1496,7 @@
     "cost": 0.000003047167961
   },
   {
-    "tenantId": "7ec85367-20e1-40f2-8725-52b245354045",
+    "tenantId": "f2771702-164d-4d90-bb79-b849f59918e5",
     "lambdaName": "company-service-dev-get-leads-feed",
     "region": "eu-west-1",
     "dateTime": "2019-09-04T07:00:00.000Z",
@@ -1507,7 +1507,7 @@
     "cost": 0.0000030696263392500002
   },
   {
-    "tenantId": "7ec85367-20e1-40f2-8725-52b245354045",
+    "tenantId": "f2771702-164d-4d90-bb79-b849f59918e5",
     "lambdaName": "company-service-dev-get-leads-feed",
     "region": "eu-west-1",
     "dateTime": "2019-09-04T08:00:00.000Z",
@@ -1518,7 +1518,7 @@
     "cost": 0.000003136063972125
   },
   {
-    "tenantId": "7ec85367-20e1-40f2-8725-52b245354045",
+    "tenantId": "f2771702-164d-4d90-bb79-b849f59918e5",
     "lambdaName": "company-service-dev-get-leads-feed",
     "region": "eu-west-1",
     "dateTime": "2019-09-04T09:00:00.000Z",
@@ -1529,7 +1529,7 @@
     "cost": 0.000003302897639125
   },
   {
-    "tenantId": "7ec85367-20e1-40f2-8725-52b245354045",
+    "tenantId": "f2771702-164d-4d90-bb79-b849f59918e5",
     "lambdaName": "company-service-dev-get-leads-feed",
     "region": "eu-west-1",
     "dateTime": "2019-09-04T10:00:00.000Z",
@@ -1540,7 +1540,7 @@
     "cost": 0.0000032725850785000003
   },
   {
-    "tenantId": "7ec85367-20e1-40f2-8725-52b245354045",
+    "tenantId": "f2771702-164d-4d90-bb79-b849f59918e5",
     "lambdaName": "company-service-dev-get-leads-feed",
     "region": "eu-west-1",
     "dateTime": "2019-09-04T11:00:00.000Z",
@@ -1551,7 +1551,7 @@
     "cost": 0.000002929896893125
   },
   {
-    "tenantId": "7ec85367-20e1-40f2-8725-52b245354045",
+    "tenantId": "f2771702-164d-4d90-bb79-b849f59918e5",
     "lambdaName": "company-service-dev-get-leads-feed",
     "region": "eu-west-1",
     "dateTime": "2019-09-04T12:00:00.000Z",
@@ -1562,7 +1562,7 @@
     "cost": 0.000010260681988000002
   },
   {
-    "tenantId": "7ec85367-20e1-40f2-8725-52b245354045",
+    "tenantId": "f2771702-164d-4d90-bb79-b849f59918e5",
     "lambdaName": "company-service-dev-get-leads-feed",
     "region": "eu-west-1",
     "dateTime": "2019-09-04T13:00:00.000Z",
@@ -1573,7 +1573,7 @@
     "cost": 0.000002732229831125
   },
   {
-    "tenantId": "7ec85367-20e1-40f2-8725-52b245354045",
+    "tenantId": "f2771702-164d-4d90-bb79-b849f59918e5",
     "lambdaName": "company-service-dev-get-leads-feed",
     "region": "eu-west-1",
     "dateTime": "2019-09-04T14:00:00.000Z",
@@ -1584,7 +1584,7 @@
     "cost": 0.0000026937089207499997
   },
   {
-    "tenantId": "7ec85367-20e1-40f2-8725-52b245354045",
+    "tenantId": "f2771702-164d-4d90-bb79-b849f59918e5",
     "lambdaName": "company-service-dev-get-leads-feed",
     "region": "eu-west-1",
     "dateTime": "2019-09-04T15:00:00.000Z",
@@ -1595,7 +1595,7 @@
     "cost": 0.000002666938033875
   },
   {
-    "tenantId": "7ec85367-20e1-40f2-8725-52b245354045",
+    "tenantId": "f2771702-164d-4d90-bb79-b849f59918e5",
     "lambdaName": "company-service-dev-get-leads-feed",
     "region": "eu-west-1",
     "dateTime": "2019-09-04T16:00:00.000Z",
@@ -1606,7 +1606,7 @@
     "cost": 0.00000273687567375
   },
   {
-    "tenantId": "7ec85367-20e1-40f2-8725-52b245354045",
+    "tenantId": "f2771702-164d-4d90-bb79-b849f59918e5",
     "lambdaName": "company-service-dev-get-leads-feed",
     "region": "eu-west-1",
     "dateTime": "2019-09-04T17:00:00.000Z",
@@ -1617,7 +1617,7 @@
     "cost": 0.00000263887547775
   },
   {
-    "tenantId": "7ec85367-20e1-40f2-8725-52b245354045",
+    "tenantId": "f2771702-164d-4d90-bb79-b849f59918e5",
     "lambdaName": "company-service-dev-get-leads-feed",
     "region": "eu-west-1",
     "dateTime": "2019-09-04T18:00:00.000Z",
@@ -1628,7 +1628,7 @@
     "cost": 0.0000026242712818749998
   },
   {
-    "tenantId": "7ec85367-20e1-40f2-8725-52b245354045",
+    "tenantId": "f2771702-164d-4d90-bb79-b849f59918e5",
     "lambdaName": "company-service-dev-get-leads-feed",
     "region": "eu-west-1",
     "dateTime": "2019-09-04T19:00:00.000Z",
@@ -1639,7 +1639,7 @@
     "cost": 0.000002846146725625
   },
   {
-    "tenantId": "7ec85367-20e1-40f2-8725-52b245354045",
+    "tenantId": "f2771702-164d-4d90-bb79-b849f59918e5",
     "lambdaName": "company-service-dev-get-leads-feed",
     "region": "eu-west-1",
     "dateTime": "2019-09-04T20:00:00.000Z",
@@ -1650,7 +1650,7 @@
     "cost": 0.000003163501527
   },
   {
-    "tenantId": "7ec85367-20e1-40f2-8725-52b245354045",
+    "tenantId": "f2771702-164d-4d90-bb79-b849f59918e5",
     "lambdaName": "company-service-dev-get-leads-feed",
     "region": "eu-west-1",
     "dateTime": "2019-09-04T21:00:00.000Z",
@@ -1661,7 +1661,7 @@
     "cost": 0.00000302037624075
   },
   {
-    "tenantId": "7ec85367-20e1-40f2-8725-52b245354045",
+    "tenantId": "f2771702-164d-4d90-bb79-b849f59918e5",
     "lambdaName": "company-service-dev-get-leads-feed",
     "region": "eu-west-1",
     "dateTime": "2019-09-04T22:00:00.000Z",
@@ -1672,7 +1672,7 @@
     "cost": 0.0000030677096687499996
   },
   {
-    "tenantId": "7ec85367-20e1-40f2-8725-52b245354045",
+    "tenantId": "f2771702-164d-4d90-bb79-b849f59918e5",
     "lambdaName": "company-service-dev-get-leads-feed",
     "region": "eu-west-1",
     "dateTime": "2019-09-04T23:00:00.000Z",
@@ -1683,7 +1683,7 @@
     "cost": 0.000002949313598625
   },
   {
-    "tenantId": "7ec85367-20e1-40f2-8725-52b245354045",
+    "tenantId": "f2771702-164d-4d90-bb79-b849f59918e5",
     "lambdaName": "company-service-dev-get-leads-feed",
     "region": "eu-west-1",
     "dateTime": "2019-09-05T00:00:00.000Z",
@@ -1694,7 +1694,7 @@
     "cost": 0.000003223772480875
   },
   {
-    "tenantId": "7ec85367-20e1-40f2-8725-52b245354045",
+    "tenantId": "f2771702-164d-4d90-bb79-b849f59918e5",
     "lambdaName": "company-service-dev-get-leads-feed",
     "region": "eu-west-1",
     "dateTime": "2019-09-05T01:00:00.000Z",
@@ -1705,7 +1705,7 @@
     "cost": 0.00000307895969125
   },
   {
-    "tenantId": "7ec85367-20e1-40f2-8725-52b245354045",
+    "tenantId": "f2771702-164d-4d90-bb79-b849f59918e5",
     "lambdaName": "company-service-dev-get-leads-feed",
     "region": "eu-west-1",
     "dateTime": "2019-09-05T02:00:00.000Z",
@@ -1716,7 +1716,7 @@
     "cost": 0.00000298754284175
   },
   {
-    "tenantId": "7ec85367-20e1-40f2-8725-52b245354045",
+    "tenantId": "f2771702-164d-4d90-bb79-b849f59918e5",
     "lambdaName": "company-service-dev-get-leads-feed",
     "region": "eu-west-1",
     "dateTime": "2019-09-05T03:00:00.000Z",
@@ -1727,7 +1727,7 @@
     "cost": 0.00000326612673225
   },
   {
-    "tenantId": "7ec85367-20e1-40f2-8725-52b245354045",
+    "tenantId": "f2771702-164d-4d90-bb79-b849f59918e5",
     "lambdaName": "company-service-dev-get-leads-feed",
     "region": "eu-west-1",
     "dateTime": "2019-09-05T04:00:00.000Z",
@@ -1738,7 +1738,7 @@
     "cost": 0.00000267000054
   },
   {
-    "tenantId": "7ec85367-20e1-40f2-8725-52b245354045",
+    "tenantId": "f2771702-164d-4d90-bb79-b849f59918e5",
     "lambdaName": "company-service-dev-get-leads-feed",
     "region": "eu-west-1",
     "dateTime": "2019-09-05T05:00:00.000Z",
@@ -1749,7 +1749,7 @@
     "cost": 0.0000027557507115
   },
   {
-    "tenantId": "7ec85367-20e1-40f2-8725-52b245354045",
+    "tenantId": "f2771702-164d-4d90-bb79-b849f59918e5",
     "lambdaName": "company-service-dev-get-leads-feed",
     "region": "eu-west-1",
     "dateTime": "2019-09-05T06:00:00.000Z",
@@ -1760,7 +1760,7 @@
     "cost": 0.000002645271323875
   },
   {
-    "tenantId": "7ec85367-20e1-40f2-8725-52b245354045",
+    "tenantId": "f2771702-164d-4d90-bb79-b849f59918e5",
     "lambdaName": "company-service-dev-get-leads-feed",
     "region": "eu-west-1",
     "dateTime": "2019-09-05T07:00:00.000Z",
@@ -1771,7 +1771,7 @@
     "cost": 0.000002694646422625
   },
   {
-    "tenantId": "7ec85367-20e1-40f2-8725-52b245354045",
+    "tenantId": "f2771702-164d-4d90-bb79-b849f59918e5",
     "lambdaName": "company-service-dev-get-leads-feed",
     "region": "eu-west-1",
     "dateTime": "2019-09-05T08:00:00.000Z",
@@ -1782,7 +1782,7 @@
     "cost": 0.000002721396476125
   },
   {
-    "tenantId": "7ec85367-20e1-40f2-8725-52b245354045",
+    "tenantId": "f2771702-164d-4d90-bb79-b849f59918e5",
     "lambdaName": "company-service-dev-get-leads-feed",
     "region": "eu-west-1",
     "dateTime": "2019-09-05T09:00:00.000Z",
@@ -1793,7 +1793,7 @@
     "cost": 0.000010423660680625
   },
   {
-    "tenantId": "7ec85367-20e1-40f2-8725-52b245354045",
+    "tenantId": "f2771702-164d-4d90-bb79-b849f59918e5",
     "lambdaName": "company-service-dev-get-leads-feed",
     "region": "eu-west-1",
     "dateTime": "2019-09-05T10:00:00.000Z",
@@ -1804,7 +1804,7 @@
     "cost": 0.000012316414866125
   },
   {
-    "tenantId": "7ec85367-20e1-40f2-8725-52b245354045",
+    "tenantId": "f2771702-164d-4d90-bb79-b849f59918e5",
     "lambdaName": "company-service-dev-get-leads-feed",
     "region": "eu-west-1",
     "dateTime": "2019-09-05T11:00:00.000Z",
@@ -1815,7 +1815,7 @@
     "cost": 0.000013022770445500002
   },
   {
-    "tenantId": "7ec85367-20e1-40f2-8725-52b245354045",
+    "tenantId": "f2771702-164d-4d90-bb79-b849f59918e5",
     "lambdaName": "company-service-dev-get-leads-feed",
     "region": "eu-west-1",
     "dateTime": "2019-09-05T12:00:00.000Z",
@@ -1826,7 +1826,7 @@
     "cost": 0.000019986324839250003
   },
   {
-    "tenantId": "7ec85367-20e1-40f2-8725-52b245354045",
+    "tenantId": "f2771702-164d-4d90-bb79-b849f59918e5",
     "lambdaName": "company-service-dev-get-leads-feed",
     "region": "eu-west-1",
     "dateTime": "2019-09-05T13:00:00.000Z",
@@ -1837,7 +1837,7 @@
     "cost": 0.000002931355229375
   },
   {
-    "tenantId": "7ec85367-20e1-40f2-8725-52b245354045",
+    "tenantId": "f2771702-164d-4d90-bb79-b849f59918e5",
     "lambdaName": "company-service-dev-get-leads-feed",
     "region": "eu-west-1",
     "dateTime": "2019-09-05T14:00:00.000Z",
