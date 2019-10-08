@@ -19,7 +19,7 @@ describe('costs collectors', () => {
   const startDate180 = DateTime.utc().minus({ days: 180 }).startOf('second').toISODate()
 
   test('costs per service', async () => {
-    const dataPoints = await getCostsPerService('f2771702-164d-4d90-bb79-b849f59918e5', startDate, endDate)
+    const dataPoints = await getCostsPerService('7ec85367-20e1-40f2-8725-52b245354045', startDate, endDate)
 
     expect(dataPoints.length).toBe(90)
 
@@ -38,7 +38,7 @@ describe('costs collectors', () => {
   })
 
   test('costs per service - 180 days', async () => {
-    const dataPoints = await getCostsPerService('f2771702-164d-4d90-bb79-b849f59918e5', startDate180, endDate)
+    const dataPoints = await getCostsPerService('7ec85367-20e1-40f2-8725-52b245354045', startDate180, endDate)
 
     expect(dataPoints.length).toBe(180)
 
@@ -58,7 +58,7 @@ describe('costs collectors', () => {
 
   test('costs for service', async () => {
     const dataPoints = await getCostsForService(
-      'f2771702-164d-4d90-bb79-b849f59918e5',
+      '7ec85367-20e1-40f2-8725-52b245354045',
       'Amazon Relational Database Service',
       startDate,
       endDate,
@@ -73,7 +73,7 @@ describe('costs collectors', () => {
   })
 
   test('costs per stack', async () => {
-    const dataPoints = await getCostsPerStack('f2771702-164d-4d90-bb79-b849f59918e5', startDate, endDate)
+    const dataPoints = await getCostsPerStack('7ec85367-20e1-40f2-8725-52b245354045', startDate, endDate)
 
     expect(dataPoints.length).toBe(90)
 
@@ -93,7 +93,7 @@ describe('costs collectors', () => {
 
 
   test('costs per stack - 180', async () => {
-    const dataPoints = await getCostsPerStack('f2771702-164d-4d90-bb79-b849f59918e5', startDate180, endDate)
+    const dataPoints = await getCostsPerStack('7ec85367-20e1-40f2-8725-52b245354045', startDate180, endDate)
 
     expect(dataPoints.length).toBe(180)
 

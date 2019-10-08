@@ -14,7 +14,7 @@ describe('get lambda totals', () => {
     const response = await lambdaClient.invoke({
       FunctionName: 'cloudkeeper-metrics-service-dev-get-lambda-totals',
       Payload: JSON.stringify({
-        tenantId: 'f2771702-164d-4d90-bb79-b849f59918e5',
+        tenantId: '7ec85367-20e1-40f2-8725-52b245354045',
         startDate,
         endDate,
       }),
@@ -41,7 +41,7 @@ describe('get lambda totals', () => {
     const response = await lambdaClient.invoke({
       FunctionName: 'cloudkeeper-metrics-service-dev-get-lambda-totals',
       Payload: JSON.stringify({
-        tenantId: 'f2771702-164d-4d90-bb79-b849f59918e5',
+        tenantId: '7ec85367-20e1-40f2-8725-52b245354045',
         startDate: '2019-09-10T00:00:00.000+02:00',
         endDate: '2019-09-10T23:59:59.999+02:00',
       }),

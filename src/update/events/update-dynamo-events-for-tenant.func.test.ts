@@ -20,7 +20,7 @@ describe('Update Dynamo Events', () => {
     await handler({
       Records: [{
         Sns: {
-          Message: 'f2771702-164d-4d90-bb79-b849f59918e5',
+          Message: '7ec85367-20e1-40f2-8725-52b245354045',
         },
       }],
     })
@@ -40,7 +40,7 @@ describe('Update Dynamo Events', () => {
       }))),
       startDateTime,
       endDateTime,
-      'f2771702-164d-4d90-bb79-b849f59918e5',
+      '7ec85367-20e1-40f2-8725-52b245354045',
       newEvents,
     )
 

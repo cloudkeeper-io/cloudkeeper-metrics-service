@@ -14,7 +14,7 @@ describe('get lambda stats', () => {
     const response = await lambdaClient.invoke({
       FunctionName: 'cloudkeeper-metrics-service-dev-get-lambda-stats',
       Payload: JSON.stringify({
-        tenantId: 'f2771702-164d-4d90-bb79-b849f59918e5',
+        tenantId: '7ec85367-20e1-40f2-8725-52b245354045',
         name: 'dev-crm-service-tenant-retry-queue-poller',
         region: 'eu-west-1',
         startDate,
