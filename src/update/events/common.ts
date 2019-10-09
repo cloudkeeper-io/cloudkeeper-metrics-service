@@ -65,8 +65,7 @@ export const setProcessingIsDone = async (tenantId, dynamo) => {
         id: tenantId,
       },
       UpdateExpression: 'SET initialProcessing.done = :true',
-      ConditionExpression: `initialProcessing.costs = :true and 
-          initialProcessing.lambda = :true and 
+      ConditionExpression: `initialProcessing.lambda = :true and 
           initialProcessing.dynamo = :true`,
       ExpressionAttributeValues: {
         ':true': true,
