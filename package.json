@@ -1,0 +1,82 @@
+{
+  "name": "serverless-aws-nodejs-typescript",
+  "version": "1.0.0",
+  "main": "handler.js",
+  "license": "MIT",
+  "private": true,
+  "homepage": "https://github.com/mesaugat/serverless-aws-nodejs-typescript",
+  "scripts": {
+    "test:unit": "jest unit",
+    "test:func": "jest func",
+    "tsc": "tsc --noEmit",
+    "lint": "eslint \"**/*.ts\"",
+    "lint:fix": "eslint \"**/*.ts\" --fix",
+    "db:migrate": "cross-env STAGE=dev ts-node scripts/migrate-db.ts",
+    "deploy": "cross-env NODE_OPTIONS=--max_old_space_size=3096 sls deploy --force"
+  },
+  "dependencies": {
+    "@azure/cognitiveservices-anomalydetector": "^1.0.0",
+    "@azure/ms-rest-nodeauth": "^1.1.1",
+    "aws-sdk": "^2.529.0",
+    "aws-xray-sdk-core": "^2.2.0",
+    "lodash": "^4.17.11",
+    "luxon": "^1.11.3",
+    "mysql": "^2.16.0",
+    "typeorm": "^0.2.20",
+    "typeorm-aurora-data-api-driver": "^1.1.8",
+    "firebase-admin": "^7.3.0",
+    "uuidv4": "^3.0.1"
+  },
+  "devDependencies": {
+    "@types/aws-lambda": "8.10.15",
+    "@types/jest": "^24.0.18",
+    "@types/jsonwebtoken": "^8.3.0",
+    "@types/lodash": "^4.14.136",
+    "@types/luxon": "^1.11.1",
+    "@types/node": "^11.9.5",
+    "@typescript-eslint/eslint-plugin": "^1.4.2",
+    "@typescript-eslint/parser": "^1.4.2",
+    "cache-loader": "^3.0.1",
+    "cross-env": "^5.2.0",
+    "eslint": "^5.14.1",
+    "eslint-config-airbnb-base": "13.1.0",
+    "eslint-plugin-import": "^2.16.0",
+    "eslint-plugin-jest": "^22.3.0",
+    "eslint-plugin-typescript": "^0.14.0",
+    "jest": "^24.9.0",
+    "jest-junit": "^6.3.0",
+    "node-fetch": "^2.3.0",
+    "serverless-offline": "^3.31.3",
+    "serverless-plugin-scripts": "^1.0.2",
+    "serverless-plugin-tracing": "^2.0.0",
+    "serverless-pseudo-parameters": "^2.5.0",
+    "serverless-webpack": "^5.3.1",
+    "ts-jest": "^24.0.0",
+    "ts-loader": "^5.3.3",
+    "ts-node": "^8.0.3",
+    "typescript": "^3.3.3333",
+    "webpack": "^4.41.0",
+    "webpack-node-externals": "1.7.2"
+  },
+  "jest": {
+    "testMatch": [
+      "<rootDir>/src/**/*(*.)@(spec|test).[tj]s?(x)"
+    ],
+    "moduleFileExtensions": [
+      "web.ts",
+      "ts",
+      "web.tsx",
+      "tsx",
+      "web.js",
+      "js",
+      "web.jsx",
+      "jsx",
+      "json",
+      "node",
+      "mjs"
+    ],
+    "transform": {
+      "^.+\\.(tsx?|json)$": "ts-jest"
+    }
+  }
+}

@@ -1,0 +1,59 @@
+Description: 'CloudFormation stack for cloudkeeper delegation'
+Resources:
+  CloudkeeperDelegationRole:
+    Type: 'AWS::IAM::Role'
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              AWS:
+              - arn:aws:iam::537011205135:root
+            Action:
+              - 'sts:AssumeRole'
+            Condition:
+              StringEquals:
+                'sts:ExternalId': !Ref ExternalId
+      Path: /
+      RoleName: CloudkeeperDelegationRole
+      Policies:
+        - PolicyName: cloudkeeper-delegation-policy
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Action: 'lambda:listFunctions'
+                Resource: '*'
+              - Effect: Allow
+                Action: 'lambda:listTags'
+                Resource: '*'
+              - Effect: Allow
+                Action: 'dynamodb:list*'
+                Resource: '*'
+              - Effect: Allow
+                Action: 'dynamodb:describe*'
+                Resource: '*'
+              - Effect: Allow
+                Action: 'cloudwatch:GetMetricStatistics'
+                Resource: '*'
+              - Effect: Allow
+                Action: 'ce:getCostAndUsage'
+                Resource: '*'
+              - Effect: "Allow"
+                Action:
+                  - "xray:GetTraceSummaries"
+                  - "xray:BatchGetTraces"
+                Resource: '*'
+
+Parameters:
+  ExternalId:
+    Description: 'The external ID for the cloudkeeper delegation role'
+    Type: String
+
+Outputs:
+  CloudkeeperDelegationRoleArn:
+    Description: 'The ARN for the cloudkeeper delegation role'
+    Value: !GetAtt
+      - CloudkeeperDelegationRole
+      - Arn

@@ -1,0 +1,228 @@
+version: 2
+jobs:
+  ensure-deps:
+    docker:
+      - image: ayankovsky/node-serverless-aws
+
+    working_directory: ~/repo
+
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - v1-yarn-{{ .Branch }}-{{ checksum "yarn.lock" }}
+            - v1-yarn-{{ .Branch }}-
+            - v1-yarn-
+
+      - run:
+          name: Install Dependencies
+          command: yarn
+
+      - save_cache:
+          key: v1-yarn-{{ .Branch }}-{{ checksum "yarn.lock" }}
+          paths:
+            - node_modules
+            - .cache/yarn
+
+      - persist_to_workspace:
+          # Must be an absolute path, or relative path from working_directory. This is a directory on the container which is
+          # taken to be the root directory of the workspace.
+          root: .
+          # Must be relative path from root
+          paths:
+            - node_modules
+  checks:
+    environment:
+      PROJECT: cloudkeeper-metrics-service
+    working_directory: ~/repo
+    docker:
+      - image: ayankovsky/node-serverless-aws
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - v1-yarn-{{ .Branch }}-{{ checksum "yarn.lock" }}
+            - v1-yarn-{{ .Branch }}-
+            - v1-yarn-
+      - run:
+          name: create folder
+          command: mkdir -p reports/junit
+      - run:
+          name: Lint
+          command: yarn lint --format junit -o reports/junit/js-lint-results.xml
+      - run:
+          name: TSC
+          command: yarn tsc
+      - run:
+          name: Tests
+          environment:
+            JEST_JUNIT_OUTPUT: reports/junit/js-test-results.xml
+          command: yarn test:unit -w 1 --ci --testResultsProcessor="jest-junit"
+      - store_test_results:
+          path: reports/junit
+      - store_artifacts:
+          path: reports/junit
+
+  dev-migrate-database:
+    environment:
+      PROJECT: cloudkeeper-metrics-service
+    working_directory: ~/repo
+    docker:
+      - image: ayankovsky/node-serverless-aws
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - v1-yarn-{{ .Branch }}-{{ checksum "yarn.lock" }}
+            - v1-yarn-{{ .Branch }}-
+            - v1-yarn-
+      - run:
+          name: Run db migration
+          command: STAGE=dev node node_modules/.bin/ts-node scripts/migrate-db.ts
+
+  prod-migrate-database:
+    environment:
+      PROJECT: cloudkeeper-metrics-service
+    working_directory: ~/repo
+    docker:
+      - image: ayankovsky/node-serverless-aws
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - v1-yarn-{{ .Branch }}-{{ checksum "yarn.lock" }}
+            - v1-yarn-{{ .Branch }}-
+            - v1-yarn-
+      - run:
+          name: Run db migration
+          command: STAGE=prod node node_modules/.bin/ts-node scripts/migrate-db.ts
+
+  functional-tests:
+    environment:
+      PROJECT: cloudkeeper-metrics-service
+    working_directory: ~/repo
+    docker:
+      - image: ayankovsky/node-serverless-aws
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - v1-yarn-{{ .Branch }}-{{ checksum "yarn.lock" }}
+            - v1-yarn-{{ .Branch }}-
+            - v1-yarn-
+      - run:
+          name: create folder
+          command: mkdir -p reports/junit
+      - run:
+          name: Run functional tests
+          environment:
+            JEST_JUNIT_OUTPUT: reports/junit/js-test-results.xml
+          command: yarn test:func -w 1 --ci --testResultsProcessor="jest-junit" --passWithNoTests
+      - store_test_results:
+          path: reports/junit
+      - store_artifacts:
+          path: reports/junit
+
+  dev-deploy:
+    environment:
+      PROJECT: cloudkeeper-metrics-service
+    working_directory: ~/repo
+    docker:
+      - image: ayankovsky/node-serverless-aws
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - v1-yarn-{{ .Branch }}-{{ checksum "yarn.lock" }}
+            - v1-yarn-{{ .Branch }}-
+            - v1-yarn-
+      - run:
+          name: deploy
+          command: yarn deploy
+
+  prod-deploy:
+    environment:
+      PROJECT: cloudkeeper-metrics-service
+    working_directory: ~/repo
+    docker:
+      - image: ayankovsky/node-serverless-aws
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - v1-yarn-{{ .Branch }}-{{ checksum "yarn.lock" }}
+            - v1-yarn-{{ .Branch }}-
+            - v1-yarn-
+      - run:
+          name: deploy
+          command: yarn deploy --stage prod
+
+workflows:
+  version: 2
+  build-and-deploy-dev:
+    jobs:
+      - ensure-deps
+      - checks:
+          context: ayankovsky-context
+          requires:
+            - ensure-deps
+      - dev-migrate-database:
+          filters:
+            branches:
+              only:
+                - master
+          context: ayankovsky-context
+          requires:
+            - checks
+      - dev-deploy:
+          filters:
+            branches:
+              only:
+                - master
+          context: ayankovsky-context
+          requires:
+            - dev-migrate-database
+      - functional-tests:
+          filters:
+            branches:
+              only:
+                - master
+          context: ayankovsky-context
+          requires:
+            - dev-deploy
+
+  build-and-deploy-prod:
+    jobs:
+      - ensure-deps:
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /^release.*/
+      - checks:
+          context: ayankovsky-context
+          requires:
+            - ensure-deps
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /^release.*/
+      - prod-migrate-database:
+          context: ayankovsky-context
+          requires:
+            - checks
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /^release.*/
+      - prod-deploy:
+          context: ayankovsky-context
+          requires:
+            - prod-migrate-database
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /^release.*/

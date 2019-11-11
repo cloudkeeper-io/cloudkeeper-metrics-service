@@ -1,0 +1,244 @@
+service:
+  name: cloudkeeper-metrics-service
+
+plugins:
+  - serverless-webpack
+  - serverless-pseudo-parameters
+  - serverless-offline
+  - serverless-plugin-tracing
+  - serverless-plugin-scripts
+
+package:
+  individually: false
+
+provider:
+  name: aws
+  runtime: nodejs8.10
+  versionFunctions: false
+  memorySize: 1024
+  region: eu-central-1
+  tracing: true
+  environment:
+    stage: ${self:custom.stage}
+    dbSecretArn: ${self:custom.${self:custom.stage}.dbSecretArn}
+    dbName: ${self:custom.${self:custom.stage}.dbName}
+    dbResourceArn: ${self:custom.${self:custom.stage}.dbResourceArn}
+    dbRegion: ${self:custom.${self:custom.stage}.dbRegion}
+  iamRoleStatements:
+    ${file(roleStatements.yml)}
+
+custom:
+  region: ${opt:region, self:provider.region}
+  stage: ${opt:stage, self:provider.stage}
+  dev:
+    dbSecretArn: arn:aws:secretsmanager:eu-west-1:537011205135:secret:cloudkeeper-creds-cIf2OP
+    dbName: dev_cloudkeeper
+    dbResourceArn: arn:aws:rds:eu-west-1:537011205135:cluster:cloudkeeper
+    dbRegion: eu-west-1
+
+  prod:
+    dbSecretArn: arn:aws:secretsmanager:eu-west-1:537011205135:secret:cloudkeeper-creds-cIf2OP
+    dbName: prod_cloudkeeper
+    dbResourceArn: arn:aws:rds:eu-west-1:537011205135:cluster:cloudkeeper
+    dbRegion: eu-west-1
+
+  scripts:
+    hooks:
+      'before:deploy:deploy': aws s3 cp ./cloudformation.yml s3://cdn.cloudkeeper.io/cloudformation.yml
+
+  webpack:
+    includeModules:
+      forceInclude:
+        - typeorm-aurora-data-api-driver
+    packager: yarn
+
+functions:
+  trigger-update-lambdas:
+    handler: src/update/lambda-configuration/trigger-lambda-config-update.handler
+    events:
+      - schedule: cron(1 * ? * * *)
+
+  update-tenant-lambdas:
+    timeout: 120
+    handler: src/update/lambda-configuration/update-lambda-configurations-for-tenant.handler
+
+
+  trigger-costs-data-update:
+    handler: src/update/costs/trigger-costs-update.handler
+    events:
+      - schedule: cron(5 0 ? * * *)
+
+  update-costs-for-tenant:
+    timeout: 240
+    handler: src/update/costs/update-costs-for-tenant.handler
+    environment:
+      finishedTopic: "arn:aws:sns:${self:custom.region}:#{AWS::AccountId}:${self:custom.stage}-finished-updating-costs"
+
+  get-costs-summary:
+    timeout: 15
+    handler: src/costs/get-costs-summary.handler
+
+  get-events:
+    timeout: 15
+    handler: src/events/get-events.handler
+
+  get-lambda-totals:
+    timeout: 15
+    handler: src/lambda/get-totals.handler
+
+  trigger-dynamo-tables-update:
+    handler: src/update/dynamodb-tables/trigger-dynamo-tables-update.handler
+    events:
+      - schedule: cron(1 * ? * * *)
+
+  update-tenant-dynamo-tables:
+    timeout: 120
+    handler: src/update/dynamodb-tables/update-tenant-dynamo-tables.handler
+    environment:
+      finishedTopic: !Ref FinishedUpdatingDynamoStats
+
+  setup-tenant:
+    handler: src/setup/setup-tenant.handler
+
+  create-tenant:
+    handler: src/tenant/create-tenant.handler
+
+  delete-tenant:
+    handler: src/tenant/delete-tenant.handler
+
+  list-tenants:
+    handler: src/tenant/list-tenants.handler
+
+  list-lambdas:
+    handler: src/lambda/list-lambdas.handler
+
+  list-most-expensive-lambdas:
+    timeout: 15
+    handler: src/lambda/list-most-expensive-lambdas.handler
+
+  get-lambda:
+    handler: src/lambda/get-lambda.handler
+
+  list-dynamo-tables:
+    handler: src/dynamodb/list-tables.handler
+
+  list-most-expensive-tables:
+    timeout: 15
+    handler: src/dynamodb/list-most-expensive-tables.handler
+
+  get-dynamo-table:
+    handler: src/dynamodb/get-table.handler
+
+  update-tenant-lambda-stats:
+    timeout: 300
+    handler: src/update/lambda-stats/update-tenant-lambda-stats.handler
+    environment:
+      finishedTopic: "arn:aws:sns:${self:custom.region}:#{AWS::AccountId}:${self:custom.stage}-finished-updating-lambda-stats"
+
+  update-tenant-dynamo-stats:
+    timeout: 300
+    handler: src/update/dynamodb-table-stats/update-tenant-dynamo-stats.handler
+    environment:
+      finishedTopic: "arn:aws:sns:${self:custom.region}:#{AWS::AccountId}:${self:custom.stage}-finished-updating-dynamo-stats"
+
+  update-dynamo-events-for-tenant:
+    timeout: 300
+    handler: src/update/events/update-dynamo-events-for-tenant.handler
+    environment:
+      bucket: ${self:custom.stage}-cloudkeeper-tenant-data
+    events:
+      - sns:
+          arn: "arn:aws:sns:${self:custom.region}:#{AWS::AccountId}:${self:custom.stage}-finished-updating-dynamo-stats"
+
+  update-lambda-events-for-tenant:
+    timeout: 300
+    handler: src/update/events/update-lambda-events-for-tenant.handler
+    environment:
+      bucket: ${self:custom.stage}-cloudkeeper-tenant-data
+    events:
+      - sns:
+          arn: "arn:aws:sns:${self:custom.region}:#{AWS::AccountId}:${self:custom.stage}-finished-updating-lambda-stats"
+
+  update-costs-events-for-tenant:
+    timeout: 120
+    handler: src/update/events/update-costs-events-for-tenant.handler
+    environment:
+      bucket: ${self:custom.stage}-cloudkeeper-tenant-data
+      azureClientId: ${ssm:azure-client-id}
+      azureClientSecret: ${ssm:azure-client-secret}
+      azureSubscriptionId: ${ssm:azure-cognitive-subscription-id}
+      azureDomain: ${ssm:azure-domain}
+    events:
+      - sns:
+          arn: "arn:aws:sns:${self:custom.region}:#{AWS::AccountId}:${self:custom.stage}-finished-updating-costs"
+
+  update-pricing:
+    handler: src/update/pricing/update-pricing.handler
+    events:
+      - schedule: cron(1 0 ? * * *)
+
+resources:
+  Resources:
+    Tenants:
+      Type: AWS::DynamoDB::Table
+      DeletionPolicy: Retain
+      Properties:
+        TableName: ${self:custom.stage}-cloudkeeper-tenants
+        PointInTimeRecoverySpecification:
+          PointInTimeRecoveryEnabled: true
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+        BillingMode: PAY_PER_REQUEST
+
+    TenantAccess:
+      Type: AWS::DynamoDB::Table
+      DeletionPolicy: Retain
+      Properties:
+        TableName: ${self:custom.stage}-cloudkeeper-tenant-users
+        PointInTimeRecoverySpecification:
+          PointInTimeRecoveryEnabled: true
+        AttributeDefinitions:
+          - AttributeName: userId
+            AttributeType: S
+          - AttributeName: tenantId
+            AttributeType: S
+        KeySchema:
+          - AttributeName: userId
+            KeyType: HASH
+          - AttributeName: tenantId
+            KeyType: RANGE
+        BillingMode: PAY_PER_REQUEST
+        GlobalSecondaryIndexes:
+          - IndexName: tenantIdIndex
+            KeySchema:
+              - AttributeName: tenantId
+                KeyType: HASH
+            Projection:
+              ProjectionType: ALL
+
+    FinishedUpdatingLambdaStats:
+      Type: "AWS::SNS::Topic"
+      Properties:
+        DisplayName: ${self:custom.stage}-finished-updating-lambda-stats
+        TopicName: ${self:custom.stage}-finished-updating-lambda-stats
+
+    FinishedUpdatingDynamoStats:
+      Type: "AWS::SNS::Topic"
+      Properties:
+        DisplayName: ${self:custom.stage}-finished-updating-dynamo-stats
+        TopicName: ${self:custom.stage}-finished-updating-dynamo-stats
+
+    FinishedUpdatingCosts:
+      Type: "AWS::SNS::Topic"
+      Properties:
+        DisplayName: ${self:custom.stage}-finished-updating-costs
+        TopicName: ${self:custom.stage}-finished-updating-costs
+
+    CloudkeeperTenantData:
+      Type: AWS::S3::Bucket
+      Properties:
+        BucketName: ${self:custom.stage}-cloudkeeper-tenant-data
