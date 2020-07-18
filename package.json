@@ -19,7 +19,7 @@
     "@azure/ms-rest-nodeauth": "^1.1.1",
     "aws-sdk": "^2.529.0",
     "aws-xray-sdk-core": "^2.2.0",
-    "lodash": "^4.17.11",
+    "lodash": "^4.17.19",
     "luxon": "^1.11.3",
     "mysql": "^2.16.0",
     "typeorm": "^0.2.20",
