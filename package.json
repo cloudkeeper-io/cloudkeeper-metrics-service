@@ -45,7 +45,7 @@
     "eslint-plugin-typescript": "^0.14.0",
     "jest": "^24.9.0",
     "jest-junit": "^6.3.0",
-    "node-fetch": "^2.3.0",
+    "node-fetch": "^2.6.1",
     "serverless-offline": "^3.31.3",
     "serverless-plugin-scripts": "^1.0.2",
     "serverless-plugin-tracing": "^2.0.0",
