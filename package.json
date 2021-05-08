@@ -22,7 +22,7 @@
     "lodash": "^4.17.11",
     "luxon": "^1.11.3",
     "mysql": "^2.16.0",
-    "typeorm": "^0.2.20",
+    "typeorm": "^0.2.25",
     "typeorm-aurora-data-api-driver": "^1.1.8",
     "firebase-admin": "^7.3.0",
     "uuidv4": "^3.0.1"
