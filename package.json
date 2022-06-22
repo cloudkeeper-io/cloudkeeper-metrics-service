@@ -16,7 +16,7 @@
   },
   "dependencies": {
     "@azure/cognitiveservices-anomalydetector": "^1.0.0",
-    "@azure/ms-rest-nodeauth": "^1.1.1",
+    "@azure/ms-rest-nodeauth": "^3.0.8",
     "aws-sdk": "^2.529.0",
     "aws-xray-sdk-core": "^2.2.0",
     "lodash": "^4.17.11",
